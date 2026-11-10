@@ -2,7 +2,7 @@
 
 > **현재 운영 상태 (2026-11-10): 전체 공개 · Cloudflare Access 비적용.** 대시보드, REST, MCP 모두 로그인 없이 접근할 수 있습니다. 예전 소유자 전용 정책과 공개 Bypass 정책은 삭제하지 않고 별도 Access 앱에 연결해 보존했습니다. 재보호 방법: [Access 일시 해제·복구 문서](docs/ACCESS_SUSPENSION_2026-11-10.md).
 
-> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 공지사항·가정통신문·한봄 NEWS RSS를 REST API, 원격 MCP, 공개 대시보드로 제공하는 Cloudflare Workers 서비스.
+> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 공지사항·가정통신문·한봄 NEWS·학생작품 및 수상내역·가정통신문(교육청) RSS를 REST API, 원격 MCP, 공개 대시보드로 제공하는 Cloudflare Workers 서비스.
 
 ## 서비스 주소 (Canonical)
 
@@ -11,6 +11,7 @@
 | 공개 대시보드 | https://data.hanbom.rhee.life/ | **누구나 (Access 일시 해제)** |
 | REST 공지 | https://data.hanbom.rhee.life/api/notices | 모두 공개, 읽기 전용 |
 | 가정통신문 | https://data.hanbom.rhee.life/api/letters | 모두 공개, 읽기 전용 |
+| 가정통신문(교육청) | https://data.hanbom.rhee.life/api/education-letters | 모두 공개, 읽기 전용 |
 | 한봄 NEWS | https://data.hanbom.rhee.life/api/news | 모두 공개, 읽기 전용 |
 | 통합 보기 | https://data.hanbom.rhee.life/api/posts | 모두 공개, 읽기 전용 |
 | REST 검색 | https://data.hanbom.rhee.life/api/search?q=입학 | 모두 공개, 읽기 전용 |
@@ -24,6 +25,7 @@
 
 - 공지 사항 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062
 - 가정통신문 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063
+- 가정통신문(교육청) RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17254&bbsId=10064&bbsTy=HCNOTIE
 - 한봄 NEWS RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022
 - 학교 홈페이지: https://hanbom-h.goesw.kr/
 - RSS에 노출된 공지 일부만 조회할 수 있습니다. 전체 공지 및 첨부파일은 반드시 공식 원문에서 확인해야 합니다.
@@ -31,8 +33,8 @@
 ## 기능 및 MCP
 
 - Worker 하나로 RSS·REST·Stateless MCP(Streamable HTTP JSON-RPC)·반응형 개인 대시보드 운영.
-- REST: GET `/api/notices`, `/api/letters`, `/api/news`, `/api/posts`, `/api/feed?category=all|notice|letter|news`, `/api/search?q=...&category=all`, `/api/status?category=all`, `/api/meta`.
-- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 기존 도구 7개에 `get_school_news`, `search_school_news`를 추가해 총 9개 제공.
+- REST: GET `/api/notices`, `/api/letters`, `/api/education-letters`, `/api/news`, `/api/awards`, `/api/posts`, `/api/feed?category=all|notice|letter|news|awards|office_letter`, `/api/search?q=...&category=all`, `/api/status?category=all`, `/api/meta`.
+- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 5개 게시판용 읽기 전용 도구 **13개** 제공.
 - 상류 URL 고정, 3분 단위 Cloudflare edge 캐시, 700KB 응답 상한, 요청 타임아웃, 실패 시 오류 표시.
 - 공개 쓰기 기능·학생 개인정보 취득·학교 홈페이지 변경 기능 없음.
 
@@ -135,3 +137,13 @@ npm run dev
 - 순백색 바탕·주아체 H1·모노톤 pill 및 호버효과 제거 유지. 현재 인증 없는 공개 서비스 및 복구용 Cloudflare Access 백업 유지.
 - GitHub Actions 없이 `main` → Cloudflare Workers Builds 자동 배포.
 - [학생작품·수상 RSS 개발 기록](docs/STUDENT_WORKS_AWARDS_2026-11-10.md).
+
+## 2026-11-10 · 가정통신문(교육청) 지원
+
+- 추가 RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17254&bbsId=10064&bbsTy=HCNOTIE`.
+- UI pill 여섯 개: `전체 보기`, `공지 사항`, `가정통신문`, `한봄 NEWS`, `학생작품 및 수상내역`, `가정통신문(교육청)`.
+- 새 REST `GET /api/education-letters?limit=20&q=`, 기존 REST 경로 그대로 유지.
+- 카테고리 `office_letter`를 `GET /api/feed`, `/api/search`, `/api/status`에 추가. `/api/posts`는 5개 피드를 날짜순으로 합침.
+- 새 MCP `get_education_office_letters`, `search_education_office_letters`. 기존 11개는 삭제하지 않아 **총 13개**.
+- 180초 개별 RSS 캐시·읽기 전용·전체 공개·기존 Access 앱 백업 유지·GitHub Actions 없이 Cloudflare Workers Builds 배포.
+- [통합 개발기 및 실측 검증 기록](docs/EDUCATION_OFFICE_LETTERS_2026-11-10.md).
