@@ -2,7 +2,19 @@
 
 > **현재 운영 상태 (2026-11-10): 전체 공개 · Cloudflare Access 비적용.** 대시보드, REST, MCP 모두 로그인 없이 접근할 수 있습니다. 예전 소유자 전용 정책과 공개 Bypass 정책은 삭제하지 않고 별도 Access 앱에 연결해 보존했습니다. 재보호 방법: [Access 일시 해제·복구 문서](docs/ACCESS_SUSPENSION_2026-11-10.md).
 
-> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 RSS 게시판 8종을 REST API, 원격 MCP, 공개 대시보드로 연결하는 Cloudflare Workers 서비스.
+> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 RSS 게시판 **31종**을 REST API, 원격 MCP, 공개 대시보드로 연결하는 Cloudflare Workers 서비스.
+
+## 현행 31개 RSS 데이터 허브 — 2026-11-10
+
+**기존 8개 + 신규 23개 = 총 31개 공식 RSS 게시판**을 지원한다. 학과별로 이름이 중복되는 학교특색활동과 교과자료실은 상위 그룹/하위 필터로 구분한다. 초기 UI에는 20개의 최상위 pill이 나타나며 그룹을 선택하면 8개 하위 필터가 열린다. 화면은 기존 순백색·Juache 제목·중앙 정렬 텍스트 목록 그대로다.
+
+- [31개 RSS 원본 주소·입력값·경로·도구 목록](docs/RSS_31_IMPLEMENTATION_2026-11-10.md)
+- [23개 신규 RSS 카탈로그 JSON](config/rss-catalog-31.json)
+- [API 메타데이터](https://data.hanbom.rhee.life/api/catalog) · [모든 게시물](https://data.hanbom.rhee.life/api/posts?limit=all)
+- **REST:** 신규 23개 직접 경로, 기존 8개 API 하위호환, `/api/feed?category=<id>`와 집계 `category=features|curriculum|all`.
+- **MCP:** 기존 19개 + 신규 전용 46개 + 범용 2개 = **67개 도구**. 기존 `/mcp` URL 및 `None` 인증 유지.
+- **무료 플랜 안정화:** 전체 조회는 31개 개별 캐시가 아닌 단일 집계 캐시를 사용해 호출 한도를 피하도록 설계.
+- Cloudflare Access 정책은 보관 상태, 서비스는 여전히 공개 읽기 전용. **GitHub Actions 미사용**, `main` → Cloudflare Workers Builds 자동 배포.
 
 ## 서비스 주소 (Canonical)
 
@@ -40,7 +52,7 @@
 
 - Worker 하나로 RSS·REST·Stateless MCP(Streamable HTTP JSON-RPC)·반응형 개인 대시보드 운영.
 - REST: GET `/api/notices`, `/api/letters`, `/api/education-letters`, `/api/news`, `/api/awards`, `/api/posts`, `/api/feed?category=all|notice|letter|news|awards|office_letter`, `/api/search?q=...&category=all`, `/api/status?category=all`, `/api/meta`.
-- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 8개 게시판용 읽기 전용 도구 **19개** 제공.
+- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). **31개 게시판용 읽기 전용 도구 67개** 제공. [전체 카탈로그](docs/RSS_31_IMPLEMENTATION_2026-11-10.md)
 - 상류 URL 고정, 3분 단위 Cloudflare edge 캐시, 700KB 응답 상한, 요청 타임아웃, 실패 시 오류 표시.
 - 공개 쓰기 기능·학생 개인정보 취득·학교 홈페이지 변경 기능 없음.
 
