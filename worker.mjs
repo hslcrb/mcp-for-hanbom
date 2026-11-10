@@ -346,7 +346,7 @@ const page=String.raw`<!doctype html>
 <html lang="ko">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>한봄고등학교 공지사항</title>
 <style>
-@font-face{font-family:'Juache';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');font-weight:normal;font-display:swap}
+@font-face{font-family: 'Juache';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');font-weight:normal;font-display: swap;}
 :root{color-scheme:light}
 *{box-sizing:border-box}
 html,body{min-height:100%;background:#fff}
