@@ -1,0 +1,14 @@
+{
+  "name": "mcp-for-hanbom",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "check": "node --check worker.mjs && node --test",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "4.158.0"
+  }
+}
