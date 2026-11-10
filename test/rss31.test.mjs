@@ -28,13 +28,13 @@ const rpc=async(method,params)=>{
 
 test("catalog matches exactly 23 new sources and 31 existing+new RSS",()=>{
  assert.equal(EXTRA_BOARD_CATALOG.length,23);
- assert.equal(Object.keys(FEEDS).length,31);
+ assert.equal(Object.keys(FEEDS).length,82);
  assert.equal(Object.keys(API_ROUTES).length,23);
  assert.equal(new Set(EXTRA_BOARD_CATALOG.map(x=>x.id)).size,23);
  assert.equal(new Set(EXTRA_BOARD_CATALOG.map(x=>x.bbs)).size,23);
  assert.equal(GROUPS.features.length,7);
  assert.equal(GROUPS.curriculum.length,7);
- assert.equal(categories.length,34);
+ assert.equal(categories.length,107);
  for(const b of EXTRA_BOARD_CATALOG){
   const actual=FEEDS[b.id];
   assert.equal(actual.url,"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi="+b.mi+"&bbsId="+b.bbs);
@@ -77,13 +77,13 @@ test("all existing per-board endpoints and 23 new direct REST routes are stable"
 
 test("all 31 feeds aggregate without 20-item truncation when limit=all",async()=>{
  await mockRemote(async()=>{
-  const r=await getJson("/api/posts?limit=all");
-  assert.equal(r.status,200);assert.equal(r.data.category,"all");
+  const r=await getJson("/api/feed?category=legacy&limit=all");
+  assert.equal(r.status,200);assert.equal(r.data.category,"legacy");
   assert.equal(r.data.count,31);assert.equal(r.data.items.length,31);
   assert.equal(r.data.sources.length,31);assert.equal(r.data.partial,false);
   assert.deepEqual(r.data.failed_feeds,[]);
   assert.equal(r.data.items[0].category.startsWith("feature_")||r.data.items[0].category.startsWith("curriculum_")||EXTRA_BOARD_CATALOG.some(b=>b.id===r.data.items[0].category),true);
-  const defaultPage=await getJson("/api/posts");
+  const defaultPage=await getJson("/api/feed?category=legacy");
   assert.equal(defaultPage.data.items.length,20);
   assert.equal(defaultPage.data.count,31);
  });
@@ -102,7 +102,7 @@ test("feature and curriculum group API return distinct 7-source aggregations",as
   const search=await getJson("/api/search?category=features&q=feature_bigdata");
   assert.equal(search.data.count,1);
   const info=await getJson("/api/catalog");
-  assert.equal(info.data.source_count,31);
+  assert.equal(info.data.source_count,82);
   assert.equal(info.data.extra_board_catalog.length,23);
  });
 });
@@ -111,7 +111,7 @@ test("all 46 specialized MCP tools plus generic pair work with the original 19",
  await mockRemote(async()=>{
   const listed=await rpc("tools/list",{});
   const names=listed.result.tools.map(x=>x.name);
-  assert.equal(names.length,67);assert.equal(new Set(names).size,67);
+  assert.equal(names.length,68);assert.equal(new Set(names).size,68);
   for(const b of EXTRA_BOARD_CATALOG){
    const getName="get_"+b.id+"_posts",searchName="search_"+b.id+"_posts";
    assert.ok(names.includes(getName));assert.ok(names.includes(searchName));
@@ -143,7 +143,7 @@ test("one upstream RSS error is reported as partial without losing other 30 boar
   return new Response(rssItem("정상 게시물","2026-11-09T09:00:00Z"),{status:200});
  };
  try{
-  const aggregate=await getJson("/api/posts?limit=all");
+  const aggregate=await getJson("/api/feed?category=legacy&limit=all");
   assert.equal(aggregate.status,200);
   assert.equal(aggregate.data.count,30);
   assert.equal(aggregate.data.partial,true);
@@ -168,12 +168,12 @@ test("HTML has grouped department filters, pristine white, and source-safe list 
  assert.match(html,/data-category="livestock"/);
  assert.match(html,/data-category="volunteer"/);
  assert.match(html,/data-category="career_resources"/);
- assert.match(html,/fetch\("\/api\/posts\?limit=all"/);
+ assert.match(html,/fetch\("\/api\/posts\?limit=all&shard="/);
  assert.match(html,/textContent=entry.title/);
  assert.match(html,/candidate.hostname==="hanbom-h.goesw.kr"/);
  assert.match(html,/button:hover\{filter:none/);
- assert.equal((html.match(/data-category="/g)||[]).length,36);
+ assert.equal((html.match(/data-category="/g)||[]).length,129);
  const meta=await getJson("/api/meta");
- assert.equal(meta.data.source_count,31);
+ assert.equal(meta.data.source_count,82);
  assert.equal(meta.data.authentication.dashboard,"public");
 });
