@@ -1,205 +1,21 @@
 
-export const VERSION="1.0.0";
-export const EXTRA_BOARD_CATALOG=Object.freeze([
-  {
-    "id": "volunteer",
-    "label": "봉사활동",
-    "mi": 17276,
-    "bbs": 10075,
-    "route": "/api/volunteer",
-    "group": null
-  },
-  {
-    "id": "after_school",
-    "label": "방과후학교",
-    "mi": 17288,
-    "bbs": 10081,
-    "route": "/api/after-school",
-    "group": null
-  },
-  {
-    "id": "feature_main",
-    "label": "학교특색활동",
-    "mi": 17292,
-    "bbs": 10082,
-    "route": "/api/featured-activities",
-    "group": "features"
-  },
-  {
-    "id": "feature_beauty",
-    "label": "뷰티아트과",
-    "mi": 17298,
-    "bbs": 10085,
-    "route": "/api/featured-activities/beauty",
-    "group": "features"
-  },
-  {
-    "id": "feature_character",
-    "label": "캐릭터창작과",
-    "mi": 17300,
-    "bbs": 10087,
-    "route": "/api/featured-activities/character",
-    "group": "features"
-  },
-  {
-    "id": "feature_visual",
-    "label": "시각디자인과",
-    "mi": 17303,
-    "bbs": 10089,
-    "route": "/api/featured-activities/visual",
-    "group": "features"
-  },
-  {
-    "id": "feature_bigdata",
-    "label": "빅데이터정보과",
-    "mi": 17305,
-    "bbs": 10091,
-    "route": "/api/featured-activities/bigdata",
-    "group": "features"
-  },
-  {
-    "id": "feature_smart",
-    "label": "스마트제어과",
-    "mi": 17307,
-    "bbs": 10092,
-    "route": "/api/featured-activities/smart",
-    "group": "features"
-  },
-  {
-    "id": "feature_sound",
-    "label": "사운드디자인과",
-    "mi": 17310,
-    "bbs": 10094,
-    "route": "/api/featured-activities/sound",
-    "group": "features"
-  },
-  {
-    "id": "meals",
-    "label": "급식게시판",
-    "mi": 17364,
-    "bbs": 10112,
-    "route": "/api/meals",
-    "group": null
-  },
-  {
-    "id": "nutrition",
-    "label": "영양상담",
-    "mi": 17371,
-    "bbs": 10115,
-    "route": "/api/nutrition",
-    "group": null
-  },
-  {
-    "id": "livestock",
-    "label": "축산물이력표시",
-    "mi": 17378,
-    "bbs": 10118,
-    "route": "/api/livestock",
-    "group": null
-  },
-  {
-    "id": "teacher_protection",
-    "label": "교육활동침해 예방교육계획",
-    "mi": 17381,
-    "bbs": 10120,
-    "route": "/api/education-protection",
-    "group": null
-  },
-  {
-    "id": "employment_status",
-    "label": "취업현황",
-    "mi": 17400,
-    "bbs": 10131,
-    "route": "/api/employment-status",
-    "group": null
-  },
-  {
-    "id": "employment_resources",
-    "label": "취업자료",
-    "mi": 17404,
-    "bbs": 10133,
-    "route": "/api/employment-resources",
-    "group": null
-  },
-  {
-    "id": "career_resources",
-    "label": "진로진학자료",
-    "mi": 17413,
-    "bbs": 10136,
-    "route": "/api/career-resources",
-    "group": null
-  },
-  {
-    "id": "curriculum_general",
-    "label": "보통교과",
-    "mi": 17438,
-    "bbs": 10155,
-    "route": "/api/curriculum/general",
-    "group": "curriculum"
-  },
-  {
-    "id": "curriculum_beauty",
-    "label": "뷰티아트과",
-    "mi": 17441,
-    "bbs": 10158,
-    "route": "/api/curriculum/beauty",
-    "group": "curriculum"
-  },
-  {
-    "id": "curriculum_character",
-    "label": "캐릭터창작과",
-    "mi": 17446,
-    "bbs": 10160,
-    "route": "/api/curriculum/character",
-    "group": "curriculum"
-  },
-  {
-    "id": "curriculum_visual",
-    "label": "시각디자인과",
-    "mi": 17450,
-    "bbs": 10163,
-    "route": "/api/curriculum/visual",
-    "group": "curriculum"
-  },
-  {
-    "id": "curriculum_bigdata",
-    "label": "빅데이터정보과",
-    "mi": 17457,
-    "bbs": 10169,
-    "route": "/api/curriculum/bigdata",
-    "group": "curriculum"
-  },
-  {
-    "id": "curriculum_smart",
-    "label": "스마트제어과",
-    "mi": 17465,
-    "bbs": 10176,
-    "route": "/api/curriculum/smart",
-    "group": "curriculum"
-  },
-  {
-    "id": "curriculum_sound",
-    "label": "사운드디자인과",
-    "mi": 17470,
-    "bbs": 10179,
-    "route": "/api/curriculum/sound",
-    "group": "curriculum"
-  }
-]);
-export const GROUPS=Object.freeze({"features":["feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound"],"curriculum":["curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"]});
-
-export const FEEDS=Object.freeze({
-  notice:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062",source:"한봄고등학교 공지사항",label:"공지 사항"},
-  letter:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063",source:"한봄고등학교 가정통신문",label:"가정통신문"},
-  news:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022",source:"한봄고등학교 한봄 NEWS",label:"한봄 NEWS"},
-  awards:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17172&bbsId=10010",source:"한봄고등학교 학생작품 및 수상내역",label:"학생작품 및 수상내역"},
-  office_letter:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17254&bbsId=10064&bbsTy=HCNOTIE",source:"한봄고등학교 가정통신문(교육청)",label:"가정통신문(교육청)"},
-  opportunities:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17255&bbsId=10065",source:"한봄고등학교 공모전 및 모집공고",label:"공모전 및 모집공고"},
-  health:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17256&bbsId=10066",source:"한봄고등학교 보건알림",label:"보건알림"},
-  student_rules:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17273&bbsId=10074",source:"한봄고등학교 학생생활규정게시판",label:"학생생활규정게시판"},
-  ...Object.fromEntries(EXTRA_BOARD_CATALOG.map(b=>[b.id,{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi="+b.mi+"&bbsId="+b.bbs,source:"한봄고등학교 "+(b.group==="features"?"학교특색활동 · ":b.group==="curriculum"?"교과자료실 · ":"")+b.label,label:b.label,group:b.group}]))
-});
+import {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS} from "./catalog.mjs";
+export const VERSION="2.0.0";
+export {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS};
+export const FEEDS=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.id,{
+ url:b.url,source:"한봄고등학교 "+b.parent+" · "+b.label,label:b.label,
+ group:b.parent_id==="features"||b.parent_id==="curriculum"?b.parent_id:null,
+ parent:b.parent,parent_id:b.parent_id,mi:b.mi,bbs:b.bbs,sensitive:b.sensitive
+}])));
+export const EXTRA_BOARD_CATALOG=Object.freeze(BOARD_CATALOG.filter(b=>LEGACY_IDS.includes(b.id)&&!["notice","letter","news","awards","office_letter","opportunities","health","student_rules"].includes(b.id))
+ .map(b=>({id:b.id,label:b.label,mi:b.mi,bbs:b.bbs,route:b.route,group:b.parent_id==="features"||b.parent_id==="curriculum"?b.parent_id:null}))));
+export const NEW_BOARD_CATALOG=Object.freeze(BOARD_CATALOG.filter(b=>!LEGACY_IDS.includes(b.id)));
+export const GROUPS=Object.freeze(Object.fromEntries([...MENU_CATALOG.map(m=>[m.id,m.ids]),["legacy",LEGACY_IDS]]));
+export const GROUP_LABELS=Object.freeze(Object.fromEntries(MENU_CATALOG.map(m=>[m.id,m.label])));
 export const API_ROUTES=Object.freeze(Object.fromEntries(EXTRA_BOARD_CATALOG.map(b=>[b.route,b.id])));
+export const ALL_API_ROUTES=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.route,b.id])));
+export const SHARD_SIZE=28;
+export const SHARD_COUNT=Math.ceil(BOARD_CATALOG.length/SHARD_SIZE);
 const VERSIONS=["2025-03-26","2025-06-18","2025-11-25"];
 const HEADERS={"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","access-control-allow-origin":"*","access-control-allow-methods":"GET,POST,OPTIONS","access-control-allow-headers":"content-type,accept,mcp-protocol-version"};
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:HEADERS});
@@ -211,13 +27,24 @@ export function parseFeed(xml,category="notice"){
  const feed=FEEDS[category];if(!feed)throw Error("INVALID_CATEGORY");
  if(!/<(?:rss|feed|rdf:RDF)\b/i.test(xml))throw Error("INVALID_RSS");
  const matches=[...xml.matchAll(/<(?:item|entry)\b[^>]*>([\s\S]*?)<\/(?:item|entry)>/gi)].slice(0,100);
- const items=matches.map(m=>{const x=m[1],d=tag(x,"pubDate")||tag(x,"published")||tag(x,"updated"),url=safeLink(x);return{id:tag(x,"guid")||tag(x,"id")||url,title:tag(x,"title").slice(0,300),url,published_at:d&&!isNaN(Date.parse(d))?new Date(d).toISOString():null,summary:(tag(x,"description")||tag(x,"summary")||tag(x,"content")).slice(0,500),category,category_label:feed.label};}).filter(x=>x.title);
+ const items=matches.map(m=>{
+  const x=m[1],d=tag(x,"pubDate")||tag(x,"published")||tag(x,"updated"),url=safeLink(x);
+  const originalTitle=tag(x,"title").slice(0,300);
+  if(!originalTitle)return null;
+  // Do not re-publish possible victim or student identifiers from counseling and complaint RSS.
+  const title=feed.sensitive?"상담·민원 게시물 (원문 확인)":originalTitle;
+  return{id:feed.sensitive?(url||tag(x,"guid")||null):(tag(x,"guid")||tag(x,"id")||url),
+    title,url,published_at:d&&!isNaN(Date.parse(d))?new Date(d).toISOString():null,
+    summary:feed.sensitive?"":(tag(x,"description")||tag(x,"summary")||tag(x,"content")).slice(0,500),
+    category,category_label:feed.label,parent:feed.parent,privacy_redacted:!!feed.sensitive};
+ }).filter(Boolean);
  return{category,source:feed.source,source_url:feed.url,feed_title:tag(xml,"title"),fetched_at:new Date().toISOString(),count:items.length,items};
 }
+
 async function readFeed(ctx,category="notice",useCache=true){
  const feed=FEEDS[category];if(!feed)throw Error("INVALID_CATEGORY");
  // Separate edge-cache keys prevent different categories from being confused.
- const cache=useCache?globalThis.caches?.default:null,key=new Request("https://hanbom-cache.invalid/feed-v3/"+category);
+ const cache=useCache?globalThis.caches?.default:null,key=new Request("https://hanbom-cache.invalid/feed-v5/"+category);
  if(cache)try{const hit=await cache.match(key);if(hit)return{...await hit.json(),cached:true};}catch{}
  let r;try{r=await fetch(feed.url,{redirect:"manual",headers:{accept:"application/rss+xml,application/atom+xml,application/xml,text/xml"},signal:AbortSignal.timeout(12000)});}catch{throw Error("UPSTREAM_NETWORK_ERROR");}
  if(!r.ok)throw Error(r.status>=300&&r.status<400?"UPSTREAM_REDIRECT":"UPSTREAM_HTTP_"+r.status);
@@ -233,26 +60,41 @@ export function mergeFeeds(results,category="all"){
   const at=Date.parse(a.published_at||"")||0,bt=Date.parse(b.published_at||"")||0;
   return bt-at||a.title.localeCompare(b.title,"ko");
  });
- return {category,source:"한봄고등학교 공개 RSS "+successful.length+"개 게시판",
+ return{category,source:"한봄고등학교 공개 RSS "+successful.length+"개 게시판",
   sources:successful.map(f=>({category:f.category,source:f.source,source_url:f.source_url,count:f.count,fetched_at:f.fetched_at,cached:f.cached})),
   fetched_at:new Date().toISOString(),count:items.length,items};
 }
 export const categories=Object.freeze(["all",...Object.keys(GROUPS),...Object.keys(FEEDS)]);
 const knownCategory=c=>categories.includes(c);
-async function getData(ctx,category="notice"){
- if(FEEDS[category])return readFeed(ctx,category);
- if(category!=="all"&&!GROUPS[category])throw Error("INVALID_CATEGORY");
- const names=category==="all"?Object.keys(FEEDS):GROUPS[category];
- // The aggregate cache prevents 31 feed lookups + 31 remote fetches from exceeding Workers Free 50 subrequests.
- const cache=globalThis.caches?.default,key=new Request("https://hanbom-cache.invalid/aggregate-v3/"+category);
+async function getData(ctx,category="notice",shard=0){
+ if(!knownCategory(category))throw Error("INVALID_CATEGORY");
+ const sourceIds=FEEDS[category]?[category]:(category==="all"?BOARD_CATALOG.map(b=>b.id):GROUPS[category]);
+ const totalSourceCount=sourceIds.length;
+ const shardCount=Math.ceil(totalSourceCount/SHARD_SIZE);
+ if(!Number.isInteger(shard)||shard<0||shard>=shardCount)throw Error("INVALID_SHARD");
+ if(FEEDS[category]){
+  const data=await readFeed(ctx,category);
+  return{...data,shard:0,shard_count:1,total_source_count:1,has_more:false,next_shard:null,complete:true};
+ }
+ // Workers Free: 50 external subrequests per invocation; each aggregated page has up to 28
+ // source fetches + a cache match + cache put = max 30 calls, safely below the quota.
+ const ids=sourceIds.slice(shard*SHARD_SIZE,(shard+1)*SHARD_SIZE);
+ const cache=globalThis.caches?.default,key=new Request("https://hanbom-cache.invalid/aggregate-v5/"+category+"/"+shard);
  if(cache)try{const hit=await cache.match(key);if(hit)return{...await hit.json(),cached:true};}catch{}
- const resolved=await Promise.allSettled(names.map(id=>readFeed(ctx,id,false)));
- const good=resolved.flatMap(x=>x.status==="fulfilled"?[x.value]:[]);
+ const resolved=[];
+ // Limit simultaneous requests to the school origin; still resolve every source independently.
+ for(let offset=0;offset<ids.length;offset+=7){
+  const part=await Promise.allSettled(ids.slice(offset,offset+7).map(id=>readFeed(ctx,id,false)));
+  resolved.push(...part);
+ }
+ const good=resolved.flatMap(v=>v.status==="fulfilled"?[v.value]:[]);
  if(!good.length)throw Error("ALL_FEEDS_UNAVAILABLE");
- const failed_feeds=resolved.flatMap((x,i)=>x.status==="rejected"?[{category:names[i],code:String(x.reason?.message||"UPSTREAM_ERROR")}]:[]);
- const result={...mergeFeeds(good,category),partial:failed_feeds.length>0,failed_feeds,cached:false};
- if(cache){const save=cache.put(key,new Response(JSON.stringify(result),{headers:{"cache-control":"public,max-age=180","content-type":"application/json"}})).catch(()=>{});if(ctx?.waitUntil)ctx.waitUntil(save);else await save;}
- return result;
+ const failed_feeds=resolved.flatMap((v,i)=>v.status==="rejected"?[{category:ids[i],code:String(v.reason?.message||"UPSTREAM_ERROR")}]:[]);
+ const data={...mergeFeeds(good,category),partial:failed_feeds.length>0,failed_feeds,
+  shard,shard_count:shardCount,total_source_count:totalSourceCount,has_more:shard+1<shardCount,
+  next_shard:shard+1<shardCount?shard+1:null,complete:shardCount===1&&failed_feeds.length===0,cached:false};
+ if(cache){const task=cache.put(key,new Response(JSON.stringify(data),{headers:{"cache-control":"public,max-age=180","content-type":"application/json"}})).catch(()=>{});if(ctx?.waitUntil)ctx.waitUntil(task);else await task;}
+ return data;
 }
 
 function filtered(data,q,limit){
@@ -294,7 +136,13 @@ const GENERIC_TOOLS=[
  {name:"get_board_posts",description:"31개 학교 RSS에서 카테고리 하나 또는 all/features/curriculum 집계를 조회합니다.",inputSchema:{type:"object",properties:{category:categorySchema,limit:limitSchema},required:["category"],additionalProperties:false}},
  {name:"search_board_posts",description:"카테고리 하나 또는 all/features/curriculum 집계를 지정해 학교 RSS를 검색합니다.",inputSchema:{type:"object",properties:{category:categorySchema,query:querySchema,limit:limitSchema},required:["category","query"],additionalProperties:false}}
 ];
-const TOOL=[...BASE_TOOLS,...EXTRA_TOOLS,...GENERIC_TOOLS].map(t=>({...t,annotations:{readOnlyHint:true,destructiveHint:false}}));
+const SHARD_ARG={type:"integer",minimum:0,maximum:SHARD_COUNT-1,description:"all 집계에서는 0~2페이지를 순서대로 조회. 메뉴/개별 게시판은 0만 유효."};
+const SHARDED_TOOLS=new Set(["get_school_feed_status","get_all_school_posts","search_all_school_posts","get_board_posts","search_board_posts"]);
+const CATALOG_TOOL={name:"list_school_boards",description:"학교 공식 공개 RSS 82개에 대한 게시판 ID·상위 메뉴·원본 주소·REST 경로 목록을 제공합니다.",inputSchema:{type:"object",properties:{},additionalProperties:false}};
+const TOOL=[...BASE_TOOLS,...EXTRA_TOOLS,...GENERIC_TOOLS,CATALOG_TOOL].map(t=>({
+ ...t,inputSchema:SHARDED_TOOLS.has(t.name)?{...t.inputSchema,properties:{...t.inputSchema.properties,shard:SHARD_ARG}}:t.inputSchema,
+ annotations:{readOnlyHint:true,destructiveHint:false}
+}));
 
 async function mcp(request,ctx){
  if(request.method!=="POST")return json({error:"Use stateless MCP POST JSON-RPC"},405);
@@ -306,7 +154,7 @@ async function mcp(request,ctx){
  if(!Object.hasOwn(p,"id"))return new Response(null,{status:202});
  const ok=result=>json({jsonrpc:"2.0",id:p.id,result});
  const err=(code,message)=>json({jsonrpc:"2.0",id:p.id,error:{code,message}});
- if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"비공식 한봄고등학교 공개 RSS 31종을 조회·검색하는 읽기 전용 MCP. 공식 학교 원문 출처를 밝혀주세요."});
+ if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"학교 RSS 82개를 읽기 전용으로 조회·검색합니다. all 카테고리는 3개 shard(0,1,2)를 순서대로 호출해야 전체를 확인할 수 있습니다. 상담·민원은 개인정보 보호를 위해 제목·요약을 축약합니다."});
  if(request.headers.get("mcp-protocol-version")&&!VERSIONS.includes(request.headers.get("mcp-protocol-version")))return err(-32600,"Unsupported protocol version");
  if(p.method==="ping")return ok({});
  if(p.method==="tools/list")return ok({tools:TOOL});
