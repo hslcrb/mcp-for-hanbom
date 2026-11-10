@@ -94,3 +94,17 @@ npm run dev
 - 복구 방법 및 정책 ID: [docs/ACCESS_SUSPENSION_2026-11-10.md](docs/ACCESS_SUSPENSION_2026-11-10.md).
 
 **실행 결과 검증 (2026-11-10):** Cloudflare Workers Builds 성공(9/9 테스트), 현재 도메인 Access 앱 0개, 보관 앱 3개·재사용 정책 2개 유지. ChatGPT MCP 호출 및 RSS 53건 확인. [복구용 머신리더블 정책 파일](config/cloudflare-access-standby.json).
+
+## 2026-11-10 · 가정통신문 지원 및 카테고리 필터
+
+기존 순백색·Juache H1·중앙 정렬 제목 목록을 유지하고 H1 아래에 **전체 보기 / 공지 사항 / 가정통신문** pill 버튼 3개를 추가했습니다. 기본값은 전체 보기, 클릭 즉시 목록 필터 전환. Hover 색상 변화 없음.
+
+- 공지 RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062`
+- 가정통신문 RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063`
+- 새 REST API: `GET /api/letters`, `GET /api/posts?limit=100`, `GET /api/feed?category=all|notice|letter`.
+- `GET /api/search?q=...&category=all`, `GET /api/status?category=all` 지원. 기존 `/api/notices`는 공지 전용으로 유지.
+- 새 MCP: `get_family_letters`, `search_family_letters`, `get_all_school_posts`, `search_all_school_posts`. 기존 3개 도구 유지.
+- 캐시 3분, 두 RSS 개별 캐시. 전체 보기에서 날짜 기준으로 병합. 두 피드 중 하나가 장애면 정상 피드만 반환하되 `partial` 및 `failed_feeds`로 실패 사실 표기.
+- 보안: 공개 읽기 전용, 기존 Cloudflare Access 보존·비활성 상태 유지. GitHub `main` → Workers Builds 자동 배포, GitHub Actions 없음.
+
+개발기: [docs/FAMILY_LETTERS_2026-11-10.md](docs/FAMILY_LETTERS_2026-11-10.md).
