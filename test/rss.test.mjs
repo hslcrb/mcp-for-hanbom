@@ -37,8 +37,8 @@ test("public REST and MCP tool registry remain intact",async()=>{
   assert.equal(rpc.status,200);
   const names=(await rpc.json()).result.tools.map(x=>x.name);
   assert.deepEqual(names.slice(0,19),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_education_office_letters","search_education_office_letters","get_school_opportunities","search_school_opportunities","get_health_notices","search_health_notices","get_student_rules","search_student_rules","get_all_school_posts","search_all_school_posts"]);
-  assert.equal(names.length,67);
-  assert.equal(new Set(names).size,67);
+  assert.equal(names.length,68);
+  assert.equal(new Set(names).size,68);
 });
 
 test("Juache heading loads CDN font while preserving the white list and CSP", async()=>{
@@ -108,7 +108,7 @@ test("legacy office-letter routes still work with empty health and opportunities
  };
  try{
   const api=async path=>(await worker.fetch(new Request("https://data.hanbom.rhee.life"+path),{},{})).json();
-  const all=await api("/api/posts?limit=100");
+  const all=await api("/api/feed?category=legacy&limit=100");
   assert.equal(all.count,5);
   assert.equal(all.sources.length,31);
   assert.deepEqual(all.items.map(x=>x.category),["office_letter","awards","news","letter","notice"]);
@@ -218,7 +218,7 @@ test("empty competitions stay healthy in REST, MCP and seven-feed combined resul
   const single=await api("/api/opportunities");assert.equal(single.count,0);assert.deepEqual(single.items,[]);
   assert.equal((await api("/api/status?category=opportunities")).count,0);
   assert.equal((await api("/api/search?category=opportunities&q=%EA%B3%B5%EB%AA%A8")).count,0);
-  const all=await api("/api/posts?limit=100");
+  const all=await api("/api/feed?category=legacy&limit=100");
   assert.equal(all.count,6);assert.equal(all.partial,false);assert.equal(all.sources.length,31);
   assert.equal(all.sources.find(x=>x.category==="opportunities").count,0);
   assert.equal((await api("/api/meta")).sources.opportunities.url,FEEDS.opportunities.url);
@@ -261,7 +261,7 @@ test("health REST and new MCP tools return health entries, old endpoints remain"
   const searched=await get("/api/search?category=health&q=%EA%B0%90%EC%97%BC%EB%B3%91");
   assert.equal(searched.count,1);
   assert.equal((await get("/api/status?category=health")).count,1);
-  const all=await get("/api/posts?limit=100");
+  const all=await get("/api/feed?category=legacy&limit=100");
   assert.equal(all.count,6);assert.equal(all.sources.length,31);assert.equal(all.partial,false);
   assert.equal(all.items[0].category,"health");
   assert.equal((await get("/api/notices")).category,"notice");
@@ -309,7 +309,7 @@ test("student rules REST, searching, MCP and all-feeds remain backwards compatib
   assert.equal((await get("/api/feed?category=student_rules")).count,1);
   assert.equal((await get("/api/search?category=student_rules&q=%EA%B0%9C%EC%A0%95")).count,1);
   assert.equal((await get("/api/status?category=student_rules")).count,1);
-  const all=await get("/api/posts?limit=100");
+  const all=await get("/api/feed?category=legacy&limit=100");
   assert.equal(all.count,7);assert.equal(all.sources.length,31);assert.equal(all.partial,false);
   assert.equal(all.items[0].category,"student_rules");
   for(const [path,expected] of [["/api/notices","notice"],["/api/letters","letter"],["/api/news","news"],["/api/awards","awards"],["/api/education-letters","office_letter"],["/api/opportunities","opportunities"],["/api/health-notices","health"]])assert.equal((await get(path)).category,expected);
