@@ -35,7 +35,10 @@ test("public REST and MCP tool registry remain intact",async()=>{
   assert.equal((await rest.json()).name,"HANBOM DATA");
   const rpc=await worker.fetch(new Request("https://data.hanbom.rhee.life/mcp",{method:"POST",headers:{"content-type":"application/json","accept":"application/json, text/event-stream"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:"tools/list",params:{}})}),{},{});
   assert.equal(rpc.status,200);
-  assert.deepEqual((await rpc.json()).result.tools.map(x=>x.name),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_education_office_letters","search_education_office_letters","get_school_opportunities","search_school_opportunities","get_health_notices","search_health_notices","get_student_rules","search_student_rules","get_all_school_posts","search_all_school_posts"]);
+  const names=(await rpc.json()).result.tools.map(x=>x.name);
+  assert.deepEqual(names.slice(0,19),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_education_office_letters","search_education_office_letters","get_school_opportunities","search_school_opportunities","get_health_notices","search_health_notices","get_student_rules","search_student_rules","get_all_school_posts","search_all_school_posts"]);
+  assert.equal(names.length,67);
+  assert.equal(new Set(names).size,67);
 });
 
 test("Juache heading loads CDN font while preserving the white list and CSP", async()=>{
@@ -62,7 +65,8 @@ test("public API metadata reflects disabled Access enforcement", async()=>{
   assert.match(payload.auth.dashboard,/^public/);
 });
 
-import {FEEDS,mergeFeeds} from "../worker.mjs";
+import {FEEDS,mergeFeeds,EXTRA_BOARD_CATALOG} from "../worker.mjs";
+const isExtraRSS=url=>EXTRA_BOARD_CATALOG.some(b=>String(url).includes("bbsId="+b.bbs));
 test("family-letter feed parser retains category and official URL",()=>{
  const xml='<rss><channel><title>가정통신문</title><item><title>건강 소식</title><link>https://hanbom-h.goesw.kr/letter</link><pubDate>Tue, 10 Nov 2026 11:00:00 GMT</pubDate></item></channel></rss>';
  const result=parseFeed(xml,"letter");
@@ -79,11 +83,11 @@ test("combined feed merges newest first",()=>{
  assert.equal(merged.items[0].category,"letter");
  assert.equal(merged.items[1].category,"notice");
 });
-test("pill navigation shows all nine filters and keeps white aesthetic",async()=>{
+test("pill navigation keeps 9 legacy filters with grouped additions",async()=>{
  const res=await worker.fetch(new Request("https://data.hanbom.rhee.life/"),{},{});
  const html=await res.text();
  for(const s of ["전체 보기","공지 사항","가정통신문","한봄 NEWS","학생작품 및 수상내역","가정통신문(교육청)","공모전 및 모집공고","보건알림","학생생활규정게시판"])assert.ok(html.includes(">"+s+"</button>"));
- assert.equal((html.match(/class="filters"/g)||[]).length,1);
+ assert.equal((html.match(/class="filters primary"/g)||[]).length,1);
  assert.match(html,/border-radius:999px/);
  assert.match(html,/button\[aria-pressed="true"\]/);
  assert.match(html,/background:#fff/);
@@ -92,6 +96,7 @@ test("pill navigation shows all nine filters and keeps white aesthetic",async()=
 test("legacy office-letter routes still work with empty health and opportunities fixtures",async()=>{
  const original=globalThis.fetch;
  globalThis.fetch=async url=>{
+  if(isExtraRSS(url))return new Response('<rss><channel><title>게시판 RSS</title></channel></rss>',{status:200});
   const target=String(url);
   const office=target.includes("bbsId=10064"),awards=target.includes("bbsId=10010"),news=target.includes("bbsId=10022"),letter=target.includes("bbsId=10063"),opportunities=target.includes("bbsId=10065"),health=target.includes("bbsId=10066"),rules=target.includes("bbsId=10074");
   const xml=(opportunities||health||rules)?'<rss version="2.0"><channel><title>게시판 RSS</title></channel></rss>':office?'<rss><item><title>교육청의 새 통신문</title><pubDate>Fri, 13 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
@@ -105,7 +110,7 @@ test("legacy office-letter routes still work with empty health and opportunities
   const api=async path=>(await worker.fetch(new Request("https://data.hanbom.rhee.life"+path),{},{})).json();
   const all=await api("/api/posts?limit=100");
   assert.equal(all.count,5);
-  assert.equal(all.sources.length,8);
+  assert.equal(all.sources.length,31);
   assert.deepEqual(all.items.map(x=>x.category),["office_letter","awards","news","letter","notice"]);
   for(const [path,expected] of [["/api/notices","notice"],["/api/letters","letter"],["/api/news","news"],["/api/awards","awards"],["/api/education-letters","office_letter"]]){
     const value=await api(path);
@@ -205,7 +210,7 @@ test("valid RSS without items returns zero not an error",()=>{
 });
 test("empty competitions stay healthy in REST, MCP and seven-feed combined results",async()=>{
  const original=globalThis.fetch;
- globalThis.fetch=async url=>new Response(String(url).includes("bbsId=10065")||String(url).includes("bbsId=10074")
+ globalThis.fetch=async url=>new Response(isExtraRSS(url)||String(url).includes("bbsId=10065")||String(url).includes("bbsId=10074")
  ?'<rss version="2.0"><channel><title>게시판 RSS</title></channel></rss>'
  :'<rss><item><title>기존 소식</title></item></rss>',{status:200});
  try{
@@ -214,7 +219,7 @@ test("empty competitions stay healthy in REST, MCP and seven-feed combined resul
   assert.equal((await api("/api/status?category=opportunities")).count,0);
   assert.equal((await api("/api/search?category=opportunities&q=%EA%B3%B5%EB%AA%A8")).count,0);
   const all=await api("/api/posts?limit=100");
-  assert.equal(all.count,6);assert.equal(all.partial,false);assert.equal(all.sources.length,8);
+  assert.equal(all.count,6);assert.equal(all.partial,false);assert.equal(all.sources.length,31);
   assert.equal(all.sources.find(x=>x.category==="opportunities").count,0);
   assert.equal((await api("/api/meta")).sources.opportunities.url,FEEDS.opportunities.url);
   for(const [name,args] of [["get_school_opportunities",{}],["search_school_opportunities",{query:"공모전"}]]){
@@ -243,6 +248,7 @@ test("health RSS parser labels and validates only school links",()=>{
 test("health REST and new MCP tools return health entries, old endpoints remain",async()=>{
  const original=globalThis.fetch;
  globalThis.fetch=async url=>{
+  if(isExtraRSS(url))return new Response('<rss><channel><title>게시판 RSS</title></channel></rss>',{status:200});
   const health=String(url).includes("bbsId=10066"),opp=String(url).includes("bbsId=10065"),rules=String(url).includes("bbsId=10074");
   return new Response((opp||rules)?'<rss><channel><title>게시판 RSS</title></channel></rss>':
    health?'<rss><item><title>보건알림 감염병 예방</title><pubDate>Wed, 11 Nov 2026 01:00:00 GMT</pubDate></item></rss>':
@@ -256,7 +262,7 @@ test("health REST and new MCP tools return health entries, old endpoints remain"
   assert.equal(searched.count,1);
   assert.equal((await get("/api/status?category=health")).count,1);
   const all=await get("/api/posts?limit=100");
-  assert.equal(all.count,6);assert.equal(all.sources.length,8);assert.equal(all.partial,false);
+  assert.equal(all.count,6);assert.equal(all.sources.length,31);assert.equal(all.partial,false);
   assert.equal(all.items[0].category,"health");
   assert.equal((await get("/api/notices")).category,"notice");
   assert.equal((await get("/api/meta")).sources.health.url,FEEDS.health.url);
@@ -290,6 +296,7 @@ test("student rules RSS accepts exact school source and two published regulation
 test("student rules REST, searching, MCP and all-feeds remain backwards compatible",async()=>{
  const previous=globalThis.fetch;
  globalThis.fetch=async url=>{
+  if(isExtraRSS(url))return new Response('<rss><channel><title>게시판 RSS</title></channel></rss>',{status:200});
   const str=String(url);
   if(str.includes("bbsId=10065"))return new Response('<rss><channel><title>게시판 RSS</title></channel></rss>',{status:200});
   if(str.includes("bbsId=10074"))return new Response('<rss><item><title>학생생활규정 개정 안내</title><pubDate>Fri, 13 Nov 2026 13:00:00 GMT</pubDate></item></rss>',{status:200});
@@ -303,7 +310,7 @@ test("student rules REST, searching, MCP and all-feeds remain backwards compatib
   assert.equal((await get("/api/search?category=student_rules&q=%EA%B0%9C%EC%A0%95")).count,1);
   assert.equal((await get("/api/status?category=student_rules")).count,1);
   const all=await get("/api/posts?limit=100");
-  assert.equal(all.count,7);assert.equal(all.sources.length,8);assert.equal(all.partial,false);
+  assert.equal(all.count,7);assert.equal(all.sources.length,31);assert.equal(all.partial,false);
   assert.equal(all.items[0].category,"student_rules");
   for(const [path,expected] of [["/api/notices","notice"],["/api/letters","letter"],["/api/news","news"],["/api/awards","awards"],["/api/education-letters","office_letter"],["/api/opportunities","opportunities"],["/api/health-notices","health"]])assert.equal((await get(path)).category,expected);
   const meta=await get("/api/meta");assert.equal(meta.sources.student_rules.url,FEEDS.student_rules.url);
