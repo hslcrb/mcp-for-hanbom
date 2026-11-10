@@ -35,7 +35,7 @@ test("public REST and MCP tool registry remain intact",async()=>{
   assert.equal((await rest.json()).name,"HANBOM DATA");
   const rpc=await worker.fetch(new Request("https://data.hanbom.rhee.life/mcp",{method:"POST",headers:{"content-type":"application/json","accept":"application/json, text/event-stream"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:"tools/list",params:{}})}),{},{});
   assert.equal(rpc.status,200);
-  assert.deepEqual((await rpc.json()).result.tools.map(x=>x.name),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_all_school_posts","search_all_school_posts"]);
+  assert.deepEqual((await rpc.json()).result.tools.map(x=>x.name),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_all_school_posts","search_all_school_posts"]);
 });
 
 test("Juache heading loads CDN font while preserving the white list and CSP", async()=>{
@@ -79,22 +79,24 @@ test("combined feed merges newest first",()=>{
  assert.equal(merged.items[0].category,"letter");
  assert.equal(merged.items[1].category,"notice");
 });
-test("pill navigation shows all four categories and keeps white aesthetic",async()=>{
+test("pill navigation shows all five categories and keeps white aesthetic",async()=>{
  const res=await worker.fetch(new Request("https://data.hanbom.rhee.life/"),{},{});
  const html=await res.text();
- for(const s of ["전체 보기","공지 사항","가정통신문","한봄 NEWS"])assert.ok(html.includes(">"+s+"</button>"));
+ for(const s of ["전체 보기","공지 사항","가정통신문","한봄 NEWS","학생작품 및 수상내역"])assert.ok(html.includes(">"+s+"</button>"));
  assert.equal((html.match(/class="filters"/g)||[]).length,1);
  assert.match(html,/border-radius:999px/);
  assert.match(html,/button\[aria-pressed="true"\]/);
  assert.match(html,/background:#fff/);
  assert.match(html,/nav\.filters button:hover\{filter:none/);
 });
-test("API supports all three feeds, each filter, search and old notices route",async()=>{
+test("API supports all four feeds, selection, combined search and existing routes",async()=>{
  const original=globalThis.fetch;
  globalThis.fetch=async url=>{
-  const target=String(url),isLetter=target.includes("bbsId=10063"),isNews=target.includes("bbsId=10022");
-  const xml=isNews
-   ?'<rss><item><title>한봄 NEWS 특별 소식</title><pubDate>Wed, 11 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
+  const target=String(url);
+  const isLetter=target.includes("bbsId=10063"),isNews=target.includes("bbsId=10022"),isAwards=target.includes("bbsId=10010");
+  const xml=isAwards
+   ?'<rss><item><title>학생작품 및 수상내역 프로젝트 대상</title><pubDate>Thu, 12 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
+   :isNews?'<rss><item><title>한봄 NEWS 특별 소식</title><pubDate>Wed, 11 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
    :isLetter?'<rss><item><title>가정통신문 A</title><pubDate>Tue, 10 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
    :'<rss><item><title>공지 B</title><pubDate>Mon, 09 Nov 2026 12:00:00 GMT</pubDate></item></rss>';
   return new Response(xml,{status:200});
@@ -102,21 +104,52 @@ test("API supports all three feeds, each filter, search and old notices route",a
  try{
   const api=async path=>(await worker.fetch(new Request("https://data.hanbom.rhee.life"+path),{},{})).json();
   const all=await api("/api/posts?limit=100");
-  assert.equal(all.count,3);assert.equal(all.items[0].category,"news");
-  assert.equal(all.items[1].category,"letter");assert.equal(all.items[2].category,"notice");
+  assert.equal(all.count,4);
+  assert.deepEqual(all.items.map(x=>x.category),["awards","news","letter","notice"]);
   const notices=await api("/api/notices");assert.equal(notices.category,"notice");assert.equal(notices.count,1);
   const letters=await api("/api/letters");assert.equal(letters.category,"letter");assert.equal(letters.count,1);
   const news=await api("/api/news");assert.equal(news.category,"news");assert.equal(news.count,1);
-  const feed=await api("/api/feed?category=news");assert.equal(feed.count,1);
-  const status=await api("/api/status?category=all");assert.equal(status.count,3);
-  const search=await api("/api/search?q=NEWS&category=all");assert.equal(search.count,1);
-  const meta=await api("/api/meta");assert.ok(meta.categories.includes("news"));assert.equal(meta.sources.news.url,FEEDS.news.url);
-  const rpc=await worker.fetch(new Request("https://data.hanbom.rhee.life/mcp",{
-    method:"POST",headers:{"content-type":"application/json","accept":"application/json, text/event-stream"},
-    body:JSON.stringify({jsonrpc:"2.0",id:77,method:"tools/call",params:{name:"get_school_news",arguments:{limit:5}}})
-  }),{},{});
-  const result=await rpc.json();assert.equal(result.result.structuredContent.items[0].category,"news");
+  const awards=await api("/api/awards");assert.equal(awards.category,"awards");assert.equal(awards.count,1);
+  const feed=await api("/api/feed?category=awards");assert.equal(feed.count,1);
+  const status=await api("/api/status?category=all");assert.equal(status.count,4);
+  const search=await api("/api/search?q=%EC%88%98%EC%83%81&category=all");assert.equal(search.count,1);
+  const meta=await api("/api/meta");assert.ok(meta.categories.includes("awards"));assert.equal(meta.sources.awards.url,FEEDS.awards.url);
+  for(const name of ["get_student_works_awards","search_student_works_awards"]){
+   const rpc=await worker.fetch(new Request("https://data.hanbom.rhee.life/mcp",{
+     method:"POST",headers:{"content-type":"application/json","accept":"application/json, text/event-stream"},
+     body:JSON.stringify({jsonrpc:"2.0",id:77,method:"tools/call",params:{name,arguments:name.startsWith("search")?{query:"대상"}:{limit:5}}})
+   }),{},{});
+   const result=await rpc.json();
+   assert.equal(result.result.structuredContent.items[0].category,"awards");
+  }
  }finally{globalThis.fetch=original;}
+});
+test("student works and awards RSS has correct category label, source and safe URL",()=>{
+ const xml='<rss><item><title>전공대회 수상</title><link>https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectNttInfo.do?nttSn=99&amp;mi=17172</link></item></rss>';
+ const parsed=parseFeed(xml,"awards");
+ assert.equal(parsed.count,1);
+ assert.equal(parsed.items[0].category,"awards");
+ assert.equal(parsed.items[0].category_label,"학생작품 및 수상내역");
+ assert.equal(parsed.source_url,FEEDS.awards.url);
+ assert.match(parsed.items[0].url,/nttSn=99/);
+});
+test("four RSS categories combine chronologically and preserve metadata",()=>{
+ const samples=["notice","letter","news","awards"].map((category,i)=>{
+   const date=new Date(Date.UTC(2026,10,9+i)).toUTCString();
+   return parseFeed('<rss><item><title>'+category+'</title><pubDate>'+date+'</pubDate></item></rss>',category);
+ });
+ const merged=mergeFeeds(samples);
+ assert.equal(merged.count,4);
+ assert.deepEqual(merged.items.map(x=>x.category),["awards","news","letter","notice"]);
+ assert.equal(merged.sources.length,4);
+});
+test("MCP validates unsupported awards arguments without invoking RSS",async()=>{
+ const rpc=await worker.fetch(new Request("https://data.hanbom.rhee.life/mcp",{
+  method:"POST",headers:{"content-type":"application/json","accept":"application/json"},
+  body:JSON.stringify({jsonrpc:"2.0",id:21,method:"tools/call",params:{name:"search_student_works_awards",arguments:{wrong:"key"}}})
+ }),{},{});
+ const payload=await rpc.json();
+ assert.equal(payload.error.code,-32602);
 });
 test("news RSS source has stable category labeling",()=>{
  const sample='<rss><channel><title>한봄 NEWS</title><item><title>학교 축제</title><link>https://hanbom-h.goesw.kr/hanbom-h/example</link></item></channel></rss>';
