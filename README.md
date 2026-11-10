@@ -108,3 +108,14 @@ npm run dev
 - 보안: 공개 읽기 전용, 기존 Cloudflare Access 보존·비활성 상태 유지. GitHub `main` → Workers Builds 자동 배포, GitHub Actions 없음.
 
 개발기: [docs/FAMILY_LETTERS_2026-11-10.md](docs/FAMILY_LETTERS_2026-11-10.md).
+
+## 2026-11-10 · 한봄 NEWS RSS 통합
+
+- 공식 한봄 NEWS RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022`.
+- 필터 4개: **전체 보기 / 공지 사항 / 가정통신문 / 한봄 NEWS**. 기존 하얀 배경·주아체 제목·중앙 정렬 목록 및 호버 무효 유지.
+- `전체 보기`는 공지·가정통신문·NEWS 최신 게시물을 게시일 기준 내림차순 합산.
+- REST 신규: `GET /api/news?limit=20&q=`. 기존 `/api/notices`, `/api/letters`, `/api/posts` 유지.
+- `/api/feed`, `/api/search`, `/api/status`에서 `category=news` 지원.
+- MCP 신규 도구: `get_school_news`, `search_school_news` (기존 7개 유지, 총 9개). `get_school_feed_status`의 `category=news`도 지원.
+- 원본 RSS는 학교 홈페이지에 귀속. 전체 공개 읽기 전용·Access 보관·GitHub `main` 자동배포 유지, GitHub Actions 없음.
+- [통합 개발 및 검증 기록](docs/HANBOM_NEWS_2026-11-10.md).
