@@ -8,6 +8,9 @@ export const THEME_BOOT=String.raw`(function(){
  try{
   const value=localStorage.getItem("hanbom-color-theme-v1");
   if(value==="light"||value==="dark")document.documentElement.setAttribute("data-theme",value);
+  const dark=value==="dark"||(value!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.setAttribute("content",dark?"#13161b":"#ffffff");
  }catch{}
 })();`;
 
