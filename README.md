@@ -2,7 +2,7 @@
 
 > **현재 운영 상태 (2026-11-10): 전체 공개 · Cloudflare Access 비적용.** 대시보드, REST, MCP 모두 로그인 없이 접근할 수 있습니다. 예전 소유자 전용 정책과 공개 Bypass 정책은 삭제하지 않고 별도 Access 앱에 연결해 보존했습니다. 재보호 방법: [Access 일시 해제·복구 문서](docs/ACCESS_SUSPENSION_2026-11-10.md).
 
-> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 공지사항·가정통신문·한봄 NEWS·학생작품 및 수상내역·가정통신문(교육청) RSS를 REST API, 원격 MCP, 공개 대시보드로 제공하는 Cloudflare Workers 서비스.
+> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 RSS 게시판 8종을 REST API, 원격 MCP, 공개 대시보드로 연결하는 Cloudflare Workers 서비스.
 
 ## 서비스 주소 (Canonical)
 
@@ -14,6 +14,7 @@
 | 가정통신문(교육청) | https://data.hanbom.rhee.life/api/education-letters | 모두 공개, 읽기 전용 |
 | 공모전 및 모집공고 | https://data.hanbom.rhee.life/api/opportunities | 모두 공개, 읽기 전용 |
 | 보건알림 | https://data.hanbom.rhee.life/api/health-notices | 모두 공개, 읽기 전용 |
+| 학생생활규정게시판 | https://data.hanbom.rhee.life/api/student-rules | 모두 공개, 읽기 전용 |
 | 한봄 NEWS | https://data.hanbom.rhee.life/api/news | 모두 공개, 읽기 전용 |
 | 통합 보기 | https://data.hanbom.rhee.life/api/posts | 모두 공개, 읽기 전용 |
 | REST 검색 | https://data.hanbom.rhee.life/api/search?q=입학 | 모두 공개, 읽기 전용 |
@@ -30,6 +31,7 @@
 - 가정통신문(교육청) RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17254&bbsId=10064&bbsTy=HCNOTIE
 - 공모전 및 모집공고 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17255&bbsId=10065
 - 보건알림 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17256&bbsId=10066
+- 학생생활규정게시판 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17273&bbsId=10074
 - 한봄 NEWS RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022
 - 학교 홈페이지: https://hanbom-h.goesw.kr/
 - RSS에 노출된 공지 일부만 조회할 수 있습니다. 전체 공지 및 첨부파일은 반드시 공식 원문에서 확인해야 합니다.
@@ -38,7 +40,7 @@
 
 - Worker 하나로 RSS·REST·Stateless MCP(Streamable HTTP JSON-RPC)·반응형 개인 대시보드 운영.
 - REST: GET `/api/notices`, `/api/letters`, `/api/education-letters`, `/api/news`, `/api/awards`, `/api/posts`, `/api/feed?category=all|notice|letter|news|awards|office_letter`, `/api/search?q=...&category=all`, `/api/status?category=all`, `/api/meta`.
-- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 7개 게시판용 읽기 전용 도구 **17개** 제공.
+- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 8개 게시판용 읽기 전용 도구 **19개** 제공.
 - 상류 URL 고정, 3분 단위 Cloudflare edge 캐시, 700KB 응답 상한, 요청 타임아웃, 실패 시 오류 표시.
 - 공개 쓰기 기능·학생 개인정보 취득·학교 홈페이지 변경 기능 없음.
 
@@ -171,3 +173,13 @@ npm run dev
 - MCP 신규 `get_health_notices`, `search_health_notices` 포함 총 **17개**. `get_all_school_posts` 및 `search_all_school_posts`에도 자동 포함.
 - 순백색 화면·주아체 H1·무채색 pill, 180초 RSS별 캐시·RSS 오류 격리, 공개 접근·Access 보관 설정은 그대로.
 - [보건알림 통합 개발기](docs/HEALTH_NOTICES_2026-11-10.md).
+
+## 2026-11-10 · 학생생활규정게시판 RSS 추가
+
+- 공식 원본: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17273&bbsId=10074`.
+- 화면 **9개 pill**(전체 보기 + 8개 게시판). 새 `학생생활규정게시판`은 별도 필터로 최신 생활규정 개정 게시물 조회.
+- REST 신규 `GET /api/student-rules?limit=20&q=`, 카테고리 `student_rules`. 통합 조회 `/api/posts` 및 선택형 검색·상태 `/api/feed`, `/api/search`, `/api/status`에서도 지원.
+- MCP `get_student_rules`, `search_student_rules` 추가 → **19개 도구**, 이전 17개 그대로 유지.
+- H1 주아체·화이트·중앙 정렬 및 pill 무채색 유지, Cloudflare Access 공개 모드와 복구용 보관 설정 유지.
+- GitHub Actions 없이 GitHub main → Cloudflare Workers Builds 자동 배포.
+- [학생생활규정게시판 통합 개발기](docs/STUDENT_RULES_2026-11-10.md).
