@@ -1,5 +1,8 @@
 # Cloudflare Workers Builds 자동 배포 및 운영
 
+**운영 현황 (2026-11-10): Cloudflare Access 앱은 비활성 호스트로 분리되어 현재 대시보드·REST·MCP 모두 공개입니다.** (원본 보호 설정 보존: [Access 복구 가이드](ACCESS_SUSPENSION_2026-11-10.md))
+
+
 ## 목표와 실제 연결
 
 **GitHub Actions 없음.** Cloudflare GitHub 통합이 `hslcrb/mcp-for-hanbom` 저장소 `main` 브랜치의 변경을 감지해 빌드·배포합니다.

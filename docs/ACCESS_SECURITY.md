@@ -1,5 +1,10 @@
 # 접근 제어 설계 — HANBOM DATA
 
+**기존 섹션은 처음 배포 당시의 Access 보호 구성 기록입니다. 현재는 전체 공개이며, 다음 내용은 복원용 참고로만 보존합니다.**
+
+자세한 내용: [Access 일시 해제·복구 운영기](ACCESS_SUSPENSION_2026-11-10.md).
+
+
 ## 개요
 
 Cloudflare Access의 경로별 self-hosted application을 사용합니다. **브라우저 대시보드는 소유자 전용, 공개 RSS REST·MCP는 누구나 사용 가능**하도록 분리합니다.

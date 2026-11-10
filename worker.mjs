@@ -84,7 +84,7 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 </style>
 </head>
 <body>
-<main aria-label="한봄고등학교 공지사항 목록"><h1>한봄고 공지사항 MCP</h1><ol id="notices" aria-live="polite" aria-busy="true"></ol></main>
+<main aria-label="한봄고등학교 공지사항 목록"><h1>한봄고 홈페이지 공지사항 MCP</h1><ol id="notices" aria-live="polite" aria-busy="true"></ol></main>
 <script>
 (function(){
   const list=document.getElementById("notices");
@@ -134,10 +134,12 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 export default{async fetch(request,env,ctx){const u=new URL(request.url),p=u.pathname;if(request.method==="OPTIONS"&&(p==="/mcp"||p.startsWith("/api/")))return new Response(null,{status:204,headers:HEADERS});
 if(p==="/mcp")return mcp(request,ctx);
 if(p==="/api/notices"||p==="/api/search"||p==="/api/status"){if(request.method!=="GET")return json({error:"Method not allowed"},405);try{const data=await load(ctx);if(p==="/api/status")return json({source:data.source,source_url:data.source_url,feed_title:data.feed_title,fetched_at:data.fetched_at,count:data.count,cached:data.cached});const limit=Number(u.searchParams.get("limit")||20);return json(filtered(data,u.searchParams.get("q"),Number.isInteger(limit)?Math.min(100,Math.max(1,limit)):20));}catch(e){return json({error:"RSS unavailable",code:e.message},502)}}
-if(p==="/api/meta")return json({name:"HANBOM DATA",version:VERSION,source:SOURCE,source_url:FEED,endpoints:["/api/notices","/api/search?q=...","/api/status","/mcp"],auth:{dashboard:"Cloudflare Access single email",api:"public",mcp:"public — OAuth planned, not enabled"}});
+if(p==="/api/meta")return json({name:"HANBOM DATA",version:VERSION,source:SOURCE,source_url:FEED,endpoints:["/api/notices","/api/search?q=...","/api/status","/mcp"],auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
 if(p.startsWith("/api/"))return json({error:"Not found"},404);
 if(p==="/health")return json({status:"ok",version:VERSION});
 if(p!=="/"&&p!=="/index.html")return json({error:"Not found"},404);
 if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
-if(!request.headers.get("cf-access-jwt-assertion"))return json({error:"Dashboard requires Cloudflare Access"},401);
+// PAUSED — Cloudflare Access protection intentionally disabled on this public dashboard.
+// RESTORE ONLY after moving the suspended Access applications back to data.hanbom.rhee.life:
+// if(!request.headers.get("cf-access-jwt-assertion"))return json({error:"Dashboard requires Cloudflare Access"},401);
 return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});}};
