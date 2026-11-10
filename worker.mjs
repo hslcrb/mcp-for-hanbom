@@ -344,40 +344,32 @@ async function mcp(request,ctx){
 
 const page=String.raw`<!doctype html>
 <html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>한봄고등학교 공지사항</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>한봄고등학교 공지사항</title>
 <style>
-@font-face {
-  font-family: 'Juache';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
-  font-weight: normal;
-  font-display: swap;
-}
+@font-face{font-family:'Juache';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');font-weight:normal;font-display:swap}
 :root{color-scheme:light}
 *{box-sizing:border-box}
 html,body{min-height:100%;background:#fff}
 body{margin:0;color:#111;font-family:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
-main{width:min(760px,calc(100% - 40px));margin-inline:auto;padding:clamp(72px,11vh,136px) 0 96px}
-h1{margin:0 0 clamp(48px,7vh,76px);font-family:'Juache',sans-serif;font-size:clamp(32px,4.2vw,46px);font-weight:normal;line-height:1.3;text-align:center;letter-spacing:-.025em}
+main{width:min(980px,calc(100% - 40px));margin-inline:auto;padding:clamp(72px,11vh,136px) 0 96px}
+h1{margin:0 0 clamp(44px,6vh,70px);font-family:'Juache',sans-serif;font-size:clamp(32px,4.2vw,46px);font-weight:normal;line-height:1.3;text-align:center;letter-spacing:-.025em}
 nav.filters{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:0 0 clamp(36px,5vh,62px)}
+nav.filters.subfilters{margin-top:-26px;margin-bottom:clamp(36px,5vh,62px);gap:8px}
+nav.filters[hidden]{display:none!important}
 nav.filters button{appearance:none;border:1px solid #dedede;border-radius:999px;background:#fff;color:#111;font:500 15px/1.25 "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;padding:11px 20px;min-height:43px;cursor:pointer;transition:none}
+nav.filters.subfilters button{font-size:14px;padding:9px 15px}
 nav.filters button[aria-pressed="true"]{color:#fff;background:#111;border-color:#111}
-nav.filters button:hover{filter:none;box-shadow:none;transform:none}
+nav.filters button:hover{filter:none;box-shadow:none;transform:none;transition:none}
 nav.filters button:focus-visible{outline:2px solid #111;outline-offset:3px}
-ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;align-items:stretch;gap:28px}
+ol{list-style:none;margin:0 auto;padding:0;display:flex;flex-direction:column;align-items:stretch;gap:28px;max-width:760px}
 li{text-align:center;font-size:clamp(17px,1.65vw,20px);font-weight:400;line-height:1.65;letter-spacing:-.025em;word-break:keep-all;overflow-wrap:anywhere}
 li a,li a:link,li a:visited,li a:hover,li a:active{color:inherit;text-decoration:none;background:transparent;opacity:1;transition:none}
 li a:focus-visible{outline:2px solid #111;outline-offset:5px}
-@media(max-width:600px){main{width:calc(100% - 36px);padding:72px 0}ol{gap:24px}li{font-size:17px}}
-</style>
-</head>
-<body>
-<main aria-label="한봄고등학교 공개 RSS 게시판 8종">
+@media(max-width:600px){main{width:calc(100% - 36px);padding:72px 0}nav.filters{gap:8px}nav.filters button{font-size:14px;padding:10px 15px;min-height:42px}ol{gap:24px}li{font-size:17px}}
+</style></head>
+<body><main aria-label="한봄고등학교 공개 RSS 게시판">
 <h1>한봄고 홈페이지 공지사항 MCP</h1>
-<nav class="filters" aria-label="게시물 유형">
+<nav class="filters primary" aria-label="게시판 종류">
 <button type="button" data-category="all" aria-pressed="true">전체 보기</button>
 <button type="button" data-category="notice" aria-pressed="false">공지 사항</button>
 <button type="button" data-category="letter" aria-pressed="false">가정통신문</button>
@@ -387,58 +379,97 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 <button type="button" data-category="opportunities" aria-pressed="false">공모전 및 모집공고</button>
 <button type="button" data-category="health" aria-pressed="false">보건알림</button>
 <button type="button" data-category="student_rules" aria-pressed="false">학생생활규정게시판</button>
+<button type="button" data-category="volunteer" aria-pressed="false">봉사활동</button>
+<button type="button" data-category="after_school" aria-pressed="false">방과후학교</button>
+<button type="button" data-category="features" aria-pressed="false">학교특색활동</button>
+<button type="button" data-category="meals" aria-pressed="false">급식게시판</button>
+<button type="button" data-category="nutrition" aria-pressed="false">영양상담</button>
+<button type="button" data-category="livestock" aria-pressed="false">축산물이력표시</button>
+<button type="button" data-category="teacher_protection" aria-pressed="false">교육활동침해 예방교육계획</button>
+<button type="button" data-category="employment_status" aria-pressed="false">취업현황</button>
+<button type="button" data-category="employment_resources" aria-pressed="false">취업자료</button>
+<button type="button" data-category="career_resources" aria-pressed="false">진로진학자료</button>
+<button type="button" data-category="curriculum" aria-pressed="false">교과자료실</button>
+</nav>
+<nav class="filters subfilters" data-group="features" aria-label="학교특색활동 학과별" hidden>
+<button type="button" data-category="features" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="feature_main" aria-pressed="false">학교특색활동 게시판</button>
+<button type="button" data-category="feature_beauty" aria-pressed="false">뷰티아트과</button>
+<button type="button" data-category="feature_character" aria-pressed="false">캐릭터창작과</button>
+<button type="button" data-category="feature_visual" aria-pressed="false">시각디자인과</button>
+<button type="button" data-category="feature_bigdata" aria-pressed="false">빅데이터정보과</button>
+<button type="button" data-category="feature_smart" aria-pressed="false">스마트제어과</button>
+<button type="button" data-category="feature_sound" aria-pressed="false">사운드디자인과</button>
+</nav>
+<nav class="filters subfilters" data-group="curriculum" aria-label="교과자료실 학과별" hidden>
+<button type="button" data-category="curriculum" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="curriculum_general" aria-pressed="false">보통교과</button>
+<button type="button" data-category="curriculum_beauty" aria-pressed="false">뷰티아트과</button>
+<button type="button" data-category="curriculum_character" aria-pressed="false">캐릭터창작과</button>
+<button type="button" data-category="curriculum_visual" aria-pressed="false">시각디자인과</button>
+<button type="button" data-category="curriculum_bigdata" aria-pressed="false">빅데이터정보과</button>
+<button type="button" data-category="curriculum_smart" aria-pressed="false">스마트제어과</button>
+<button type="button" data-category="curriculum_sound" aria-pressed="false">사운드디자인과</button>
 </nav>
 <ol id="notices" aria-live="polite" aria-busy="true"></ol>
-</main>
-<script>
+</main><script>
 (function(){
  const list=document.getElementById("notices");
- const buttons=[...document.querySelectorAll(".filters button")];
- let category="all",feeds={notice:[],letter:[],news:[],awards:[],office_letter:[],opportunities:[],health:[],student_rules:[]},failed={notice:false,letter:false,news:false,awards:false,office_letter:false,opportunities:false,health:false,student_rules:false};
+ const buttons=[...document.querySelectorAll("nav.filters button")];
+ const groups={"features":["feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound"],"curriculum":["curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"]};
+ const ids=["notice","letter","news","awards","office_letter","opportunities","health","student_rules","volunteer","after_school","feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound","meals","nutrition","livestock","teacher_protection","employment_status","employment_resources","career_resources","curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"];
+ let active="all",data=[],errors=new Set(),loaded=false;
  const message=text=>{const li=document.createElement("li");li.textContent=text;list.replaceChildren(li);};
- const compare=(a,b)=>(Date.parse(b.published_at||"")||0)-(Date.parse(a.published_at||"")||0);
- function render(){
-   const data=category==="all"?[...feeds.notice,...feeds.letter,...feeds.news,...feeds.awards,...feeds.office_letter,...feeds.opportunities,...feeds.health,...feeds.student_rules].sort(compare):feeds[category];
-   const frag=document.createDocumentFragment();
-   for(const entry of data){
-     if(typeof entry.title!=="string"||!entry.title.trim())continue;
-     const li=document.createElement("li");
-     let valid=null;
-     if(typeof entry.url==="string")try{const link=new URL(entry.url);if(link.protocol==="https:"&&link.hostname==="hanbom-h.goesw.kr")valid=link;}catch{}
-     const text=document.createElement(valid?"a":"span");
-     text.textContent=entry.title;
-     if(valid){text.href=valid.href;text.target="_blank";text.rel="noopener noreferrer";}
-     li.append(text);frag.append(li);
-   }
-   if(frag.childNodes.length){list.replaceChildren(frag);}
-   else if(category==="all"?(failed.notice&&failed.letter&&failed.news&&failed.awards&&failed.office_letter&&failed.opportunities&&failed.health&&failed.student_rules):failed[category])message("게시물을 불러올 수 없습니다.");
-   else message("표시할 게시물이 없습니다.");
+ function groupFor(category){
+  if(category==="features"||groups.features.includes(category))return "features";
+  if(category==="curriculum"||groups.curriculum.includes(category))return "curriculum";
+  return null;
  }
- function select(next){
-   category=next;
-   for(const button of buttons)button.setAttribute("aria-pressed",String(button.dataset.category===category));
-   render();
+ function render(){
+  if(!loaded){message("불러오는 중입니다.");return;}
+  const selected=active==="all"?null:(groups[active]||[active]);
+  const rows=selected?data.filter(x=>selected.includes(x.category)):data;
+  const fragment=document.createDocumentFragment();
+  for(const entry of rows){
+   if(typeof entry.title!=="string"||!entry.title.trim())continue;
+   const li=document.createElement("li");
+   let url=null;
+   if(typeof entry.url==="string")try{const candidate=new URL(entry.url);if(candidate.protocol==="https:"&&candidate.hostname==="hanbom-h.goesw.kr")url=candidate;}catch{}
+   const link=document.createElement(url?"a":"span");link.textContent=entry.title;
+   if(url){link.href=url.href;link.target="_blank";link.rel="noopener noreferrer";}
+   li.append(link);fragment.append(li);
+  }
+  if(fragment.childNodes.length)list.replaceChildren(fragment);
+  else if(active==="all"?(errors.size===ids.length):(selected?selected.every(k=>errors.has(k)):errors.has(active)))message("게시물을 불러올 수 없습니다.");
+  else message("표시할 게시물이 없습니다.");
+ }
+ function select(category){
+  active=category;
+  const group=groupFor(category);
+  for(const nav of document.querySelectorAll("nav.subfilters"))nav.hidden=nav.dataset.group!==group;
+  for(const button of buttons){
+   const parent=button.closest("nav.primary");
+   const pressed=parent?(button.dataset.category===(group||category)):(button.dataset.category===category);
+   button.setAttribute("aria-pressed",String(pressed));
+  }
+  render();
  }
  for(const button of buttons)button.addEventListener("click",()=>select(button.dataset.category));
- async function refresh(){
-   const categories=["notice","letter","news","awards","office_letter","opportunities","health","student_rules"];
-   await Promise.all(categories.map(async kind=>{
-     try{
-       const response=await fetch({notice:"/api/notices?limit=100",letter:"/api/letters?limit=100",news:"/api/news?limit=100",awards:"/api/awards?limit=100",office_letter:"/api/education-letters?limit=100",opportunities:"/api/opportunities?limit=100",health:"/api/health-notices?limit=100",student_rules:"/api/student-rules?limit=100"}[kind],{cache:"no-store"});
-       if(!response.ok)throw Error("RSS_NOT_AVAILABLE");
-       const result=await response.json();
-       feeds[kind]=Array.isArray(result.items)?result.items:[];
-       failed[kind]=false;
-     }catch{feeds[kind]=[];failed[kind]=true;}
-     render();
-   }));
-   list.setAttribute("aria-busy","false");
+ async function load(){
+  message("불러오는 중입니다.");
+  try{
+   const response=await fetch("/api/posts?limit=all",{cache:"no-store"});
+   if(!response.ok)throw new Error("RSS_UNAVAILABLE");
+   const result=await response.json();
+   data=Array.isArray(result.items)?result.items:[];
+   errors=new Set((result.failed_feeds||[]).map(x=>x.category));
+   loaded=true;render();
+  }catch{loaded=true;errors=new Set(ids);render();}
+  finally{list.setAttribute("aria-busy","false");}
  }
- refresh();
+ load();
 })();
-</script>
-</body>
-</html>`;
+</script></body></html>`;
 
 export default{async fetch(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;
