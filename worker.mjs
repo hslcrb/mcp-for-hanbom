@@ -70,7 +70,9 @@ async function getData(ctx,category="notice",shard=0){
  if(!knownCategory(category))throw Error("INVALID_CATEGORY");
  const sourceIds=FEEDS[category]?[category]:(category==="all"?BOARD_CATALOG.map(b=>b.id):GROUPS[category]);
  const totalSourceCount=sourceIds.length;
- const shardCount=Math.ceil(totalSourceCount/SHARD_SIZE);
+ // Legacy 31-board dataset still fits Workers Free in one 33-subrequest invocation.
+ const pageSize=category==="legacy"?31:SHARD_SIZE;
+ const shardCount=Math.ceil(totalSourceCount/pageSize);
  if(!Number.isInteger(shard)||shard<0||shard>=shardCount)throw Error("INVALID_SHARD");
  if(FEEDS[category]){
   const data=await readFeed(ctx,category);
@@ -78,7 +80,7 @@ async function getData(ctx,category="notice",shard=0){
  }
  // Workers Free: 50 external subrequests per invocation; each aggregated page has up to 28
  // source fetches + a cache match + cache put = max 30 calls, safely below the quota.
- const ids=sourceIds.slice(shard*SHARD_SIZE,(shard+1)*SHARD_SIZE);
+ const ids=sourceIds.slice(shard*pageSize,(shard+1)*pageSize);
  const cache=globalThis.caches?.default,key=new Request("https://hanbom-cache.invalid/aggregate-v5/"+category+"/"+shard);
  if(cache)try{const hit=await cache.match(key);if(hit)return{...await hit.json(),cached:true};}catch{}
  const resolved=[];
