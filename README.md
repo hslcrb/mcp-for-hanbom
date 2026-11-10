@@ -1,5 +1,14 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+## 2026-11-11 · Pill 컴포넌트 리팩터링
+
+- `PillButton`, `PillGroup`, `PillNavigation`으로 기존 **129개 버튼을 재사용 가능한 컴포넌트**에서 생성.
+- `<hanbom-pill>` Custom Element + native `button` 선택 상태, 단일 위임 이벤트 처리.
+- Flex-wrap pill 레이아웃 + Grid 콘텐츠 레이아웃, 작은 화면에서 텍스트 줄바꿈 지원.
+- 기존 82개 게시판·23개 메뉴·RSS·REST·MCP·Cloudflare 자동 배포와 디자인은 유지.
+- [컴포넌트 설계·검증 기록](docs/PILL_COMPONENT_REFACTOR_2026-11-11.md).
+
+
 > **현재 운영 상태 (2026-11-11): RSS 82종 · 23개 메뉴 · 3개 무료 플랜 호환 분할 조회 · MCP 68개 도구 · 전체 공개.** 기존 31개 및 GitHub main 자동배포·Cloudflare Access 복구용 설정은 유지됩니다. 전체 RSS 등록값은 [RSS 82종 개발기](docs/RSS_82_IMPLEMENTATION_2026-11-11.md)와 [원본 카탈로그](config/rss-catalog-82.json)를 참고하세요.
 
 ## 현재 버전 v2.0.0
