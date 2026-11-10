@@ -36,3 +36,37 @@
 ## 실제 배포 결과
 
 배포와 브라우저 검사 후 실측 결과 추가.
+
+## 최종 운영 배포·실제 브라우저 검증
+
+- 최종 UI 구현 커밋: `f7e1deff21a6960dc44a87d93ee0ab2535da59b0` (GitHub `main`, v2.0.1).
+- Cloudflare Workers Builds: `eefbec10-2006-408f-ab4b-fb7cca5f6876`; 빌드 결과 `success`, Node 테스트 **59개 통과 / 실패 0**, Worker 배포 명령 성공.
+- Cloudflare 프로덕션 Worker 버전: `1115efa5-4938-46b5-89ad-e0e31d769fc5`, 트래픽 100%. 도메인 `data.hanbom.rhee.life` 유지.
+- Cloudflare Browser Rendering을 통해 실제 프로덕션 HTML에서 `<hanbom-pill>` **129개**, 원래의 `<button>` 129개, 브라우저 Custom Element 클래스 `HanbomPill` 등록 확인.
+- 실제 조회에서는 82개 RSS 범위의 **528건** 게시물 원문 링크를 모두 렌더링. 빈 피드·상담 게시물 보호 처리와 기존 API/MCP 경로 변경 없음.
+
+### 360px 모바일 스모크 테스트
+
+- 뷰포트 `width=360`, `document.documentElement.scrollWidth=360`, 가로 넘침 없음.
+- 계산된 CSS: `main.display=grid`, 첫 `.pill-layout.display=flex`.
+- Web Component 호스트 129개, 실제 native button 129개, 데이터 로딩 완료, 원문 링크 528개.
+- `커뮤니티` 클릭: 상위 버튼 `aria-pressed=true`, 호스트 `selected=true`; `각종양식[서식]` 클릭: 11건.
+- `법인 > 임원 인적사항` 선택: 3건. 표시된 pill 요소가 화면 경계를 넘는 경우 **0개**.
+- `전체 보기` 복귀: 528건 복원.
+
+### 320px 초소형 모바일
+
+- 뷰포트 `width=320`, 문서 가로 scrollWidth도 320, 스크롤 넘침 0.
+- `법인 > 임원 인적사항`을 실제 클릭한 뒤 선택 버튼 `aria-pressed=true` 유지.
+- 현재 표시된 pill 31개(상위 24 + 법인 하위 7), 화면 경계 바깥으로 넘친 pill **0개**, 가장 긴 버튼의 실제 폭 292px.
+- 긴 법인 게시판 이름이 내용 컨테이너 안에서 줄바꿈되며 원문 게시물은 정상 표시됨.
+
+### 1440px 데스크톱
+
+- 뷰포트 `width=1440`, 문서 scrollWidth 1440으로 수평 넘침 없음.
+- 상위 메뉴 24개 pill이 **4개 행으로 자동 줄바꿈**. Grid와 Flex 계산 스타일 확인.
+- 초기 전체 보기 528건 렌더링, 첫 번째 전체 보기 pill의 `selected=true` 확인.
+
+## 결론
+
+변경은 UI 컴포넌트·반응형 내부 마크업 구조에 한정했다. REST/MCP·RSS 82종·Cloudflare Access 복구용 설정 및 GitHub Actions를 사용하지 않는 `main` 자동 배포 체계는 유지했다.
