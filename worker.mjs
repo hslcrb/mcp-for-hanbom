@@ -3,7 +3,9 @@ import {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS} from "./catalog.mjs";
 import {PillNavigation} from "./ui/pill-components.mjs";
 import {SITE_STYLES} from "./ui/site-styles.mjs";
 import {SITE_CLIENT} from "./ui/site-client.mjs";
-export const VERSION="2.0.1";
+import {ThemeSwitch} from "./ui/theme-components.mjs";
+import {THEME_BOOT,THEME_CLIENT} from "./ui/theme-client.mjs";
+export const VERSION="2.1.0";
 export {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS};
 export const FEEDS=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.id,{
  url:b.url,source:"한봄고등학교 "+b.parent+" · "+b.label,label:b.label,
@@ -199,6 +201,7 @@ async function mcp(request,ctx){
 }
 
 const pillNavigation=PillNavigation({menus:MENU_CATALOG,boards:BOARD_CATALOG});
+const themeSwitch=ThemeSwitch();
 const clientScript=SITE_CLIENT
  .replace("__GROUPS__",JSON.stringify(Object.fromEntries(MENU_CATALOG.map(menu=>[menu.id,menu.ids]))))
  .replace("__IDS__",JSON.stringify(BOARD_CATALOG.map(board=>board.id)))
@@ -208,8 +211,10 @@ const page=String.raw`<!doctype html>
 <head>
  <meta charset="utf-8">
  <meta name="viewport" content="width=device-width,initial-scale=1">
- <meta name="color-scheme" content="light">
+ <meta name="color-scheme" content="light dark">
+ <meta name="theme-color" content="#ffffff">
  <title>한봄고등학교 공지사항</title>
+ <script>${THEME_BOOT}</script>
  <style>
 ${SITE_STYLES}
  </style>
@@ -217,11 +222,15 @@ ${SITE_STYLES}
 <body>
  <main aria-label="한봄고등학교 공개 RSS 82개 게시판">
   <h1>한봄고 홈페이지 공지사항 MCP</h1>
+  ${themeSwitch}
   ${pillNavigation}
   <ol id="notices" aria-live="polite" aria-busy="true"></ol>
  </main>
  <script>
 ${clientScript}
+ </script>
+ <script>
+${THEME_CLIENT}
  </script>
 </body>
 </html>`;
