@@ -195,14 +195,15 @@ async function mcp(request,ctx){
 
 const page=String.raw`<!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>한봄고등학교 공지사항</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><title>한봄고등학교 공지사항</title>
 <style>
 @font-face{font-family: 'Juache';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');font-weight:normal;font-display: swap;}
 :root{color-scheme:light}
 *{box-sizing:border-box}
 html,body{min-height:100%;background:#fff}
 body{margin:0;color:#111;font-family:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
-main{width:min(980px,calc(100% - 40px));margin-inline:auto;padding:clamp(72px,11vh,136px) 0 96px}
+main{width:min(1000px,calc(100% - 40px));margin-inline:auto;padding:clamp(72px,11vh,136px) 0 96px}
 h1{margin:0 0 clamp(44px,6vh,70px);font-family:'Juache',sans-serif;font-size:clamp(32px,4.2vw,46px);font-weight:normal;line-height:1.3;text-align:center;letter-spacing:-.025em}
 nav.filters{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:0 0 clamp(36px,5vh,62px)}
 nav.filters.subfilters{margin-top:-26px;margin-bottom:clamp(36px,5vh,62px);gap:8px}
@@ -218,33 +219,70 @@ li a,li a:link,li a:visited,li a:hover,li a:active{color:inherit;text-decoration
 li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 @media(max-width:600px){main{width:calc(100% - 36px);padding:72px 0}nav.filters{gap:8px}nav.filters button{font-size:14px;padding:10px 15px;min-height:42px}ol{gap:24px}li{font-size:17px}}
 </style></head>
-<body><main aria-label="한봄고등학교 공개 RSS 게시판">
+<body><main aria-label="한봄고등학교 공개 RSS 82개 게시판">
 <h1>한봄고 홈페이지 공지사항 MCP</h1>
-<nav class="filters primary" aria-label="게시판 종류">
+<nav class="filters primary" aria-label="상위 메뉴">
 <button type="button" data-category="all" aria-pressed="true">전체 보기</button>
-<button type="button" data-category="notice" aria-pressed="false">공지 사항</button>
-<button type="button" data-category="letter" aria-pressed="false">가정통신문</button>
-<button type="button" data-category="news" aria-pressed="false">한봄 NEWS</button>
+<button type="button" data-category="admission_requirements" aria-pressed="false">모집요항</button>
+<button type="button" data-category="school_promotion" aria-pressed="false">학교홍보</button>
+<button type="button" data-category="admission_guide" aria-pressed="false">입학안내</button>
+<button type="button" data-category="notices_group" aria-pressed="false">알림</button>
+<button type="button" data-category="school_life" aria-pressed="false">학교생활</button>
+<button type="button" data-category="clubs" aria-pressed="false">동아리활동</button>
+<button type="button" data-category="features" aria-pressed="false">학교특색활동</button>
+<button type="button" data-category="school_meals" aria-pressed="false">학교급식안내</button>
+<button type="button" data-category="career" aria-pressed="false">취업/진학</button>
+<button type="button" data-category="curriculum" aria-pressed="false">교과자료실</button>
+<button type="button" data-category="community" aria-pressed="false">커뮤니티</button>
+<button type="button" data-category="counseling" aria-pressed="false">사이버상담실</button>
+<button type="button" data-category="foundation" aria-pressed="false">법인</button>
+<button type="button" data-category="budget_reports" aria-pressed="false">예.결산현황</button>
+<button type="button" data-category="operating_costs" aria-pressed="false">업무추진비 집행내역</button>
+<button type="button" data-category="procurement" aria-pressed="false">물품 및 공사계약</button>
+<button type="button" data-category="disclosures" aria-pressed="false">공개코너</button>
+<button type="button" data-category="parent_funded" aria-pressed="false">수익자부담 경비집행내역</button>
+<button type="button" data-category="school_fund" aria-pressed="false">학교발전기금</button>
+<button type="button" data-category="school_council" aria-pressed="false">학교운영위원회</button>
+<button type="button" data-category="certificates" aria-pressed="false">증명서 발급</button>
+<button type="button" data-category="facilities" aria-pressed="false">학교시설개방</button>
+<button type="button" data-category="administrative_services" aria-pressed="false">행정서비스</button>
+</nav>
+<nav class="filters subfilters" data-group="admission_requirements" aria-label="모집요항 하위 게시판" hidden>
+<button type="button" data-category="admission_requirements" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="admission_special" aria-pressed="false">진로적성 특별전형</button>
+</nav>
+<nav class="filters subfilters" data-group="school_promotion" aria-label="학교홍보 하위 게시판" hidden>
+<button type="button" data-category="school_promotion" aria-pressed="false">전체 보기</button>
 <button type="button" data-category="awards" aria-pressed="false">학생작품 및 수상내역</button>
+<button type="button" data-category="news" aria-pressed="false">한봄 NEWS</button>
+</nav>
+<nav class="filters subfilters" data-group="admission_guide" aria-label="입학안내 하위 게시판" hidden>
+<button type="button" data-category="admission_guide" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="department_experience" aria-pressed="false">학과체험</button>
+</nav>
+<nav class="filters subfilters" data-group="notices_group" aria-label="알림 하위 게시판" hidden>
+<button type="button" data-category="notices_group" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="notice" aria-pressed="false">공지사항</button>
+<button type="button" data-category="letter" aria-pressed="false">가정통신문</button>
 <button type="button" data-category="office_letter" aria-pressed="false">가정통신문(교육청)</button>
 <button type="button" data-category="opportunities" aria-pressed="false">공모전 및 모집공고</button>
 <button type="button" data-category="health" aria-pressed="false">보건알림</button>
+</nav>
+<nav class="filters subfilters" data-group="school_life" aria-label="학교생활 하위 게시판" hidden>
+<button type="button" data-category="school_life" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="education_curriculum" aria-pressed="false">교육과정</button>
 <button type="button" data-category="student_rules" aria-pressed="false">학생생활규정게시판</button>
 <button type="button" data-category="volunteer" aria-pressed="false">봉사활동</button>
 <button type="button" data-category="after_school" aria-pressed="false">방과후학교</button>
-<button type="button" data-category="features" aria-pressed="false">학교특색활동</button>
-<button type="button" data-category="meals" aria-pressed="false">급식게시판</button>
-<button type="button" data-category="nutrition" aria-pressed="false">영양상담</button>
-<button type="button" data-category="livestock" aria-pressed="false">축산물이력표시</button>
-<button type="button" data-category="teacher_protection" aria-pressed="false">교육활동침해 예방교육계획</button>
-<button type="button" data-category="employment_status" aria-pressed="false">취업현황</button>
-<button type="button" data-category="employment_resources" aria-pressed="false">취업자료</button>
-<button type="button" data-category="career_resources" aria-pressed="false">진로진학자료</button>
-<button type="button" data-category="curriculum" aria-pressed="false">교과자료실</button>
+<button type="button" data-category="teacher_protection" aria-pressed="false">교육활동침해 에방교육계획</button>
 </nav>
-<nav class="filters subfilters" data-group="features" aria-label="학교특색활동 학과별" hidden>
+<nav class="filters subfilters" data-group="clubs" aria-label="동아리활동 하위 게시판" hidden>
+<button type="button" data-category="clubs" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="club_photos" aria-pressed="false">동아리활동 사진</button>
+</nav>
+<nav class="filters subfilters" data-group="features" aria-label="학교특색활동 하위 게시판" hidden>
 <button type="button" data-category="features" aria-pressed="false">전체 보기</button>
-<button type="button" data-category="feature_main" aria-pressed="false">학교특색활동 게시판</button>
+<button type="button" data-category="feature_main" aria-pressed="false">학교특색활동</button>
 <button type="button" data-category="feature_beauty" aria-pressed="false">뷰티아트과</button>
 <button type="button" data-category="feature_character" aria-pressed="false">캐릭터창작과</button>
 <button type="button" data-category="feature_visual" aria-pressed="false">시각디자인과</button>
@@ -252,7 +290,19 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 <button type="button" data-category="feature_smart" aria-pressed="false">스마트제어과</button>
 <button type="button" data-category="feature_sound" aria-pressed="false">사운드디자인과</button>
 </nav>
-<nav class="filters subfilters" data-group="curriculum" aria-label="교과자료실 학과별" hidden>
+<nav class="filters subfilters" data-group="school_meals" aria-label="학교급식안내 하위 게시판" hidden>
+<button type="button" data-category="school_meals" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="meals" aria-pressed="false">급식게시판</button>
+<button type="button" data-category="nutrition" aria-pressed="false">영양상담</button>
+<button type="button" data-category="livestock" aria-pressed="false">축산물이력표시</button>
+</nav>
+<nav class="filters subfilters" data-group="career" aria-label="취업/진학 하위 게시판" hidden>
+<button type="button" data-category="career" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="employment_status" aria-pressed="false">취업현황</button>
+<button type="button" data-category="employment_resources" aria-pressed="false">취업자료</button>
+<button type="button" data-category="career_resources" aria-pressed="false">진로진학자료</button>
+</nav>
+<nav class="filters subfilters" data-group="curriculum" aria-label="교과자료실 하위 게시판" hidden>
 <button type="button" data-category="curriculum" aria-pressed="false">전체 보기</button>
 <button type="button" data-category="curriculum_general" aria-pressed="false">보통교과</button>
 <button type="button" data-category="curriculum_beauty" aria-pressed="false">뷰티아트과</button>
@@ -262,20 +312,104 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 <button type="button" data-category="curriculum_smart" aria-pressed="false">스마트제어과</button>
 <button type="button" data-category="curriculum_sound" aria-pressed="false">사운드디자인과</button>
 </nav>
+<nav class="filters subfilters" data-group="community" aria-label="커뮤니티 하위 게시판" hidden>
+<button type="button" data-category="community" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="community_forms" aria-pressed="false">각종양식[서식]</button>
+<button type="button" data-category="community_students" aria-pressed="false">재학생게시판</button>
+<button type="button" data-category="community_parents" aria-pressed="false">학부모게시판</button>
+<button type="button" data-category="community_teachers" aria-pressed="false">교사게시판</button>
+<button type="button" data-category="community_suggestions" aria-pressed="false">건의게시판</button>
+<button type="button" data-category="community_album" aria-pressed="false">한봄앨범</button>
+<button type="button" data-category="community_grades_complaints" aria-pressed="false">성적민원센터</button>
+<button type="button" data-category="community_school_life_complaints" aria-pressed="false">학교생활 민원센터</button>
+<button type="button" data-category="community_athlete_complaints" aria-pressed="false">학생선수고충처리센터</button>
+</nav>
+<nav class="filters subfilters" data-group="counseling" aria-label="사이버상담실 하위 게시판" hidden>
+<button type="button" data-category="counseling" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="counseling_resources" aria-pressed="false">상담자료실</button>
+<button type="button" data-category="counseling_friendship" aria-pressed="false">친구문제</button>
+<button type="button" data-category="counseling_sexual_violence_report" aria-pressed="false">성희롱,성폭력 사이버신고센터</button>
+</nav>
+<nav class="filters subfilters" data-group="foundation" aria-label="법인 하위 게시판" hidden>
+<button type="button" data-category="foundation" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="foundation_articles" aria-pressed="false">정관</button>
+<button type="button" data-category="foundation_officers" aria-pressed="false">임원 인적사항(임원과 친족관게에 있는 교직원 현황)</button>
+<button type="button" data-category="foundation_budget" aria-pressed="false">예.결산</button>
+<button type="button" data-category="foundation_board_minutes" aria-pressed="false">이사회회의록</button>
+<button type="button" data-category="foundation_legal_contributions" aria-pressed="false">법정부담금 납부 현황</button>
+<button type="button" data-category="foundation_personnel_rules" aria-pressed="false">사무직원인사관리지침</button>
+</nav>
+<nav class="filters subfilters" data-group="budget_reports" aria-label="예.결산현황 하위 게시판" hidden>
+<button type="button" data-category="budget_reports" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="budget_proposal" aria-pressed="false">예산서</button>
+<button type="button" data-category="budget_settlement" aria-pressed="false">결산서</button>
+</nav>
+<nav class="filters subfilters" data-group="operating_costs" aria-label="업무추진비 집행내역 하위 게시판" hidden>
+<button type="button" data-category="operating_costs" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="operating_expenses" aria-pressed="false">업무추진비 집행내역</button>
+<button type="button" data-category="credit_card_expenses" aria-pressed="false">신용카드 사용내역</button>
+</nav>
+<nav class="filters subfilters" data-group="procurement" aria-label="물품 및 공사계약 하위 게시판" hidden>
+<button type="button" data-category="procurement" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="procurement_direct_contracts" aria-pressed="false">수의 계약내역</button>
+<button type="button" data-category="procurement_bids" aria-pressed="false">입찰공고</button>
+<button type="button" data-category="procurement_results" aria-pressed="false">입찰결과</button>
+<button type="button" data-category="procurement_selection_committee" aria-pressed="false">물품선정위원회</button>
+</nav>
+<nav class="filters subfilters" data-group="disclosures" aria-label="공개코너 하위 게시판" hidden>
+<button type="button" data-category="disclosures" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="gift_certificate_expenses" aria-pressed="false">상품권 구매 및 사용 내역</button>
+<button type="button" data-category="teacher_personnel_committee" aria-pressed="false">교원인사위원회</button>
+<button type="button" data-category="audit_results" aria-pressed="false">감사결과</button>
+<button type="button" data-category="athletic_team_expenses" aria-pressed="false">학교운동부집행내역</button>
+<button type="button" data-category="disclosure_other" aria-pressed="false">기타</button>
+<button type="button" data-category="asbestos_removal" aria-pressed="false">석면해체제거공사</button>
+<button type="button" data-category="school_evaluation" aria-pressed="false">학교평가</button>
+<button type="button" data-category="air_purifier_inspection" aria-pressed="false">공기정화장치 점검</button>
+</nav>
+<nav class="filters subfilters" data-group="parent_funded" aria-label="수익자부담 경비집행내역 하위 게시판" hidden>
+<button type="button" data-category="parent_funded" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="fee_after_school" aria-pressed="false">방과후학교</button>
+<button type="button" data-category="fee_school_trip" aria-pressed="false">수학여행</button>
+<button type="button" data-category="fee_field_trip" aria-pressed="false">체험학습</button>
+<button type="button" data-category="fee_camp_selection" aria-pressed="false">수련회선정</button>
+</nav>
+<nav class="filters subfilters" data-group="school_fund" aria-label="학교발전기금 하위 게시판" hidden>
+<button type="button" data-category="school_fund" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="development_fund_plan" aria-pressed="false">운용계획</button>
+<button type="button" data-category="development_fund_income_expense" aria-pressed="false">접수 및 집행내역</button>
+<button type="button" data-category="development_fund_settlement" aria-pressed="false">결산보고서</button>
+</nav>
+<nav class="filters subfilters" data-group="school_council" aria-label="학교운영위원회 하위 게시판" hidden>
+<button type="button" data-category="school_council" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="school_steering_committee" aria-pressed="false">학교운영위원회게시판</button>
+<button type="button" data-category="parent_opinions" aria-pressed="false">학부모 의견수렴</button>
+</nav>
+<nav class="filters subfilters" data-group="certificates" aria-label="증명서 발급 하위 게시판" hidden>
+<button type="button" data-category="certificates" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="certificates_faq" aria-pressed="false">증명서 Q&amp;A</button>
+</nav>
+<nav class="filters subfilters" data-group="facilities" aria-label="학교시설개방 하위 게시판" hidden>
+<button type="button" data-category="facilities" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="facilities_faq" aria-pressed="false">학교시설개방 Q&amp;A</button>
+<button type="button" data-category="facilities_application" aria-pressed="false">사용신청</button>
+</nav>
+<nav class="filters subfilters" data-group="administrative_services" aria-label="행정서비스 하위 게시판" hidden>
+<button type="button" data-category="administrative_services" aria-pressed="false">전체 보기</button>
+<button type="button" data-category="administrative_disclosure" aria-pressed="false">행정정보공개</button>
+</nav>
 <ol id="notices" aria-live="polite" aria-busy="true"></ol>
 </main><script>
 (function(){
  const list=document.getElementById("notices");
  const buttons=[...document.querySelectorAll("nav.filters button")];
- const groups={"features":["feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound"],"curriculum":["curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"]};
- const ids=["notice","letter","news","awards","office_letter","opportunities","health","student_rules","volunteer","after_school","feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound","meals","nutrition","livestock","teacher_protection","employment_status","employment_resources","career_resources","curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"];
+ const groups={"admission_requirements":["admission_special"],"school_promotion":["awards","news"],"admission_guide":["department_experience"],"notices_group":["notice","letter","office_letter","opportunities","health"],"school_life":["education_curriculum","student_rules","volunteer","after_school","teacher_protection"],"clubs":["club_photos"],"features":["feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound"],"school_meals":["meals","nutrition","livestock"],"career":["employment_status","employment_resources","career_resources"],"curriculum":["curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"],"community":["community_forms","community_students","community_parents","community_teachers","community_suggestions","community_album","community_grades_complaints","community_school_life_complaints","community_athlete_complaints"],"counseling":["counseling_resources","counseling_friendship","counseling_sexual_violence_report"],"foundation":["foundation_articles","foundation_officers","foundation_budget","foundation_board_minutes","foundation_legal_contributions","foundation_personnel_rules"],"budget_reports":["budget_proposal","budget_settlement"],"operating_costs":["operating_expenses","credit_card_expenses"],"procurement":["procurement_direct_contracts","procurement_bids","procurement_results","procurement_selection_committee"],"disclosures":["gift_certificate_expenses","teacher_personnel_committee","audit_results","athletic_team_expenses","disclosure_other","asbestos_removal","school_evaluation","air_purifier_inspection"],"parent_funded":["fee_after_school","fee_school_trip","fee_field_trip","fee_camp_selection"],"school_fund":["development_fund_plan","development_fund_income_expense","development_fund_settlement"],"school_council":["school_steering_committee","parent_opinions"],"certificates":["certificates_faq"],"facilities":["facilities_faq","facilities_application"],"administrative_services":["administrative_disclosure"]};
+ const ids=["admission_special","awards","news","department_experience","notice","letter","office_letter","opportunities","health","education_curriculum","student_rules","volunteer","club_photos","after_school","feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound","meals","nutrition","livestock","teacher_protection","employment_status","employment_resources","career_resources","curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound","community_forms","community_students","community_parents","community_teachers","community_suggestions","counseling_resources","counseling_friendship","counseling_sexual_violence_report","community_album","community_grades_complaints","community_school_life_complaints","community_athlete_complaints","foundation_articles","foundation_officers","foundation_budget","foundation_board_minutes","foundation_legal_contributions","foundation_personnel_rules","budget_proposal","budget_settlement","operating_expenses","credit_card_expenses","procurement_direct_contracts","procurement_bids","procurement_results","procurement_selection_committee","gift_certificate_expenses","fee_after_school","fee_school_trip","fee_field_trip","fee_camp_selection","development_fund_plan","development_fund_income_expense","development_fund_settlement","school_steering_committee","parent_opinions","teacher_personnel_committee","audit_results","athletic_team_expenses","disclosure_other","asbestos_removal","school_evaluation","air_purifier_inspection","certificates_faq","facilities_faq","facilities_application","administrative_disclosure"];
+ const shardCount=3;
  let active="all",data=[],errors=new Set(),loaded=false;
  const message=text=>{const li=document.createElement("li");li.textContent=text;list.replaceChildren(li);};
- function groupFor(category){
-  if(category==="features"||groups.features.includes(category))return "features";
-  if(category==="curriculum"||groups.curriculum.includes(category))return "curriculum";
-  return null;
- }
+ const compare=(a,b)=>(Date.parse(b.published_at||"")||0)-(Date.parse(a.published_at||"")||0);
+ const parentOf=category=>groups[category]?category:Object.keys(groups).find(key=>groups[key].includes(category))||null;
  function render(){
   if(!loaded){message("불러오는 중입니다.");return;}
   const selected=active==="all"?null:(groups[active]||[active]);
@@ -296,11 +430,11 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
  }
  function select(category){
   active=category;
-  const group=groupFor(category);
-  for(const nav of document.querySelectorAll("nav.subfilters"))nav.hidden=nav.dataset.group!==group;
+  const parent=parentOf(category);
+  for(const nav of document.querySelectorAll("nav.subfilters"))nav.hidden=nav.dataset.group!==parent;
   for(const button of buttons){
-   const parent=button.closest("nav.primary");
-   const pressed=parent?(button.dataset.category===(group||category)):(button.dataset.category===category);
+   const inPrimary=!!button.closest("nav.primary");
+   const pressed=inPrimary?(button.dataset.category===(parent||"all")):(button.dataset.category===category);
    button.setAttribute("aria-pressed",String(pressed));
   }
   render();
@@ -308,17 +442,21 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
  for(const button of buttons)button.addEventListener("click",()=>select(button.dataset.category));
  async function load(){
   message("불러오는 중입니다.");
-  try{
-   const response=await fetch("/api/posts?limit=all",{cache:"no-store"});
-   if(!response.ok)throw new Error("RSS_UNAVAILABLE");
-   const result=await response.json();
-   data=Array.isArray(result.items)?result.items:[];
-   errors=new Set((result.failed_feeds||[]).map(x=>x.category));
-   loaded=true;render();
-  }catch{loaded=true;errors=new Set(ids);render();}
-  finally{list.setAttribute("aria-busy","false");}
+  const result=await Promise.allSettled(Array.from({length:shardCount},(_,shard)=>fetch("/api/posts?limit=all&shard="+shard,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("RSS_UNAVAILABLE");return r.json();})));
+  const posts=[];const failures=new Set();
+  for(let i=0;i<result.length;i++){
+   const r=result[i];
+   if(r.status==="fulfilled"){
+    posts.push(...(Array.isArray(r.value.items)?r.value.items:[]));
+    for(const entry of r.value.failed_feeds||[])failures.add(entry.category);
+   }else{
+    for(const id of ids.slice(i*28,(i+1)*28))failures.add(id);
+   }
+  }
+  data=posts.sort(compare);errors=failures;loaded=true;render();
+  list.setAttribute("aria-busy","false");
  }
- load();
+ load().catch(()=>{loaded=true;errors=new Set(ids);render();list.setAttribute("aria-busy","false");});
 })();
 </script></body></html>`;
 
