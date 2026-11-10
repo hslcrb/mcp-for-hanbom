@@ -1,5 +1,14 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+## 2026-11-11 · 다크모드 추가 (v2.1.0)
+
+- **자동(시스템 설정) / 라이트 / 다크** 3가지 테마 선택. 자동이 기본값이며 선택값을 저장할 수 있습니다.
+- 본문·pill·테두리·선택 상태·포커스 링을 CSS 변수로 관리하며 기존 화이트 디자인도 유지.
+- 새 컴포넌트 `ui/theme-components.mjs`, 초기 테마 및 브라우저 선택 처리 `ui/theme-client.mjs`.
+- **82개 RSS·68개 MCP 도구·129개 pill·3 shard·메인 브랜치 Cloudflare 자동 배포** 구조는 그대로.
+- [다크모드 구현·배포·테스트 기록](docs/DARK_MODE_2026-11-11.md).
+
+
 ## 2026-11-11 · Pill 컴포넌트 리팩터링
 
 - `PillButton`, `PillGroup`, `PillNavigation`으로 기존 **129개 버튼을 재사용 가능한 컴포넌트**에서 생성.
