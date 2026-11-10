@@ -69,3 +69,15 @@ Cloudflare Access 소유자 이메일 이외 계정에서 `/` 접근이 불가�
 - [보안 정책](ACCESS_SECURITY.md)
 - [도메인 이전 기록](DOMAIN_MIGRATION_2026-11-10.md)
 - [구축 개발기](BUILD_HISTORY_2026-11-10.md)
+
+## 2026-11-10 실제 `main` 자동 배포 재검증
+
+- canonical domain: `data.hanbom.rhee.life`
+- git commit: `b20563ebc00c8342f6392b2d4b8e6e267d4df9eb`
+- build uuid: `f8097809-26d4-4eb4-8731-7c1078f8eb35`
+- build outcome: `success`
+- Workers production version: `7daee9be-e805-4f3e-bbbb-d9245abcb281` (100% 당시 배포)
+- Worker Custom Domain 목록: 새 호스트만 존재, 이전 호스트는 제거됨.
+- Worker 서브도메인/preview URL: disabled.
+
+위 수치는 Cloudflare의 실제 배포·구성 API 조회 결과입니다. 외부 인터넷에서의 HTTPS 로그인·RSS 실데이터·JSON-RPC 테스트 성공을 의미하지 않으므로 따로 확인합니다.

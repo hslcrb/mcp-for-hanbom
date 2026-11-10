@@ -74,3 +74,33 @@
 - 주 배포 방식: GitHub main push → Cloudflare Workers Builds (GitHub Actions 없음).
 - 실패 시 빌드 로그를 먼저 확인하고 마지막 정상 main 커밋으로 복원하거나, Cloudflare Worker 버전 배포 복구를 사용한다.
 - Access 정책은 애플리케이션 별도로 유지한다. 빌드가 성공해도 공개 경로·인증 경로의 오작동 여부는 별도 확인 필요.
+
+---
+
+## 도메인 변경 추가 기록 — 2026-11-10
+
+> 이 문서 상단의 `hanbom.rhee.life` 정보는 **초기 배포 당시의 역사적 기록**입니다. 현재 정식 주소는 아래의 **`data.hanbom.rhee.life`**입니다.
+
+1. 요청에 따라 서비스 FQDN을 `data.hanbom.rhee.life`로 정확하게 교체.
+2. 신규 Access 앱 3개와 기존 reusable 정책을 연결한 뒤 Worker Custom Domain 생성.
+3. GitHub `main`에 `wrangler.jsonc`의 Custom Domain 변경, README 및 등록·배포·보안 문서 수정.
+4. Cloudflare Workers Builds가 commit `b20563ebc00c8342f6392b2d4b8e6e267d4df9eb`를 감지하고 빌드 `f8097809-26d4-4eb4-8731-7c1078f8eb35`를 성공 처리. Worker version `7daee9be-e805-4f3e-bbbb-d9245abcb281`가 100% 프로덕션에 배포됨.
+5. Cloudflare Custom Domain 목록에서 기존 `hanbom.rhee.life`가 제거되고 `data.hanbom.rhee.life`만 남은 것을 재확인.
+6. 기존 호스트에 한정된 Access 앱 3개를 모두 삭제하고, 신규 호스트 개인/공개 Access 앱 3개를 다시 조회해 정책 일치 확인.
+7. 새 DNS에 프록시된 AAAA가 생성됨을 확인. 기존 도메인의 별도 이메일용 MX/TXT는 유지.
+8. `workers.dev`/Preview URLs 비활성화 유지, `main` 브랜치 Git 연결 및 자동 배포 유지. GitHub Actions 생성·사용 없음.
+
+### 현재 입력값
+
+- Web: `https://data.hanbom.rhee.life/` (Cloudflare Access 단일 이메일)
+- REST: `https://data.hanbom.rhee.life/api/notices` · `https://data.hanbom.rhee.life/api/status`
+- MCP: **`https://data.hanbom.rhee.life/mcp`**
+- ChatGPT Plugin Name: `HANBOM Data MCP`
+- ChatGPT Authentication: `None`
+- OAuth Client ID / Client Secret: 빈칸 (MCP OAuth 아직 구현 전)
+- GitHub: `hslcrb/mcp-for-hanbom` / `main`
+- Worker: `mcp-for-hanbom` / Build: `npm run check` / Deploy: `npm run deploy`
+
+### 검증 주의
+
+운영 배포의 성공과 실제 RSS 수신·MCP 연결 성공·OTP 로그인 성공을 혼동하지 않습니다. 후자 3가지는 이 턴에서 HTTP 브라우저 실측이 되지 않았습니다. 자세한 이전 기록과 Cloudflare 설정은 [도메인 이전 기술기](DOMAIN_MIGRATION_2026-11-10.md), [플러그인스 등록 가이드](CHATGPT_PLUGINS_REGISTRATION.md), [배포 매뉴얼](DEPLOYMENT.md), [Access 보안 매뉴얼](ACCESS_SECURITY.md)를 참조하세요.
