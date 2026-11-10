@@ -12,6 +12,7 @@
 | REST 공지 | https://data.hanbom.rhee.life/api/notices | 모두 공개, 읽기 전용 |
 | 가정통신문 | https://data.hanbom.rhee.life/api/letters | 모두 공개, 읽기 전용 |
 | 가정통신문(교육청) | https://data.hanbom.rhee.life/api/education-letters | 모두 공개, 읽기 전용 |
+| 공모전 및 모집공고 | https://data.hanbom.rhee.life/api/opportunities | 모두 공개, 읽기 전용 |
 | 한봄 NEWS | https://data.hanbom.rhee.life/api/news | 모두 공개, 읽기 전용 |
 | 통합 보기 | https://data.hanbom.rhee.life/api/posts | 모두 공개, 읽기 전용 |
 | REST 검색 | https://data.hanbom.rhee.life/api/search?q=입학 | 모두 공개, 읽기 전용 |
@@ -26,6 +27,7 @@
 - 공지 사항 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062
 - 가정통신문 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063
 - 가정통신문(교육청) RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17254&bbsId=10064&bbsTy=HCNOTIE
+- 공모전 및 모집공고 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17255&bbsId=10065
 - 한봄 NEWS RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022
 - 학교 홈페이지: https://hanbom-h.goesw.kr/
 - RSS에 노출된 공지 일부만 조회할 수 있습니다. 전체 공지 및 첨부파일은 반드시 공식 원문에서 확인해야 합니다.
@@ -34,7 +36,7 @@
 
 - Worker 하나로 RSS·REST·Stateless MCP(Streamable HTTP JSON-RPC)·반응형 개인 대시보드 운영.
 - REST: GET `/api/notices`, `/api/letters`, `/api/education-letters`, `/api/news`, `/api/awards`, `/api/posts`, `/api/feed?category=all|notice|letter|news|awards|office_letter`, `/api/search?q=...&category=all`, `/api/status?category=all`, `/api/meta`.
-- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 5개 게시판용 읽기 전용 도구 **13개** 제공.
+- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 6개 게시판용 읽기 전용 도구 **15개** 제공.
 - 상류 URL 고정, 3분 단위 Cloudflare edge 캐시, 700KB 응답 상한, 요청 타임아웃, 실패 시 오류 표시.
 - 공개 쓰기 기능·학생 개인정보 취득·학교 홈페이지 변경 기능 없음.
 
@@ -147,3 +149,13 @@ npm run dev
 - 새 MCP `get_education_office_letters`, `search_education_office_letters`. 기존 11개는 삭제하지 않아 **총 13개**.
 - 180초 개별 RSS 캐시·읽기 전용·전체 공개·기존 Access 앱 백업 유지·GitHub Actions 없이 Cloudflare Workers Builds 배포.
 - [통합 개발기 및 실측 검증 기록](docs/EDUCATION_OFFICE_LETTERS_2026-11-10.md).
+
+## 2026-11-10 · 공모전 및 모집공고 RSS
+
+- 공식 원본: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17255&bbsId=10065`.
+- 7개 pill: `전체 보기`, `공지 사항`, `가정통신문`, `한봄 NEWS`, `학생작품 및 수상내역`, `가정통신문(교육청)`, `공모전 및 모집공고`.
+- 새 API `GET /api/opportunities?limit=20&q=`, `category=opportunities` 지원. 이전 API 유지.
+- MCP 신규 `get_school_opportunities`, `search_school_opportunities`; 전체 15개.
+- **게시물이 없으면 정상 0건·빈 배열로 반환하며 에러나 가짜 공지를 만들지 않음.** 탭에는 `표시할 게시물이 없습니다.` 한 줄만 노출.
+- 기존 순백색·주아체·공개 접근·3분 캐시·GitHub main 자동 배포 및 Access 복구 설정 그대로.
+- [개발·검증 기록](docs/CONTESTS_RECRUITMENT_2026-11-10.md).

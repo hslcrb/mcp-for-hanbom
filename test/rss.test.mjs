@@ -35,7 +35,7 @@ test("public REST and MCP tool registry remain intact",async()=>{
   assert.equal((await rest.json()).name,"HANBOM DATA");
   const rpc=await worker.fetch(new Request("https://data.hanbom.rhee.life/mcp",{method:"POST",headers:{"content-type":"application/json","accept":"application/json, text/event-stream"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:"tools/list",params:{}})}),{},{});
   assert.equal(rpc.status,200);
-  assert.deepEqual((await rpc.json()).result.tools.map(x=>x.name),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_education_office_letters","search_education_office_letters","get_all_school_posts","search_all_school_posts"]);
+  assert.deepEqual((await rpc.json()).result.tools.map(x=>x.name),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_education_office_letters","search_education_office_letters","get_school_opportunities","search_school_opportunities","get_all_school_posts","search_all_school_posts"]);
 });
 
 test("Juache heading loads CDN font while preserving the white list and CSP", async()=>{
@@ -79,10 +79,10 @@ test("combined feed merges newest first",()=>{
  assert.equal(merged.items[0].category,"letter");
  assert.equal(merged.items[1].category,"notice");
 });
-test("pill navigation shows all six categories and keeps white aesthetic",async()=>{
+test("pill navigation shows all seven filters and keeps white aesthetic",async()=>{
  const res=await worker.fetch(new Request("https://data.hanbom.rhee.life/"),{},{});
  const html=await res.text();
- for(const s of ["전체 보기","공지 사항","가정통신문","한봄 NEWS","학생작품 및 수상내역","가정통신문(교육청)"])assert.ok(html.includes(">"+s+"</button>"));
+ for(const s of ["전체 보기","공지 사항","가정통신문","한봄 NEWS","학생작품 및 수상내역","가정통신문(교육청)","공모전 및 모집공고"])assert.ok(html.includes(">"+s+"</button>"));
  assert.equal((html.match(/class="filters"/g)||[]).length,1);
  assert.match(html,/border-radius:999px/);
  assert.match(html,/button\[aria-pressed="true"\]/);
@@ -195,4 +195,38 @@ test("three-feed merge remains chronological",()=>{
 test("bad category fails safely",async()=>{
  const res=await worker.fetch(new Request("https://data.hanbom.rhee.life/api/feed?category=alien"),{},{});
  assert.equal(res.status,400);
+});
+
+test("valid RSS without items returns zero not an error",()=>{
+ const feed=parseFeed('<rss version="2.0"><channel><title>게시판 RSS</title><description>공모전 및 모집공고</description></channel></rss>',"opportunities");
+ assert.equal(feed.category,"opportunities");assert.equal(feed.source_url,FEEDS.opportunities.url);
+ assert.equal(feed.count,0);assert.deepEqual(feed.items,[]);
+});
+test("empty competitions stay healthy in REST, MCP and six-feed combined results",async()=>{
+ const original=globalThis.fetch;
+ globalThis.fetch=async url=>new Response(String(url).includes("bbsId=10065")
+ ?'<rss version="2.0"><channel><title>게시판 RSS</title></channel></rss>'
+ :'<rss><item><title>기존 소식</title></item></rss>',{status:200});
+ try{
+  const api=async path=>{const r=await worker.fetch(new Request("https://data.hanbom.rhee.life"+path),{},{});assert.equal(r.status,200);return r.json();};
+  const single=await api("/api/opportunities");assert.equal(single.count,0);assert.deepEqual(single.items,[]);
+  assert.equal((await api("/api/status?category=opportunities")).count,0);
+  assert.equal((await api("/api/search?category=opportunities&q=%EA%B3%B5%EB%AA%A8")).count,0);
+  const all=await api("/api/posts?limit=100");
+  assert.equal(all.count,5);assert.equal(all.partial,false);assert.equal(all.sources.length,6);
+  assert.equal(all.sources.find(x=>x.category==="opportunities").count,0);
+  assert.equal((await api("/api/meta")).sources.opportunities.url,FEEDS.opportunities.url);
+  for(const [name,args] of [["get_school_opportunities",{}],["search_school_opportunities",{query:"공모전"}]]){
+   const req=new Request("https://data.hanbom.rhee.life/mcp",{method:"POST",headers:{"content-type":"application/json","accept":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:2,method:"tools/call",params:{name,arguments:args}})});
+   const response=await worker.fetch(req,{},{});
+   const result=await response.json();
+   assert.equal(result.result.structuredContent.count,0);
+   assert.deepEqual(result.result.structuredContent.items,[]);
+   assert.notEqual(result.result.isError,true);
+  }
+ }finally{globalThis.fetch=original;}
+});
+test("MCP rejects unsupported opportunity search parameters",async()=>{
+ const req=new Request("https://data.hanbom.rhee.life/mcp",{method:"POST",headers:{"content-type":"application/json","accept":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:3,method:"tools/call",params:{name:"search_school_opportunities",arguments:{wrong:true}}})});
+ const res=await worker.fetch(req,{},{});assert.equal((await res.json()).error.code,-32602);
 });
