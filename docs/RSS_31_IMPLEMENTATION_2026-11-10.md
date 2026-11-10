@@ -204,3 +204,15 @@ Cloudflare 공식 [Workers Limits](https://developers.cloudflare.com/workers/pla
 - 동적 도구 46개 + 범용 도구 2개와 기존 도구 19개는 테스트에서 REST와 MCP의 JSON-RPC 호출 결과로 검증.
 - ChatGPT에 연결된 앱이 새로운 67개 도구 스키마를 실제로 다시 탐색하는지 여부는 사용자 앱의 캐시 갱신 상태에 따라 차이가 있을 수 있어 별도 확인 대상.
 - 서비스 인증은 여전히 `None`, 과거 Cloudflare Access 보관 정책은 변경하지 않음.
+
+### 실제 학과별 pill 전환 스모크 테스트 추가
+
+Cloudflare Browser Rendering의 임시 브라우저에서 스크립트로 실제 `click()` 이벤트를 실행하여 아래 상태를 확인했다. 테스트 스크립트는 라이브 사이트에 저장하거나 사용자 페이지 소스를 수정하지 않았다.
+
+- 최상위 `학교특색활동` 클릭 → 학교특색활동 보조 nav **표시**, 상위 버튼 `aria-pressed=true`.
+- 보조 `빅데이터정보과` 클릭 → 해당 하위 버튼 `aria-pressed=true`.
+- 최상위 `교과자료실` 클릭 → 교과자료실 보조 nav **표시**, 이전 학교특색활동 nav **숨김**.
+- 교과자료실 아래 `빅데이터정보과` 클릭 → 해당 하위 버튼 `aria-pressed=true`.
+- 실제 반환 상태: `featuresVisible=true, featuresPressed=true, bigdataPressed=true, curriculumVisible=true, featuresHidden=true, curriculumBigdataPressed=true`.
+
+별도 문제로 이번 Browser Rendering은 AJAX 초기 수집 이전에 결과를 추출하면 '불러오는 중입니다.'가 나올 수 있다. `waitForSelector:'#notices li a'`를 사용할 때 전체 361개 링크 렌더링이 완료된 것을 확인했다. 이 차이는 브라우저 자동화 대기 조건의 문제이지 데이터 유실이 아니다.
