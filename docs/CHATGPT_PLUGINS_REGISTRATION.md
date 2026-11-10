@@ -10,7 +10,7 @@
 | 항목 / UI 명칭 | 입력값 | 비고 |
 | --- | --- | --- |
 | Name / 표시명 | `HANBOM Data MCP` | 사용자에게 표시할 이름 |
-| Description / 설명 | `한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역 RSS 조회·검색용 비공식 읽기 전용 도구` | 선택 사항 |
+| Description / 설명 | `한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역·공모전 및 모집공고 RSS 조회·검색용 비공식 읽기 전용 도구` | 선택 사항 |
 | Server URL / URL | **`https://data.hanbom.rhee.life/mcp`** | 끝에 `/mcp` 필수 |
 | Transport / Connection | `Remote MCP server` / `Streamable HTTP` | 지원 UI에서 선택 |
 | Authentication / 인증 | **`None` / `No authentication`** | 현재 무인증 서비스 |
@@ -42,7 +42,7 @@ None
 **Description**
 
 ```text
-한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역의 공개 RSS를 조회하고 검색하는 비공식 읽기 전용 MCP 서버
+한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역·공모전 및 모집공고의 공개 RSS를 조회하고 검색하는 비공식 읽기 전용 MCP 서버
 ```
 
 ## MCP 서버가 제공하는 도구
@@ -60,6 +60,8 @@ None
 | `search_student_works_awards` | `query` 필수, `limit` 선택 | 학생작품 및 수상내역 RSS 검색 |
 | `get_education_office_letters` | `limit` 선택 | 가정통신문(교육청) 최근 게시물 |
 | `search_education_office_letters` | `query` 필수, `limit` 선택 | 교육청 가정통신문 RSS 검색 |
+| `get_school_opportunities` | `limit` 선택 | 공모전 및 모집공고 최신 게시물(없으면 0건) |
+| `search_school_opportunities` | `query` 필수, `limit` 선택 | 공모전 및 모집공고 검색(없으면 0건) |
 | `get_all_school_posts` | `limit` 선택 | 3개 게시판 날짜순 통합 |
 | `search_all_school_posts` | `query` 필수, `limit` 선택 | 3개 게시판 통합 검색 |
 
@@ -70,6 +72,7 @@ curl -i 'https://data.hanbom.rhee.life/api/meta'
 curl -i 'https://data.hanbom.rhee.life/api/notices?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/letters?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/education-letters?limit=3'
+curl -i 'https://data.hanbom.rhee.life/api/opportunities?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/news?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/awards?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/posts?limit=5'
@@ -115,3 +118,11 @@ curl -sS -X POST 'https://data.hanbom.rhee.life/mcp' \
 - 기존 도구·URL 유지, 등록 URL은 `https://data.hanbom.rhee.life/mcp`, 인증 `None`.
 - 기존 등록 앱이 이전 도구 목록만 표시하면 도구 재동기화/연결 갱신이 필요할 수 있음.
 - 상세 개발기: [EDUCATION_OFFICE_LETTERS_2026-11-10.md](EDUCATION_OFFICE_LETTERS_2026-11-10.md).
+
+## 2026-11-10 · 공모전 및 모집공고 추가 — 현행
+
+- 공식 RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17255&bbsId=10065`.
+- **MCP 도구 15개** (기존 13개 + `get_school_opportunities`, `search_school_opportunities`).
+- 유효하지만 게시물 없는 피드는 오류가 아니라 정상 0건 결과.
+- MCP URL `https://data.hanbom.rhee.life/mcp`, Authentication `None` 유지. 설치된 ChatGPT 앱의 도구 목록 갱신이 필요할 수 있음.
+- [구현·검증기](CONTESTS_RECRUITMENT_2026-11-10.md).
