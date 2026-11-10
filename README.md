@@ -1,10 +1,23 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+> **현재 운영 상태 (2026-11-11): RSS 82종 · 23개 메뉴 · 3개 무료 플랜 호환 분할 조회 · MCP 68개 도구 · 전체 공개.** 기존 31개 및 GitHub main 자동배포·Cloudflare Access 복구용 설정은 유지됩니다. 전체 RSS 등록값은 [RSS 82종 개발기](docs/RSS_82_IMPLEMENTATION_2026-11-11.md)와 [원본 카탈로그](config/rss-catalog-82.json)를 참고하세요.
+
+## 현재 버전 v2.0.0
+
+- 학교 공식 공개 RSS **82개(기존 31 + 신규 51)**를 파일 원문에 적힌 **23개 상위 메뉴**로 분류.
+- 홈은 기존 흰 배경·주아체·본문 중앙 정렬을 유지하고, 23개 상위 pill 아래에서 각 소속 게시판을 하위 pill로 선택.
+- [전체 게시판 카탈로그](https://data.hanbom.rhee.life/api/catalog), [전체 첫 페이지](https://data.hanbom.rhee.life/api/posts?shard=0&limit=all), 나머지 `shard=1,2`까지 합쳐 전체 82개 조회.
+- **한 요청에서 82개를 모두 가져오지 않습니다.** Cloudflare Workers Free 외부 subrequest 50개 제한을 피해 28/28/26개의 3개 shard로 나누고, 브라우저가 이 데이터를 합쳐 보여줍니다.
+- REST 직접 경로 82개, MCP 기존 67개 + 카탈로그 조회 1개 = **68개 도구**. 새로운 51개도 기존 `get_board_posts`/`search_board_posts`의 category 선택으로 검색 가능.
+- 공개 상담·민원 게시물은 개인정보 최소 노출을 위해 제목·요약을 보호 처리합니다.
+- Worker 인증은 현재 None; GitHub Actions 없이 `main` 커밋 → Cloudflare Workers Builds 자동 배포.
+
+
 > **현재 운영 상태 (2026-11-10): 전체 공개 · Cloudflare Access 비적용.** 대시보드, REST, MCP 모두 로그인 없이 접근할 수 있습니다. 예전 소유자 전용 정책과 공개 Bypass 정책은 삭제하지 않고 별도 Access 앱에 연결해 보존했습니다. 재보호 방법: [Access 일시 해제·복구 문서](docs/ACCESS_SUSPENSION_2026-11-10.md).
 
-> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 RSS 게시판 **31종**을 REST API, 원격 MCP, 공개 대시보드로 연결하는 Cloudflare Workers 서비스.
+> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 RSS 게시판 **82종**을 REST API, 원격 MCP, 공개 대시보드로 연결하는 Cloudflare Workers 서비스.
 
-## 현행 31개 RSS 데이터 허브 — 2026-11-10
+## 현행 31개 RSS 데이터 허브 — 2026-11-10 (이전 버전 기록)
 
 **기존 8개 + 신규 23개 = 총 31개 공식 RSS 게시판**을 지원한다. 학과별로 이름이 중복되는 학교특색활동과 교과자료실은 상위 그룹/하위 필터로 구분한다. 초기 UI에는 20개의 최상위 pill이 나타나며 그룹을 선택하면 8개 하위 필터가 열린다. 화면은 기존 순백색·Juache 제목·중앙 정렬 텍스트 목록 그대로다.
 

@@ -1,5 +1,25 @@
 # ChatGPT Plugins 등록 입력값 — HANBOM DATA MCP
 
+## 2026-11-11 현행 등록값 (v2.0.0)
+
+| 항목 | 값 |
+|---|---|
+| Name | `HANBOM Data MCP` |
+| Server URL | `https://data.hanbom.rhee.life/mcp` |
+| Transport | `Streamable HTTP` |
+| Authentication | `None` |
+| OAuth / Client ID / Secret | 모두 사용하지 않음 |
+| 공개 RSS | **82개** |
+| 상위 메뉴 | **23개** |
+| MCP 도구 | **68개**, 기존 67개 + `list_school_boards` 1개 |
+
+**신규 51개 RSS는 모두 등록**돼 있고 `list_school_boards`에서 category ID를 확인한 뒤 `get_board_posts` 또는 `search_board_posts`로 사용합니다. 별도의 102개 중복 MCP 도구를 추가하지 않은 것은 ChatGPT 플러그인 탐색 복잡성과 호출 효율을 고려한 결정입니다.
+
+`category="all"`은 82개 RSS를 한 번에 수집하지 않으며, Cloudflare 무료 플랜 제약 때문에 **`shard=0`, `shard=1`, `shard=2`** 순서로 조회해야 전체를 볼 수 있습니다. `get_all_school_posts`와 `search_all_school_posts`, `get_school_feed_status`의 입력에도 `shard`를 사용합니다. 응답에 `has_more`, `next_shard`, `shard_count`가 포함됩니다.
+
+[82개 RSS와 전체 입력값·개발기](RSS_82_IMPLEMENTATION_2026-11-11.md)
+
+
 **2026-11-10 변경:** 대시보드까지 전면 공개로 전환했습니다. MCP 주소와 인증값은 기존대로 `https://data.hanbom.rhee.life/mcp` / `None`을 유지합니다. ([Access 복구 가이드](ACCESS_SUSPENSION_2026-11-10.md))
 
 
@@ -21,7 +41,7 @@
 | 항목 / UI 명칭 | 입력값 | 비고 |
 | --- | --- | --- |
 | Name / 표시명 | `HANBOM Data MCP` | 사용자에게 표시할 이름 |
-| Description / 설명 | `한봄고 공개 RSS 31종의 공지·학과·교과자료·진로·취업·급식 등을 조회·검색하는 읽기 전용 MCP` | 선택 사항 |
+| Description / 설명 | `한봄고 공개 RSS 82종을 23개 상위 메뉴로 탐색하고 게시판별 조회·검색하는 읽기 전용 MCP` | 선택 사항 |
 | Server URL / URL | **`https://data.hanbom.rhee.life/mcp`** | 끝에 `/mcp` 필수 |
 | Transport / Connection | `Remote MCP server` / `Streamable HTTP` | 지원 UI에서 선택 |
 | Authentication / 인증 | **`None` / `No authentication`** | 현재 무인증 서비스 |
@@ -53,7 +73,7 @@ None
 **Description**
 
 ```text
-한봄고등학교 공개 RSS 31종에서 공지·학과별 활동·교과자료·진로진학·취업·급식 게시물을 조회하고 검색하는 비공식 읽기 전용 MCP 서버
+한봄고등학교 공개 RSS 82종을 23개 상위 메뉴로 탐색하며 게시판별 공지·교과·진로·취업·급식·공개자료를 조회·검색하는 비공식 읽기 전용 MCP 서버
 ```
 
 ## MCP 서버가 제공하는 도구
