@@ -6,7 +6,7 @@
   "preview_urls": false,
   "routes": [
     {
-      "pattern": "hanbom.rhee.life",
+      "pattern": "data.hanbom.rhee.life",
       "custom_domain": true
     }
   ]

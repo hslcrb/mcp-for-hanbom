@@ -1,33 +1,67 @@
-# HANBOM DATA
+# HANBOM DATA — 학교 RSS 데이터 허브
 
-비공식 한봄고등학교 RSS → Cloudflare Workers REST API + Streamable HTTP MCP + 개인 대시보드.
+> **비공식 학생 개발 프로젝트** · 한봄고등학교 공식 공지사항 RSS를 REST API, 원격 MCP, 개인 대시보드로 제공하는 Cloudflare Workers 서비스.
 
-RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062
+## 서비스 주소 (Canonical)
 
-## API
+| 항목 | URL | 접근 정책 |
+| --- | --- | --- |
+| 개인 대시보드 | https://data.hanbom.rhee.life/ | 지정 이메일 1명만 Cloudflare Access 허용 |
+| REST 공지 | https://data.hanbom.rhee.life/api/notices | 모두 공개, 읽기 전용 |
+| REST 검색 | https://data.hanbom.rhee.life/api/search?q=입학 | 모두 공개, 읽기 전용 |
+| REST 상태 | https://data.hanbom.rhee.life/api/status | 모두 공개, 읽기 전용 |
+| API 메타데이터 | https://data.hanbom.rhee.life/api/meta | 모두 공개, 읽기 전용 |
+| MCP endpoint | **https://data.hanbom.rhee.life/mcp** | 모두 공개, 읽기 전용 |
 
-- GET `/api/notices?limit=20&q=`
-- GET `/api/search?q=...`
-- GET `/api/status`
-- GET `/api/meta`
-- POST `/mcp`: JSON-RPC 2.0, `initialize`, `tools/list`, `tools/call`, `ping`; tools `get_school_notices`, `search_school_notices`, `get_school_feed_status`.
+**2026-11-10 도메인 변경:** 예전 `hanbom.rhee.life`는 폐기 대상으로, 신규 정식 주소 `data.hanbom.rhee.life`만 사용합니다. 기존 주소로 플러그인을 등록하지 마세요.
 
-## 인증
+## 데이터 출처
 
-Cloudflare Access 경로별 애플리케이션 구성: `hanbom.rhee.life` 전체는 `dlghtp581@naver.com` 한 계정만 Allow, `/mcp`와 `/api/*`에는 각각 Bypass Everyone 적용. workers.dev/preview URLs 비활성화. Worker도 대시보드에 Access assertion header가 없으면 401. 주의: 헤더 존재 여부 검사는 Access 서명을 자체 검증하는 것이 아니므로 Cloudflare Access 정책이 필수입니다.
+- 공식 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062
+- 학교 홈페이지: https://hanbom-h.goesw.kr/
+- RSS에 노출된 공지 일부만 조회할 수 있습니다. 전체 공지 및 첨부파일은 반드시 공식 원문에서 확인해야 합니다.
 
-MCP는 현재 **공개 무인증**. OAuth 2.1/PKCE 지원은 앞으로 구현 예정이며 아직 OAuth 지원을 주장하지 않습니다.
+## 기능 및 MCP
 
-## 자동 배포
+- Worker 하나로 RSS·REST·Stateless MCP(Streamable HTTP JSON-RPC)·반응형 개인 대시보드 운영.
+- GET `/api/notices?limit=20&q=`, GET `/api/search?q=...`, GET `/api/status`, GET `/api/meta`.
+- POST `/mcp`: `initialize`, `ping`, `tools/list`, `tools/call`.
+- MCP 도구: `get_school_notices`, `search_school_notices`, `get_school_feed_status`.
+- 상류 URL 고정, 3분 단위 Cloudflare edge 캐시, 700KB 응답 상한, 요청 타임아웃, 실패 시 오류 표시.
+- 공개 쓰기 기능·학생 개인정보 취득·학교 홈페이지 변경 기능 없음.
 
-Cloudflare Workers Builds를 GitHub `hslcrb/mcp-for-hanbom`의 `main`에 연결. Build `npm run check`, deploy `npm run deploy`, Node 24, Preview builds off. **GitHub Actions 금지.**
+## 보안과 인증
 
-## 로컬 실행
+- 대시보드 `/`는 Cloudflare Access로 `dlghtp581@naver.com`만 허용합니다.
+- `/mcp` 와 `/api/*`는 각각 독립된 Cloudflare Access **Bypass Everyone** 규칙으로 공개합니다.
+- Worker의 대시보드 인증 헤더 확인은 보조 수단이며, **실제 인증 강제는 Cloudflare Access 정책**이 담당합니다.
+- `workers.dev` 비활성화, Preview URLs 비활성화, Preview builds 비활성화.
+- 현재 MCP는 **인증 없는 공개 접근**입니다. OAuth 2.1/PKCE는 아직 구현되지 않았으며, 등록 화면에서 OAuth를 선택하면 안 됩니다.
 
-`npm install && npm run check && npm run dev`
+## GitHub Actions 없는 main 자동 배포
 
-## ChatGPT Plugins 등록
+- GitHub 저장소: https://github.com/hslcrb/mcp-for-hanbom
+- Production branch: `main` / Root directory: `/`.
+- Build command: `npm run check`; Deploy command: `npm run deploy`.
+- Provider: GitHub → Cloudflare Workers Builds (**GitHub Actions, .github/workflows 미사용**).
+- Worker name: `mcp-for-hanbom` / Custom domain: `data.hanbom.rhee.life`.
 
-Server URL `https://hanbom.rhee.life/mcp` (실제 배포와 HTTPS 동작 검증 후 등록), Authentication None, Name HANBOM Data MCP.
+## 로컬 작업
 
-학교 공식 서비스가 아니며 공개 RSS 게시물만 사용. 원문과 출처를 명시하세요. RSS는 전체 과거 기록을 포함하지 않을 수 있습니다. 실제 학교 상류 연결은 운영 환경에서 검증해야 합니다.
+```bash
+npm install
+npm run check
+npm run dev
+```
+
+## 프로젝트 운영 문서
+
+- [ChatGPT Plugins 등록 입력값 및 테스트](docs/CHATGPT_PLUGINS_REGISTRATION.md)
+- [Cloudflare Workers Builds 배포·운영 매뉴얼](docs/DEPLOYMENT.md)
+- [대시보드·REST·MCP 접근 제어](docs/ACCESS_SECURITY.md)
+- [도메인 이전 기록 — 2026-11-10](docs/DOMAIN_MIGRATION_2026-11-10.md)
+- [개발·구축·검증 기술기 — 2026-11-10](docs/BUILD_HISTORY_2026-11-10.md)
+
+## 책임 고지
+
+이 프로젝트는 학교 공식 서비스가 아닙니다. 데이터·이미지·문서의 권리는 원저작자와 제공 기관에 있으며 출처를 명시합니다. 소스의 공개 여부는 학교 데이터 재배포 허가를 뜻하지 않습니다.
