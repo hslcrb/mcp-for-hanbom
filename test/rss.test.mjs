@@ -86,7 +86,7 @@ test("combined feed merges newest first",()=>{
 test("pill navigation keeps 9 legacy filters with grouped additions",async()=>{
  const res=await worker.fetch(new Request("https://data.hanbom.rhee.life/"),{},{});
  const html=await res.text();
- for(const s of ["전체 보기","공지 사항","가정통신문","한봄 NEWS","학생작품 및 수상내역","가정통신문(교육청)","공모전 및 모집공고","보건알림","학생생활규정게시판"])assert.ok(html.includes(">"+s+"</button>"));
+ for(const s of ["전체 보기","공지사항","가정통신문","한봄 NEWS","학생작품 및 수상내역","가정통신문(교육청)","공모전 및 모집공고","보건알림","학생생활규정게시판"])assert.ok(html.includes(">"+s+"</button>"));
  assert.equal((html.match(/class="filters primary"/g)||[]).length,1);
  assert.match(html,/border-radius:999px/);
  assert.match(html,/button\[aria-pressed="true"\]/);

@@ -140,7 +140,7 @@ test("MCP remains 68 tools with 67 originals and 1 catalog tool; all three shard
   assert.equal(catalog.result.structuredContent.menus.length,23);
   const one=await rpc("get_board_posts",{category:"foundation_board_minutes"});
   assert.equal(one.result.structuredContent.category,"foundation_board_minutes");
-  const search=await rpc("search_board_posts",{category:"community",query:"학부모"});
+  const search=await rpc("search_board_posts",{category:"community",query:"각종양식"});
   assert.ok(search.result.structuredContent.count>=1);
   for(let shard=0;shard<3;shard++){
    const page=await rpc("get_all_school_posts",{shard,limit:100});
