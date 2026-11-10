@@ -1,5 +1,193 @@
 
-export const VERSION="0.8.0";
+export const VERSION="1.0.0";
+export const EXTRA_BOARD_CATALOG=Object.freeze([
+  {
+    "id": "volunteer",
+    "label": "봉사활동",
+    "mi": 17276,
+    "bbs": 10075,
+    "route": "/api/volunteer",
+    "group": null
+  },
+  {
+    "id": "after_school",
+    "label": "방과후학교",
+    "mi": 17288,
+    "bbs": 10081,
+    "route": "/api/after-school",
+    "group": null
+  },
+  {
+    "id": "feature_main",
+    "label": "학교특색활동",
+    "mi": 17292,
+    "bbs": 10082,
+    "route": "/api/featured-activities",
+    "group": "features"
+  },
+  {
+    "id": "feature_beauty",
+    "label": "뷰티아트과",
+    "mi": 17298,
+    "bbs": 10085,
+    "route": "/api/featured-activities/beauty",
+    "group": "features"
+  },
+  {
+    "id": "feature_character",
+    "label": "캐릭터창작과",
+    "mi": 17300,
+    "bbs": 10087,
+    "route": "/api/featured-activities/character",
+    "group": "features"
+  },
+  {
+    "id": "feature_visual",
+    "label": "시각디자인과",
+    "mi": 17303,
+    "bbs": 10089,
+    "route": "/api/featured-activities/visual",
+    "group": "features"
+  },
+  {
+    "id": "feature_bigdata",
+    "label": "빅데이터정보과",
+    "mi": 17305,
+    "bbs": 10091,
+    "route": "/api/featured-activities/bigdata",
+    "group": "features"
+  },
+  {
+    "id": "feature_smart",
+    "label": "스마트제어과",
+    "mi": 17307,
+    "bbs": 10092,
+    "route": "/api/featured-activities/smart",
+    "group": "features"
+  },
+  {
+    "id": "feature_sound",
+    "label": "사운드디자인과",
+    "mi": 17310,
+    "bbs": 10094,
+    "route": "/api/featured-activities/sound",
+    "group": "features"
+  },
+  {
+    "id": "meals",
+    "label": "급식게시판",
+    "mi": 17364,
+    "bbs": 10112,
+    "route": "/api/meals",
+    "group": null
+  },
+  {
+    "id": "nutrition",
+    "label": "영양상담",
+    "mi": 17371,
+    "bbs": 10115,
+    "route": "/api/nutrition",
+    "group": null
+  },
+  {
+    "id": "livestock",
+    "label": "축산물이력표시",
+    "mi": 17378,
+    "bbs": 10118,
+    "route": "/api/livestock",
+    "group": null
+  },
+  {
+    "id": "teacher_protection",
+    "label": "교육활동침해 예방교육계획",
+    "mi": 17381,
+    "bbs": 10120,
+    "route": "/api/education-protection",
+    "group": null
+  },
+  {
+    "id": "employment_status",
+    "label": "취업현황",
+    "mi": 17400,
+    "bbs": 10131,
+    "route": "/api/employment-status",
+    "group": null
+  },
+  {
+    "id": "employment_resources",
+    "label": "취업자료",
+    "mi": 17404,
+    "bbs": 10133,
+    "route": "/api/employment-resources",
+    "group": null
+  },
+  {
+    "id": "career_resources",
+    "label": "진로진학자료",
+    "mi": 17413,
+    "bbs": 10136,
+    "route": "/api/career-resources",
+    "group": null
+  },
+  {
+    "id": "curriculum_general",
+    "label": "보통교과",
+    "mi": 17438,
+    "bbs": 10155,
+    "route": "/api/curriculum/general",
+    "group": "curriculum"
+  },
+  {
+    "id": "curriculum_beauty",
+    "label": "뷰티아트과",
+    "mi": 17441,
+    "bbs": 10158,
+    "route": "/api/curriculum/beauty",
+    "group": "curriculum"
+  },
+  {
+    "id": "curriculum_character",
+    "label": "캐릭터창작과",
+    "mi": 17446,
+    "bbs": 10160,
+    "route": "/api/curriculum/character",
+    "group": "curriculum"
+  },
+  {
+    "id": "curriculum_visual",
+    "label": "시각디자인과",
+    "mi": 17450,
+    "bbs": 10163,
+    "route": "/api/curriculum/visual",
+    "group": "curriculum"
+  },
+  {
+    "id": "curriculum_bigdata",
+    "label": "빅데이터정보과",
+    "mi": 17457,
+    "bbs": 10169,
+    "route": "/api/curriculum/bigdata",
+    "group": "curriculum"
+  },
+  {
+    "id": "curriculum_smart",
+    "label": "스마트제어과",
+    "mi": 17465,
+    "bbs": 10176,
+    "route": "/api/curriculum/smart",
+    "group": "curriculum"
+  },
+  {
+    "id": "curriculum_sound",
+    "label": "사운드디자인과",
+    "mi": 17470,
+    "bbs": 10179,
+    "route": "/api/curriculum/sound",
+    "group": "curriculum"
+  }
+]);
+export const GROUPS=Object.freeze({"features":["feature_main","feature_beauty","feature_character","feature_visual","feature_bigdata","feature_smart","feature_sound"],"curriculum":["curriculum_general","curriculum_beauty","curriculum_character","curriculum_visual","curriculum_bigdata","curriculum_smart","curriculum_sound"]});
+
 export const FEEDS=Object.freeze({
   notice:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062",source:"한봄고등학교 공지사항",label:"공지 사항"},
   letter:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063",source:"한봄고등학교 가정통신문",label:"가정통신문"},
@@ -8,8 +196,10 @@ export const FEEDS=Object.freeze({
   office_letter:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17254&bbsId=10064&bbsTy=HCNOTIE",source:"한봄고등학교 가정통신문(교육청)",label:"가정통신문(교육청)"},
   opportunities:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17255&bbsId=10065",source:"한봄고등학교 공모전 및 모집공고",label:"공모전 및 모집공고"},
   health:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17256&bbsId=10066",source:"한봄고등학교 보건알림",label:"보건알림"},
-  student_rules:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17273&bbsId=10074",source:"한봄고등학교 학생생활규정게시판",label:"학생생활규정게시판"}
+  student_rules:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17273&bbsId=10074",source:"한봄고등학교 학생생활규정게시판",label:"학생생활규정게시판"},
+  ...Object.fromEntries(EXTRA_BOARD_CATALOG.map(b=>[b.id,{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi="+b.mi+"&bbsId="+b.bbs,source:"한봄고등학교 "+(b.group==="features"?"학교특색활동 · ":b.group==="curriculum"?"교과자료실 · ":"")+b.label,label:b.label,group:b.group}]))
 });
+export const API_ROUTES=Object.freeze(Object.fromEntries(EXTRA_BOARD_CATALOG.map(b=>[b.route,b.id])));
 const VERSIONS=["2025-03-26","2025-06-18","2025-11-25"];
 const HEADERS={"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","access-control-allow-origin":"*","access-control-allow-methods":"GET,POST,OPTIONS","access-control-allow-headers":"content-type,accept,mcp-protocol-version"};
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:HEADERS});
@@ -24,10 +214,10 @@ export function parseFeed(xml,category="notice"){
  const items=matches.map(m=>{const x=m[1],d=tag(x,"pubDate")||tag(x,"published")||tag(x,"updated"),url=safeLink(x);return{id:tag(x,"guid")||tag(x,"id")||url,title:tag(x,"title").slice(0,300),url,published_at:d&&!isNaN(Date.parse(d))?new Date(d).toISOString():null,summary:(tag(x,"description")||tag(x,"summary")||tag(x,"content")).slice(0,500),category,category_label:feed.label};}).filter(x=>x.title);
  return{category,source:feed.source,source_url:feed.url,feed_title:tag(xml,"title"),fetched_at:new Date().toISOString(),count:items.length,items};
 }
-async function readFeed(ctx,category="notice"){
+async function readFeed(ctx,category="notice",useCache=true){
  const feed=FEEDS[category];if(!feed)throw Error("INVALID_CATEGORY");
  // Separate edge-cache keys prevent different categories from being confused.
- const cache=globalThis.caches?.default,key=new Request("https://hanbom-cache.invalid/feed-v2/"+category);
+ const cache=useCache?globalThis.caches?.default:null,key=new Request("https://hanbom-cache.invalid/feed-v3/"+category);
  if(cache)try{const hit=await cache.match(key);if(hit)return{...await hit.json(),cached:true};}catch{}
  let r;try{r=await fetch(feed.url,{redirect:"manual",headers:{accept:"application/rss+xml,application/atom+xml,application/xml,text/xml"},signal:AbortSignal.timeout(12000)});}catch{throw Error("UPSTREAM_NETWORK_ERROR");}
  if(!r.ok)throw Error(r.status>=300&&r.status<400?"UPSTREAM_REDIRECT":"UPSTREAM_HTTP_"+r.status);
@@ -37,28 +227,34 @@ async function readFeed(ctx,category="notice"){
  if(cache){const save=cache.put(key,new Response(JSON.stringify(result),{headers:{"cache-control":"public,max-age=180","content-type":"application/json"}})).catch(()=>{});if(ctx?.waitUntil)ctx.waitUntil(save);else await save;}
  return{...result,cached:false};
 }
-export function mergeFeeds(results){
+export function mergeFeeds(results,category="all"){
  const successful=results.filter(Boolean);
  const items=successful.flatMap(f=>f.items).sort((a,b)=>{
-   const at=Date.parse(a.published_at||"")||0,bt=Date.parse(b.published_at||"")||0;
-   return bt-at||a.title.localeCompare(b.title,"ko");
+  const at=Date.parse(a.published_at||"")||0,bt=Date.parse(b.published_at||"")||0;
+  return bt-at||a.title.localeCompare(b.title,"ko");
  });
- return {
-   category:"all",
-   source:"한봄고등학교 공개 RSS — 공지 사항·가정통신문·한봄 NEWS·학생작품 및 수상내역·가정통신문(교육청)·공모전 및 모집공고·보건알림·학생생활규정게시판",
-   sources:successful.map(f=>({category:f.category,source:f.source,source_url:f.source_url,count:f.count,fetched_at:f.fetched_at,cached:f.cached})),
-   fetched_at:new Date().toISOString(),count:items.length,items
- };
+ return {category,source:"한봄고등학교 공개 RSS "+successful.length+"개 게시판",
+  sources:successful.map(f=>({category:f.category,source:f.source,source_url:f.source_url,count:f.count,fetched_at:f.fetched_at,cached:f.cached})),
+  fetched_at:new Date().toISOString(),count:items.length,items};
 }
+export const categories=Object.freeze(["all",...Object.keys(GROUPS),...Object.keys(FEEDS)]);
+const knownCategory=c=>categories.includes(c);
 async function getData(ctx,category="notice"){
- if(category!=="all")return readFeed(ctx,category);
- const names=["notice","letter","news","awards","office_letter","opportunities","health","student_rules"],resolved=await Promise.allSettled(names.map(c=>readFeed(ctx,c)));
- const good=resolved.map((r,i)=>r.status==="fulfilled"?r.value:null).filter(Boolean);
+ if(FEEDS[category])return readFeed(ctx,category);
+ if(category!=="all"&&!GROUPS[category])throw Error("INVALID_CATEGORY");
+ const names=category==="all"?Object.keys(FEEDS):GROUPS[category];
+ // The aggregate cache prevents 31 feed lookups + 31 remote fetches from exceeding Workers Free 50 subrequests.
+ const cache=globalThis.caches?.default,key=new Request("https://hanbom-cache.invalid/aggregate-v3/"+category);
+ if(cache)try{const hit=await cache.match(key);if(hit)return{...await hit.json(),cached:true};}catch{}
+ const resolved=await Promise.allSettled(names.map(id=>readFeed(ctx,id,false)));
+ const good=resolved.flatMap(x=>x.status==="fulfilled"?[x.value]:[]);
  if(!good.length)throw Error("ALL_FEEDS_UNAVAILABLE");
- const result=mergeFeeds(good);
- const failed_feeds=resolved.flatMap((r,i)=>r.status==="rejected"?[{category:names[i],code:String(r.reason?.message||"UPSTREAM_ERROR")}]:[]);
- return{...result,partial:failed_feeds.length>0,failed_feeds};
+ const failed_feeds=resolved.flatMap((x,i)=>x.status==="rejected"?[{category:names[i],code:String(x.reason?.message||"UPSTREAM_ERROR")}]:[]);
+ const result={...mergeFeeds(good,category),partial:failed_feeds.length>0,failed_feeds,cached:false};
+ if(cache){const save=cache.put(key,new Response(JSON.stringify(result),{headers:{"cache-control":"public,max-age=180","content-type":"application/json"}})).catch(()=>{});if(ctx?.waitUntil)ctx.waitUntil(save);else await save;}
+ return result;
 }
+
 function filtered(data,q,limit){
  const term=String(q||"").trim().toLocaleLowerCase("ko").slice(0,100);
  const rows=term?data.items.filter(x=>(x.title+" "+x.summary).toLocaleLowerCase("ko").includes(term)):data.items;

@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-10",
+  "source_host": "hanbom-h.goesw.kr",
+  "existing_feeds_count": 8,
+  "added_feeds_count": 23,
+  "all_feeds_count": 31,
+  "groups": {
+    "features": [
+      "feature_main",
+      "feature_beauty",
+      "feature_character",
+      "feature_visual",
+      "feature_bigdata",
+      "feature_smart",
+      "feature_sound"
+    ],
+    "curriculum": [
+      "curriculum_general",
+      "curriculum_beauty",
+      "curriculum_character",
+      "curriculum_visual",
+      "curriculum_bigdata",
+      "curriculum_smart",
+      "curriculum_sound"
+    ]
+  },
+  "feeds": [
+    {
+      "id": "volunteer",
+      "label": "봉사활동",
+      "mi": 17276,
+      "bbs": 10075,
+      "route": "/api/volunteer",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17276&bbsId=10075"
+    },
+    {
+      "id": "after_school",
+      "label": "방과후학교",
+      "mi": 17288,
+      "bbs": 10081,
+      "route": "/api/after-school",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17288&bbsId=10081"
+    },
+    {
+      "id": "feature_main",
+      "label": "학교특색활동",
+      "mi": 17292,
+      "bbs": 10082,
+      "route": "/api/featured-activities",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17292&bbsId=10082"
+    },
+    {
+      "id": "feature_beauty",
+      "label": "뷰티아트과",
+      "mi": 17298,
+      "bbs": 10085,
+      "route": "/api/featured-activities/beauty",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17298&bbsId=10085"
+    },
+    {
+      "id": "feature_character",
+      "label": "캐릭터창작과",
+      "mi": 17300,
+      "bbs": 10087,
+      "route": "/api/featured-activities/character",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17300&bbsId=10087"
+    },
+    {
+      "id": "feature_visual",
+      "label": "시각디자인과",
+      "mi": 17303,
+      "bbs": 10089,
+      "route": "/api/featured-activities/visual",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17303&bbsId=10089"
+    },
+    {
+      "id": "feature_bigdata",
+      "label": "빅데이터정보과",
+      "mi": 17305,
+      "bbs": 10091,
+      "route": "/api/featured-activities/bigdata",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17305&bbsId=10091"
+    },
+    {
+      "id": "feature_smart",
+      "label": "스마트제어과",
+      "mi": 17307,
+      "bbs": 10092,
+      "route": "/api/featured-activities/smart",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17307&bbsId=10092"
+    },
+    {
+      "id": "feature_sound",
+      "label": "사운드디자인과",
+      "mi": 17310,
+      "bbs": 10094,
+      "route": "/api/featured-activities/sound",
+      "group": "features",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17310&bbsId=10094"
+    },
+    {
+      "id": "meals",
+      "label": "급식게시판",
+      "mi": 17364,
+      "bbs": 10112,
+      "route": "/api/meals",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17364&bbsId=10112"
+    },
+    {
+      "id": "nutrition",
+      "label": "영양상담",
+      "mi": 17371,
+      "bbs": 10115,
+      "route": "/api/nutrition",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17371&bbsId=10115"
+    },
+    {
+      "id": "livestock",
+      "label": "축산물이력표시",
+      "mi": 17378,
+      "bbs": 10118,
+      "route": "/api/livestock",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17378&bbsId=10118"
+    },
+    {
+      "id": "teacher_protection",
+      "label": "교육활동침해 예방교육계획",
+      "mi": 17381,
+      "bbs": 10120,
+      "route": "/api/education-protection",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17381&bbsId=10120"
+    },
+    {
+      "id": "employment_status",
+      "label": "취업현황",
+      "mi": 17400,
+      "bbs": 10131,
+      "route": "/api/employment-status",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17400&bbsId=10131"
+    },
+    {
+      "id": "employment_resources",
+      "label": "취업자료",
+      "mi": 17404,
+      "bbs": 10133,
+      "route": "/api/employment-resources",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17404&bbsId=10133"
+    },
+    {
+      "id": "career_resources",
+      "label": "진로진학자료",
+      "mi": 17413,
+      "bbs": 10136,
+      "route": "/api/career-resources",
+      "group": null,
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17413&bbsId=10136"
+    },
+    {
+      "id": "curriculum_general",
+      "label": "보통교과",
+      "mi": 17438,
+      "bbs": 10155,
+      "route": "/api/curriculum/general",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17438&bbsId=10155"
+    },
+    {
+      "id": "curriculum_beauty",
+      "label": "뷰티아트과",
+      "mi": 17441,
+      "bbs": 10158,
+      "route": "/api/curriculum/beauty",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17441&bbsId=10158"
+    },
+    {
+      "id": "curriculum_character",
+      "label": "캐릭터창작과",
+      "mi": 17446,
+      "bbs": 10160,
+      "route": "/api/curriculum/character",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17446&bbsId=10160"
+    },
+    {
+      "id": "curriculum_visual",
+      "label": "시각디자인과",
+      "mi": 17450,
+      "bbs": 10163,
+      "route": "/api/curriculum/visual",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17450&bbsId=10163"
+    },
+    {
+      "id": "curriculum_bigdata",
+      "label": "빅데이터정보과",
+      "mi": 17457,
+      "bbs": 10169,
+      "route": "/api/curriculum/bigdata",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17457&bbsId=10169"
+    },
+    {
+      "id": "curriculum_smart",
+      "label": "스마트제어과",
+      "mi": 17465,
+      "bbs": 10176,
+      "route": "/api/curriculum/smart",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17465&bbsId=10176"
+    },
+    {
+      "id": "curriculum_sound",
+      "label": "사운드디자인과",
+      "mi": 17470,
+      "bbs": 10179,
+      "route": "/api/curriculum/sound",
+      "group": "curriculum",
+      "url": "https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17470&bbsId=10179"
+    }
+  ]
+}
