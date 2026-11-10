@@ -37,3 +37,13 @@ Cloudflare Access의 경로별 self-hosted application을 사용합니다. **브
 ## OAuth 계획
 
 현재 `/mcp`는 **OAuth 없는 읽기 전용 공개 서버**입니다. 향후 OAuth 2.1과 PKCE를 붙이려면 권한 서버, 토큰 발급·검증 및 resource metadata/authorization metadata, client registration, Bearer 401 challenge 등을 구축한 후 무인증 Bypass 정책을 조정해야 합니다. 현재 OAuth 보호가 활성화됐다고 표기하지 않습니다.
+
+## 실제 현재 정책 상태 — Cloudflare 조회
+
+- 프로덕션 `data.hanbom.rhee.life`에 일치하는 Access 앱 **0개**.
+- `[PAUSED] HANBOM DATA` 3개 앱은 `access-paused-hanbom.rhee.life`에서 그대로 유지. 보관 호스트에는 Worker 도메인과 DNS가 없음.
+- 재사용 정책 2개 모두 삭제하지 않았음.
+- 전 계정 기본 deny 모드 `deny_unmatched_requests: false`.
+- 대시보드 Worker의 Access Assertion 거부문은 주석 처리된 상태. 따라서 누구나 대시보드를 볼 수 있도록 설계·배포됨.
+- MCP 및 REST의 공개 정책 앱도 동일하게 실제 호스트에서 분리됨. OAuth는 여전히 미구현.
+- 복구: [ACCESS_SUSPENSION_2026-11-10.md](ACCESS_SUSPENSION_2026-11-10.md).

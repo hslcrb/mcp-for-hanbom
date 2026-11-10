@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "generated_date": "2026-11-10",
+  "service": "HANBOM DATA",
+  "worker": "mcp-for-hanbom",
+  "repository": "hslcrb/mcp-for-hanbom",
+  "live_domain": "data.hanbom.rhee.life",
+  "suspended_domain": "access-paused-hanbom.rhee.life",
+  "current_mode": "public_no_access_on_live_domain",
+  "access_policy_resources": {
+    "owner_policy": {
+      "id": "<cf-access-app-id>",
+      "name": "HANBOM owner only",
+      "decision": "allow",
+      "include": [
+        {
+          "email": {
+            "email": "<admin-email>"
+          }
+        }
+      ]
+    },
+    "public_policy": {
+      "id": "<cf-access-app-id>",
+      "name": "HANBOM public read-only MCP and REST",
+      "decision": "bypass",
+      "include": [
+        {
+          "everyone": {}
+        }
+      ]
+    }
+  },
+  "apps": [
+    {
+      "id": "<cf-access-app-id>",
+      "name": "[PAUSED] HANBOM DATA - Owner Dashboard",
+      "type": "self_hosted",
+      "current_domain": "access-paused-hanbom.rhee.life",
+      "restore_domain": "data.hanbom.rhee.life",
+      "policy_id": "<cf-access-app-id>",
+      "session_duration": "12h"
+    },
+    {
+      "id": "<cf-access-app-id>",
+      "name": "[PAUSED] HANBOM DATA - Public MCP",
+      "type": "self_hosted",
+      "current_domain": "access-paused-hanbom.rhee.life/mcp",
+      "restore_domain": "data.hanbom.rhee.life/mcp",
+      "policy_id": "<cf-access-app-id>",
+      "session_duration": "12h"
+    },
+    {
+      "id": "<cf-access-app-id>",
+      "name": "[PAUSED] HANBOM DATA - Public REST",
+      "type": "self_hosted",
+      "current_domain": "access-paused-hanbom.rhee.life/api/*",
+      "restore_domain": "data.hanbom.rhee.life/api/*",
+      "policy_id": "<cf-access-app-id>",
+      "session_duration": "12h"
+    }
+  ],
+  "current_production_verification": {
+    "github_commit": "7ff4c294d7cf4d7485677855a45b9d6adcb61b2e",
+    "cloudflare_build_id": "140ce060-593b-417e-bd83-8aedee9c6f9d",
+    "build_outcome": "success",
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "version_id": "c81e8b86-41b5-48ec-88d3-d2c4aa0a6b1c",
+    "percentage_deployed": 100,
+    "live_access_apps": 0,
+    "archived_access_apps": 3,
+    "dns_records_on_archived_host": 0,
+    "account_default_deny": false
+  },
+  "note": "No credentials or API tokens. Re-enabling requires moving apps to restore_domain and verifying policies; worker header assertion guard is retained in comments. Other Cloudflare services unaffected."
+}

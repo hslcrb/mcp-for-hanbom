@@ -84,3 +84,10 @@ Cloudflare Access 소유자 이메일 이외 계정에서 `/` 접근이 불가�
 - Worker 서브도메인/preview URL: disabled.
 
 위 수치는 Cloudflare의 실제 배포·구성 API 조회 결과입니다. 외부 인터넷에서의 HTTPS 로그인·RSS 실데이터·JSON-RPC 테스트 성공을 의미하지 않으므로 따로 확인합니다.
+
+## 2026-11-10 공개 대시보드 전환 확인
+
+- Cloudflare Workers Builds: commit `7ff4c294d7cf4d7485677855a45b9d6adcb61b2e` 배포 성공, Node tests 9/9 통과.
+- Worker 프로덕션 버전 `c81e8b86-41b5-48ec-88d3-d2c4aa0a6b1c` 100% 배포.
+- 현재는 Cloudflare Access 비적용 대시보드, 공개 REST, 공개 MCP. 기존 Access 앱의 ID/정책은 별도 라우팅되지 않는 보관 호스트로 이전했습니다.
+- 재활성화: [ACCESS_SUSPENSION_2026-11-10.md](ACCESS_SUSPENSION_2026-11-10.md).
