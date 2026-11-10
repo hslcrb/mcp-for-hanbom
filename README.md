@@ -73,3 +73,11 @@ npm run dev
 - 호버와 방문 상태에서 색·밑줄·크기·투명도가 바뀌지 않으며 키보드 포커스 외곽선만 유지합니다.
 - 공개 API, MCP, 개인용 Access, data.hanbom.rhee.life, GitHub main 자동 배포는 유지합니다.
 - 자세한 사항: docs/UI_MINIMAL_2026-11-10.md
+
+## 2026-11-10 · 주아체 제목 추가
+
+- 루트의 공지 리스트 **위에** `<h1>한봄고 공지사항 MCP</h1>` 한 줄만 추가했습니다.
+- 글꼴: 배달의민족 주아체, `Juache` — [jsDelivr Noonnu WOFF](https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff).
+- H1만 주아체로, 아래 공지 목록은 기존 기본 서체로 유지. 기존 백색 배경/중앙 목록/링크 호버 무효 유지.
+- 외부 웹폰트 로딩을 위해 HTML 응답 CSP의 `font-src https://cdn.jsdelivr.net`를 허용했습니다.
+- 단일 이메일 Cloudflare Access, 공개 REST, MCP 서버, GitHub `main` 자동배포는 변경하지 않았습니다.

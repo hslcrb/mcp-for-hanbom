@@ -64,11 +64,18 @@ const page=String.raw`<!doctype html>
 <meta name="color-scheme" content="light">
 <title>한봄고등학교 공지사항</title>
 <style>
+@font-face {
+  font-family: 'Juache';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
 :root{color-scheme:light}
 *{box-sizing:border-box}
 html,body{min-height:100%;background:#fff}
 body{margin:0;color:#111;font-family:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
 main{width:min(760px,calc(100% - 40px));margin-inline:auto;padding:clamp(72px,11vh,136px) 0 96px}
+h1{margin:0 0 clamp(48px,7vh,76px);font-family:'Juache',sans-serif;font-size:clamp(32px,4.2vw,46px);font-weight:normal;line-height:1.3;text-align:center;letter-spacing:-.025em}
 ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;align-items:stretch;gap:28px}
 li{text-align:center;font-size:clamp(17px,1.65vw,20px);font-weight:400;line-height:1.65;letter-spacing:-.025em;word-break:keep-all;overflow-wrap:anywhere}
 li a,li a:link,li a:visited,li a:hover,li a:active{color:inherit;text-decoration:none;background:transparent;opacity:1;transition:none}
@@ -77,7 +84,7 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 </style>
 </head>
 <body>
-<main aria-label="한봄고등학교 공지사항 목록"><ol id="notices" aria-live="polite" aria-busy="true"></ol></main>
+<main aria-label="한봄고등학교 공지사항 목록"><h1>한봄고 공지사항 MCP</h1><ol id="notices" aria-live="polite" aria-busy="true"></ol></main>
 <script>
 (function(){
   const list=document.getElementById("notices");
@@ -133,4 +140,4 @@ if(p==="/health")return json({status:"ok",version:VERSION});
 if(p!=="/"&&p!=="/index.html")return json({error:"Not found"},404);
 if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
 if(!request.headers.get("cf-access-jwt-assertion"))return json({error:"Dashboard requires Cloudflare Access"},401);
-return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});}};
+return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});}};
