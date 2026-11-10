@@ -45,3 +45,19 @@
 - REST `/api/awards`, `/api/posts`, `/api/feed?category=awards`, 검색·상태 경로가 작동하며 기존 3개 전용 경로 유지.
 - MCP `tools/list`에 새 도구와 기존 도구가 모두 존재하고, `tools/call`에서 실제 `awards` category가 반환되며 잘못된 인수 거부.
 - Cloudflare 빌드 로그와 실제 RSS 응답은 배포 이후 별도 확인.
+
+## 프로덕션 실측 결과 (2026-11-10 KST)
+
+- 기능 구현 GitHub commit: `90f0bc884dcb8c870388afd0349c21ba7783122b`.
+- Cloudflare Workers Builds: `97348861-2881-4315-b270-84cad07e4481`; `build_outcome=success`.
+- Node unit tests **19개 통과 / 실패 0건** 및 Worker 배포 로그 `data.hanbom.rhee.life (custom domain)` 확인.
+- 프로덕션 Worker 버전: `d3bf901e-10a4-47d9-8e0a-bcd39a863872`, 당시 배포 비율 100%.
+- Cloudflare Browser Rendering으로 실제 HTTP 조회 `https://data.hanbom.rhee.life/api/awards?limit=5`: **정상 응답**, `category=awards`, `count=21`, 학교 공식 RSS URL 일치.
+- 실제 수상 게시물: `[빅데이터정보과] 2026 과정평가형 국가기술자격 정보처리산업기사 합격 (총 8명)`, `[빅데이터정보과] 제61회 전국기능경기대회 사이버보안 직종 장려상 수상`, `[시각디자인과] 제32회 커뮤니케이션디자인 국제어워드 수상 알림` 등. 공식 원문 URL 제공.
+- 실제 통합 HTTP 조회 `https://data.hanbom.rhee.life/api/posts?limit=5`: `category=all`, `count=200`, `partial=false`, `failed_feeds=[]`.
+- RSS 소스별: `notice=53`, `letter=100`(최대 100건 처리 제한), `news=26`, `awards=21`. 총 200건은 현재 RSS 수집 범위의 수치임.
+- 실제 공개 홈페이지 `https://data.hanbom.rhee.life/`를 Cloudflare Browser Rendering으로 렌더링해 H1 및 `전체 보기 / 공지 사항 / 가정통신문 / 한봄 NEWS / 학생작품 및 수상내역` 다섯 버튼 표시 확인.
+- 홈페이지 렌더링된 전체 목록에 정보처리산업기사 합격·사이버보안 장려상 등 학생작품/수상 게시물이 날짜순으로 합쳐진 것도 확인.
+- 개별 pill 클릭 후 필터 전환의 브라우저 조작 테스트는 별도 실행하지 않았음. 다만 버튼·스크립트 및 REST 기능을 Node 테스트에서 검증.
+- 플러그인 도구 목록: 11개 정의 및 Node 테스트 검증. 이미 등록된 ChatGPT 앱이 추가 도구를 즉시 표시하지 않으면 연결 새로고침/재등록이 필요할 수 있음.
+- Access 설정: 공개 유지, 기존 복구용 앱/정책을 변경하지 않았음. GitHub Actions 사용하지 않음.
