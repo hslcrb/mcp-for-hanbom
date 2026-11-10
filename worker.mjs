@@ -8,7 +8,7 @@ export const FEEDS=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.id,{
  parent:b.parent,parent_id:b.parent_id,mi:b.mi,bbs:b.bbs,sensitive:b.sensitive
 }])));
 export const EXTRA_BOARD_CATALOG=Object.freeze(BOARD_CATALOG.filter(b=>LEGACY_IDS.includes(b.id)&&!["notice","letter","news","awards","office_letter","opportunities","health","student_rules"].includes(b.id))
- .map(b=>({id:b.id,label:b.label,mi:b.mi,bbs:b.bbs,route:b.route,group:b.parent_id==="features"||b.parent_id==="curriculum"?b.parent_id:null}))));
+ .map(b=>({id:b.id,label:b.label,mi:b.mi,bbs:b.bbs,route:b.route,group:b.parent_id==="features"||b.parent_id==="curriculum"?b.parent_id:null})));
 export const NEW_BOARD_CATALOG=Object.freeze(BOARD_CATALOG.filter(b=>!LEGACY_IDS.includes(b.id)));
 export const GROUPS=Object.freeze(Object.fromEntries([...MENU_CATALOG.map(m=>[m.id,m.ids]),["legacy",LEGACY_IDS]]));
 export const GROUP_LABELS=Object.freeze(Object.fromEntries(MENU_CATALOG.map(m=>[m.id,m.label])));
