@@ -5,12 +5,23 @@
 
 > 2026-11-10 기준. **새 정식 주소만 사용**. 이전 `hanbom.rhee.life/mcp`는 등록하거나 계속 사용하지 않습니다.
 
+## 2026-11-10 최신 31개 피드 서버 등록값
+
+- 표시 이름: `HANBOM Data MCP`
+- 서버 URL: `https://data.hanbom.rhee.life/mcp`
+- 전송: `Streamable HTTP`
+- 인증: `None` (OAuth 미구현)
+- 신규 피드 23개, 신규 MCP 조회·검색 도구 46개, 범용 도구 2개. 기존 도구 19개 유지 → **총 67개**.
+- `get_board_posts({category:"curriculum_bigdata"})`와 `search_board_posts({category:"features",query:"빅데이터"})` 등으로 게시판/그룹 단위로도 사용 가능.
+- [31개 피드별 URL과 46개 신규 도구의 전체 목록](RSS_31_IMPLEMENTATION_2026-11-10.md).
+- 연결된 ChatGPT 앱은 도구 목록 캐시가 갱신되어야 새 도구가 표시될 수 있다.
+
 ## 등록 화면의 각 항목별 입력값
 
 | 항목 / UI 명칭 | 입력값 | 비고 |
 | --- | --- | --- |
 | Name / 표시명 | `HANBOM Data MCP` | 사용자에게 표시할 이름 |
-| Description / 설명 | `한봄고등학교 공지·가정통신문·한봄 NEWS·학생작품·공모전·보건알림·학생생활규정 등 공개 RSS 8종 조회·검색용 읽기 전용 MCP` | 선택 사항 |
+| Description / 설명 | `한봄고 공개 RSS 31종의 공지·학과·교과자료·진로·취업·급식 등을 조회·검색하는 읽기 전용 MCP` | 선택 사항 |
 | Server URL / URL | **`https://data.hanbom.rhee.life/mcp`** | 끝에 `/mcp` 필수 |
 | Transport / Connection | `Remote MCP server` / `Streamable HTTP` | 지원 UI에서 선택 |
 | Authentication / 인증 | **`None` / `No authentication`** | 현재 무인증 서비스 |
@@ -42,7 +53,7 @@ None
 **Description**
 
 ```text
-한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역·공모전 및 모집공고·보건알림·학생생활규정게시판의 공개 RSS를 조회하고 검색하는 비공식 읽기 전용 MCP 서버
+한봄고등학교 공개 RSS 31종에서 공지·학과별 활동·교과자료·진로진학·취업·급식 게시물을 조회하고 검색하는 비공식 읽기 전용 MCP 서버
 ```
 
 ## MCP 서버가 제공하는 도구
@@ -147,3 +158,9 @@ curl -sS -X POST 'https://data.hanbom.rhee.life/mcp' \
 - `get_school_feed_status({category:'student_rules'})`, 전체 게시판 검색·조회 지원.
 - URL `https://data.hanbom.rhee.life/mcp`, 인증 `None` 유지. ChatGPT에 이미 등록된 앱은 새 도구 스키마 재동기화가 필요할 수 있음.
 - [통합 개발 기록](STUDENT_RULES_2026-11-10.md).
+
+## 2026-11-10 · 31개 RSS / 67개 MCP 도구 확장 (현행)
+
+- 23개 신규 RSS의 정확한 bbsId·mi·REST 라우트·두 MCP tool 이름은 [전체 개발기](RSS_31_IMPLEMENTATION_2026-11-10.md) 참조.
+- 서버 주소·인증값 변경 없음. 범용 조회 도구 `get_board_posts`, 검색 도구 `search_board_posts`를 통한 유연한 카테고리 선택 가능.
+- 기존 19개 이름 유지하므로 이미 등록된 기존 도구를 계속 사용할 수 있음. 신규 도구를 사용하려면 클라이언트의 도구 목록 재발견이 필요할 수 있다.
