@@ -118,8 +118,8 @@ test("legacy office-letter routes still work with empty health and opportunities
   }
   const special=await api("/api/feed?category=office_letter");
   assert.equal(special.count,1);
-  const status=await api("/api/status?category=all");assert.equal(status.count,5);
-  const search=await api("/api/search?q=%EA%B5%90%EC%9C%A1%EC%B2%AD&category=all");assert.equal(search.count,1);
+  const status=await api("/api/status?category=legacy");assert.equal(status.count,5);
+  const search=await api("/api/search?q=%EA%B5%90%EC%9C%A1%EC%B2%AD&category=legacy");assert.equal(search.count,1);
   const meta=await api("/api/meta");
   assert.ok(meta.categories.includes("office_letter"));assert.equal(meta.sources.office_letter.url,FEEDS.office_letter.url);
   for(const name of ["get_education_office_letters","search_education_office_letters"]){
