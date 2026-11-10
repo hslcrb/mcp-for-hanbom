@@ -138,3 +138,69 @@ Cloudflare 공식 [Workers Limits](https://developers.cloudflare.com/workers/pla
 작업 브랜치: `feat/rss-31-board-expansion`. 단위·회귀 검사 후 `main`에 반영하면 Cloudflare Workers Builds가 `npm run check` 및 `npm run deploy`를 자동 실행한다. **GitHub Actions는 사용하지 않는다.**
 
 실제 빌드 결과·소스별 성공/실패·직접 HTTP 검증·최종 커밋은 배포 후 확인된 사실만 추가 기록한다.
+
+---
+
+## 실제 GitHub/Cloudflare 배포 및 실데이터 검증 (2026-11-10)
+
+### 배포 과정
+
+- 작업 브랜치: `feat/rss-31-board-expansion`, 코어 구현·테스트·문서화 후 `main`으로 fast-forward.
+- 최초 main 적용 커밋: `ece42640bc0e48b95a7e9c2ce9886630e932b132`, 빌드 UUID `909316e3-32d5-4db0-8810-a5ce4825c0ef`.
+- 초기 빌드는 HTML 내 `@font-face` 선언의 공백이 기존 단위 테스트 정규식과 맞지 않아 **40개 중 1개 실패**. 배포되지 않았고 이전 프로덕션 버전을 계속 유지.
+- 수정 커밋: `0335d074a574bff081ff5a47fade338421d0d0e5`, 빌드 UUID `b1537718-f64f-415f-8d17-08e4f05b6601`. **테스트 40/40 통과, 빌드·배포 success**.
+- 해당 신규 프로덕션 Worker 버전: `8f5b806e-956b-4c6b-84a1-b3e038b1d530`, 트래픽 100%. GitHub Actions 미사용.
+
+### 실제 프로덕션 데이터 수집
+
+- `GET https://data.hanbom.rhee.life/api/status?category=all`을 Cloudflare Browser Rendering으로 직접 호출.
+- 결과: **source_count 31개**, **총 361개 게시물**, `partial=false`, `failed_feeds=[]`, 원천 RSS 전부 정상.
+- `GET /api/posts?limit=all` 실제 호출: `count=361`, `items.length=361`, `sources.length=31`. UI가 전체 20건만 보여주는 오래된 API 기본 limit 문제를 막고 **전체 범위 반환**을 검증.
+- HTML 페이지는 최초 Browser Rendering의 기본 추출 때 로딩 문구만 찍혔으나, `waitForSelector: #notices li a`로 비동기 목록 로딩 완료를 기다린 재검증에서 **실제 원문 링크 361개가 렌더링**된 것을 확인.
+- 실제 마크업: Juache H1, 기본 pill 20개와 학교특색활동/교과자료실의 학과별 보조 pill 8개씩 모두 포함. 최상위 카테고리의 정상 동작과 DOM 링크 생성까지 확인했으며, 각각의 하위 pill을 클릭하는 브라우저 사용자 행동의 실측은 별도 미실시.
+- `school-feature` 계열과 `curriculum` 계열은 현재 원천이 0개 항목이어도 각각 독립 category와 출처로 정상 처리.
+
+### 피드별 수집 건수
+
+| category | RSS 수집 | 분류 |
+|---|---:|---|
+| `notice` | 53 | 기존/일반 |
+| `letter` | 100 | 기존/일반 |
+| `news` | 26 | 기존/일반 |
+| `awards` | 21 | 기존/일반 |
+| `office_letter` | 100 | 기존/일반 |
+| `opportunities` | 0 | 기존/일반 |
+| `health` | 1 | 기존/일반 |
+| `student_rules` | 2 | 기존/일반 |
+| `volunteer` | 0 | 기존/일반 |
+| `after_school` | 9 | 기존/일반 |
+| `feature_main` | 0 | features |
+| `feature_beauty` | 0 | features |
+| `feature_character` | 0 | features |
+| `feature_visual` | 0 | features |
+| `feature_bigdata` | 0 | features |
+| `feature_smart` | 0 | features |
+| `feature_sound` | 0 | features |
+| `meals` | 29 | 기존/일반 |
+| `nutrition` | 4 | 기존/일반 |
+| `livestock` | 1 | 기존/일반 |
+| `teacher_protection` | 1 | 기존/일반 |
+| `employment_status` | 1 | 기존/일반 |
+| `employment_resources` | 2 | 기존/일반 |
+| `career_resources` | 11 | 기존/일반 |
+| `curriculum_general` | 0 | curriculum |
+| `curriculum_beauty` | 0 | curriculum |
+| `curriculum_character` | 0 | curriculum |
+| `curriculum_visual` | 0 | curriculum |
+| `curriculum_bigdata` | 0 | curriculum |
+| `curriculum_smart` | 0 | curriculum |
+| `curriculum_sound` | 0 | curriculum |
+
+**합계 = 361건.** 이는 해당 시점 RSS 최근 항목(각 원본에서 최대 100개) 수치이며 학사 기록 전체의 누적 건수나 실제 급식 메뉴의 개수가 아님. 단일 RSS가 정상적으로 빈 응답을 보내면 0건은 정상이다.
+
+### MCP 확인 범위
+
+- `tools/list` 정적 실행 및 단위 시험: **67개 도구**, 중복 이름 0개.
+- 동적 도구 46개 + 범용 도구 2개와 기존 도구 19개는 테스트에서 REST와 MCP의 JSON-RPC 호출 결과로 검증.
+- ChatGPT에 연결된 앱이 새로운 67개 도구 스키마를 실제로 다시 탐색하는지 여부는 사용자 앱의 캐시 갱신 상태에 따라 차이가 있을 수 있어 별도 확인 대상.
+- 서비스 인증은 여전히 `None`, 과거 Cloudflare Access 보관 정책은 변경하지 않음.
