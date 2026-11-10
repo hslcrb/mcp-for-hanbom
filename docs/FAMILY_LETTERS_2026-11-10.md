@@ -61,3 +61,17 @@ MCP는 공개 읽기 전용 Stateless Streamable HTTP JSON-RPC이며 OAuth는 �
 ## 검증
 
 테스트는 각 RSS 파서, 날짜순 통합, 기존 도구 하위호환, 신규 MCP 도구 및 REST 경로, 필터 버튼 HTML을 검사한다. 라이브 RSS는 배포 후 별도 확인한다.
+
+## 프로덕션 실제 검증 — 2026-11-10 KST
+
+- GitHub 배포 커밋: `a827489ccc0f045dab143c8dce6b4af01f9a49b5`.
+- Cloudflare Workers Builds ID: `413fe937-659b-4b72-b002-709feed68e89`.
+- Cloudflare 빌드 결과: `success`, Node 테스트 **14/14 통과**, 실패 0.
+- 배포 로그: `data.hanbom.rhee.life (custom domain)`, `Success: Deploy command completed`.
+- 배포 Worker 버전: `1a60171b-e39b-44e1-b517-7c1ef29596af`.
+- 등록돼 있던 ChatGPT MCP의 기존 `get_school_notices` 호출 성공 (기존 기능 호환).
+- Cloudflare Browser Rendering을 통해 신규 `GET /api/status?category=letter`를 **실제 호출 성공**: `category=letter`, `count=100`, `partial=false`. 데이터 항목은 백엔드에 설정한 최대 100건까지만 읽으며 학교 게시판의 전 기간 총게시물 수를 뜻하지 않음.
+- 신규 `GET /api/posts?limit=5` **실제 HTTP 조회 성공**: `count=153`, `category=all`, `partial=false`, `failed_feeds=[]`. 공지 RSS 53건 + 가정통신문 RSS 조회 상한 100건을 합친 결과.
+- 통합 최신 목록에서 실제 가정통신문 제목·학교 공식 링크·날짜 확인: `약물 오남용 예방 및 안전관리 안내` (2026-11-04), `2026년도 중·고등학생 인플루엔자 예방접종 지원사업 안내` (2026-11-02), `2026학년도 2학기 1차 정기시험 성적 확인 안내` (2026-10-30), `11월 식단표 및 영양소식지` (2026-10-28).
+- 프로덕션 API의 RSS 통합 동작을 확인했지만, **브라우저 pill 클릭 시각적 렌더링 및 신규 MCP 도구를 ChatGPT 앱이 재발견했는지**는 별도 확인 필요. 연결된 기존 앱은 이전 tool-schema를 캐시하고 있으므로 신규 도구가 앱에 나타나려면 연결 갱신 또는 재등록이 필요할 수 있음.
+- 데이터 반환은 학교 공식 RSS 출처이며 비공식 서비스. 내용 정확성과 첨부 파일은 학교 공식 원문에서 확인.
