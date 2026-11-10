@@ -188,3 +188,62 @@ ChatGPT 앱 등록값 **Name: HANBOM Data MCP**, **URL: `https://data.hanbom.rhe
 - GitHub Actions를 생성하거나 사용하지 않는다. `main` 커밋만 Cloudflare Workers Builds가 자동 빌드/배포한다.
 - 기존 브랜치/Workers 도메인을 변경하지 않는다.
 - 프로덕션 최종 커밋·빌드 로그·82개 실제 RSS 수신 상태는 검증 후 아래 후속 섹션에 기록한다.
+
+---
+
+## 실제 프로덕션 배포 및 82개 RSS 검증 — 2026-11-11 KST
+
+### GitHub 및 Cloudflare Workers Builds
+
+- 82종 소스 전체 등록·초기 코드와 문서의 `main` 통합 커밋: `134a5314571e897ccab7891b8f7989a1c39672e8`.
+- 초기 Workers Builds ID `9fa2f171-9dfa-4c42-8e14-d649a3995e7a`에서 51개 테스트 중 2개 실패(기존 테스트의 `공지 사항` 표기 불일치 및 개인정보 보호 처리된 민원 제목을 원문 검색하려던 테스트 기대값). 빌드는 차단되고 이전 프로덕션은 유지됨.
+- 회귀 테스트 수정 커밋: `33f8b437d811adc373b8b1e6edbf9d76cd3b5a40`.
+- 수정 빌드 ID `62b5ba6a-6a90-4f78-b379-de98ed10d1b4`, **51/51 테스트 통과, 실패 0, 빌드·배포 `success`**.
+- 해당 Worker 프로덕션 버전 `d5d5bc17-54a2-4c60-8b31-55b47a4c589b` 100% 적용 확인. 도메인은 `data.hanbom.rhee.life`.
+- GitHub Actions는 생성하지 않았고 기존 **GitHub main → Cloudflare Workers Builds** 연결을 사용함.
+
+### 실서비스 세 개 shard의 실제 RSS 수집
+
+Cloudflare Browser Rendering에서 실제 운영 HTTP GET `/api/status?category=all&shard=N` 세 요청을 독립 실행:
+
+| 분할 | 공식 원본 RSS 수 | 실제 RSS item 수 | partial | failed_feeds | 다음 shard |
+|---|---:|---:|---|---|---|
+| 0 | 28 | 366 | false | [] | 1 |
+| 1 | 28 | 59 | false | [] | 2 |
+| 2 | 26 | 103 | false | [] | null |
+| 합계 | **82** | **528** | 전부 정상 | **0개 실패** | 완료 |
+
+**528건은 RSS가 현재 제공하는 범위의 수집 건수**로, 게시판의 전체 누적 기록 수와 다름. 각 RSS는 최대 100개 item까지만 파싱한다. 0개를 반환하는 게시판도 정상 RSS로 응답했으며, 실패로 처리하지 않았다.
+
+예시: `community_forms` 11건, `community_album` 19건, `foundation_board_minutes` 8건, `school_steering_committee` 31건, `teacher_personnel_committee` 35건, `air_purifier_inspection` 11건. 이 수치들은 해당 수집 시점의 snapshot임.
+
+### 실제 브라우저 렌더링·메뉴 전환 검증
+
+Cloudflare Browser Rendering으로 공개 `https://data.hanbom.rhee.life/`를 열어 `waitForSelector('#notices li a')`로 비동기 로딩 완료를 기다림.
+
+- H1, 23개 상위 메뉴, 82개 하위 게시판 선택지의 렌더링 확인.
+- 전체 보기에서 **실제 원문 링크 528개**가 렌더링됐으며, `상담·민원 게시물 (원문 확인)` 보호 문구 노출도 확인.
+- 임시 브라우저 테스트 스크립트로 실제 메뉴 버튼 `click()` 수행. 이 테스트 스크립트는 운영 소스에 남기지 않음.
+- `커뮤니티` 메뉴 클릭: 하위 메뉴 표시, 관련 게시물 32건.
+- `각종양식[서식]` 하위 선택: 11건만 표시.
+- `법인` 메뉴 클릭: 법인 하위 메뉴 표시, 이전 커뮤니티 하위 메뉴 숨김.
+- `이사회회의록` 하위 선택: 8건 표시.
+- `학교특색활동 > 빅데이터정보과` 하위 선택: RSS가 비어 있어 정상 `표시할 게시물이 없습니다.` 메시지 표시.
+- 다시 최상위 `전체 보기`로 복귀: 528건의 실제 링크가 복원됨.
+
+### 실제 원격 MCP HTTP JSON-RPC 검증
+
+공개 도메인에 브라우저에서 실제 `POST /mcp` JSON-RPC 요청을 보내 확인:
+
+- `tools/list`: **MCP 도구 68개**, `list_school_boards` 존재.
+- `tools/call: list_school_boards`: **게시판 82개**와 상위 메뉴 **23개** 반환.
+- `tools/call: get_board_posts({category:"foundation_board_minutes",limit:2})`: 해당 게시판 카테고리로 정상 응답, RSS 전체 건수 8.
+- 기존 67개 도구를 유지하는 것과 shard 조회·검색, 82개 직접 REST 경로의 동작은 **51개 Node 테스트**로 검증했다.
+- 현재 ChatGPT에 설치된 앱이 새 도구를 즉시 표시하는지는 클라이언트 측 MCP 도구 재동기화 상태에 따라 달라질 수 있으며 앱 단위 재발견까지 보장한 것은 아님.
+
+### 보안·운영
+
+- 민감 가능 9개 게시판의 원문 제목·요약 공개 재전송을 피하는 보호 규칙 유지.
+- 모든 source URL은 첨부 원문 82개에 고정. RSS 원문의 공식 학교 HTTPS 링크만 원문으로 노출.
+- Cloudflare Access 비활성 보관 설정을 이번 작업에서 바꾸지 않았으며 운영 홈페이지·REST·MCP는 공개 읽기 전용 상태 유지.
+- 무료 Worker에 맞게 각 통합 조회를 28/28/26건의 origin 요청으로 나눈다. 단일 `/api/posts` 요청이 82개를 전부 반환한다고 오인하지 않도록 `has_more` 및 `next_shard` 메타데이터를 사용한다.
