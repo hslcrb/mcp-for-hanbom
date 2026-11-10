@@ -10,7 +10,7 @@
 | 항목 / UI 명칭 | 입력값 | 비고 |
 | --- | --- | --- |
 | Name / 표시명 | `HANBOM Data MCP` | 사용자에게 표시할 이름 |
-| Description / 설명 | `한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역·공모전 및 모집공고·보건알림 RSS 조회·검색용 비공식 읽기 전용 도구` | 선택 사항 |
+| Description / 설명 | `한봄고등학교 공지·가정통신문·한봄 NEWS·학생작품·공모전·보건알림·학생생활규정 등 공개 RSS 8종 조회·검색용 읽기 전용 MCP` | 선택 사항 |
 | Server URL / URL | **`https://data.hanbom.rhee.life/mcp`** | 끝에 `/mcp` 필수 |
 | Transport / Connection | `Remote MCP server` / `Streamable HTTP` | 지원 UI에서 선택 |
 | Authentication / 인증 | **`None` / `No authentication`** | 현재 무인증 서비스 |
@@ -42,7 +42,7 @@ None
 **Description**
 
 ```text
-한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역·공모전 및 모집공고·보건알림의 공개 RSS를 조회하고 검색하는 비공식 읽기 전용 MCP 서버
+한봄고등학교 공지사항·가정통신문·교육청 가정통신문·한봄 NEWS·학생작품 및 수상내역·공모전 및 모집공고·보건알림·학생생활규정게시판의 공개 RSS를 조회하고 검색하는 비공식 읽기 전용 MCP 서버
 ```
 
 ## MCP 서버가 제공하는 도구
@@ -51,7 +51,7 @@ None
 | --- | --- | --- |
 | `get_school_notices` | `limit` (정수 1~100, 선택) | RSS 내 최근 공지 |
 | `search_school_notices` | `query` (필수), `limit` (선택) | RSS에 포함된 제목·요약 검색 |
-| `get_school_feed_status` | `category` 선택 (`notice`/`letter`/`office_letter`/`news`/`awards`/`opportunities`/`health`/`all`, 기본 notice) | 유형별 RSS 수집 시각·건수·원천 |
+| `get_school_feed_status` | `category` 선택 (`notice`/`letter`/`office_letter`/`news`/`awards`/`opportunities`/`health`/`student_rules`/`all`, 기본 notice) | 유형별 RSS 수집 시각·건수·원천 |
 | `get_family_letters` | `limit` 선택 | 가정통신문 RSS 최신 게시물 |
 | `search_family_letters` | `query` 필수, `limit` 선택 | 가정통신문 검색 |
 | `get_school_news` | `limit` 선택 | 한봄 NEWS RSS 최신 게시물 |
@@ -64,8 +64,10 @@ None
 | `search_school_opportunities` | `query` 필수, `limit` 선택 | 공모전 및 모집공고 검색(없으면 0건) |
 | `get_health_notices` | `limit` 선택 | 보건알림 최신 게시물 |
 | `search_health_notices` | `query` 필수, `limit` 선택 | 보건알림 RSS 검색 |
-| `get_all_school_posts` | `limit` 선택 | 7개 게시판 날짜순 통합 |
-| `search_all_school_posts` | `query` 필수, `limit` 선택 | 7개 게시판 통합 검색 |
+| `get_student_rules` | `limit` 선택 | 학생생활규정게시판 최신 게시물 |
+| `search_student_rules` | `query` 필수, `limit` 선택 | 학생생활규정게시판 검색 |
+| `get_all_school_posts` | `limit` 선택 | 8개 게시판 날짜순 통합 |
+| `search_all_school_posts` | `query` 필수, `limit` 선택 | 8개 게시판 통합 검색 |
 
 ## HTTP 연결 점검 예시
 
@@ -76,6 +78,7 @@ curl -i 'https://data.hanbom.rhee.life/api/letters?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/education-letters?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/opportunities?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/health-notices?limit=3'
+curl -i 'https://data.hanbom.rhee.life/api/student-rules?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/news?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/awards?limit=3'
 curl -i 'https://data.hanbom.rhee.life/api/posts?limit=5'
@@ -136,3 +139,11 @@ curl -sS -X POST 'https://data.hanbom.rhee.life/mcp' \
 - **서버 MCP 17개 도구**: `get_health_notices`, `search_health_notices` 추가. `get_school_feed_status({category:'health'})` 지원.
 - 서버 URL `https://data.hanbom.rhee.life/mcp`, Authentication `None`은 그대로. 이미 연결한 ChatGPT 앱에서 새 도구가 표시되지 않으면 도구 목록 재동기화가 필요할 수 있음.
 - [보건알림 추가 개발기](HEALTH_NOTICES_2026-11-10.md).
+
+## 2026-11-10 · 학생생활규정게시판 추가 (현행)
+
+- 출처: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17273&bbsId=10074`.
+- 총 **19개 MCP 도구**, 추가 도구는 `get_student_rules`, `search_student_rules`.
+- `get_school_feed_status({category:'student_rules'})`, 전체 게시판 검색·조회 지원.
+- URL `https://data.hanbom.rhee.life/mcp`, 인증 `None` 유지. ChatGPT에 이미 등록된 앱은 새 도구 스키마 재동기화가 필요할 수 있음.
+- [통합 개발 기록](STUDENT_RULES_2026-11-10.md).
