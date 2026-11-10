@@ -260,10 +260,10 @@ function filtered(data,q,limit){
  const rows=term?data.items.filter(x=>(x.title+" "+x.summary).toLocaleLowerCase("ko").includes(term)):data.items;
  return{...data,count:rows.length,items:rows.slice(0,limit)};
 }
-const categorySchema={type:"string",enum:["notice","letter","news","awards","office_letter","opportunities","health","student_rules","all"],description:"notice=공지 사항, letter=가정통신문, news=한봄 NEWS, awards=학생작품 및 수상내역, office_letter=가정통신문(교육청), opportunities=공모전 및 모집공고, health=보건알림, student_rules=학생생활규정게시판, all=전체"};
-const limitSchema={type:"integer",minimum:1,maximum:100,description:"최대 결과 수(기본 10)"};
+const categorySchema={type:"string",enum:categories,description:"게시판 category 또는 all/features/curriculum 집계"};
+const limitSchema={type:"integer",minimum:1,maximum:100,description:"최대 결과 수 (기본 10)"};
 const querySchema={type:"string",minLength:1,maxLength:100,description:"제목·요약 검색어"};
-const TOOL=[
+const BASE_TOOLS=[
  {name:"get_school_notices",description:"한봄고등학교 공식 RSS의 최신 공지 사항을 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
  {name:"search_school_notices",description:"한봄고등학교 공지 사항 RSS의 현재 항목을 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}},
  {name:"get_school_feed_status",description:"한봄고등학교 RSS 수집 상태·항목 수·출처를 조회합니다. 기본값 notice로 기존 클라이언트 호환.",inputSchema:{type:"object",properties:{category:categorySchema},additionalProperties:false}},
@@ -283,7 +283,19 @@ const TOOL=[
  {name:"search_student_rules",description:"한봄고등학교 학생생활규정게시판의 공개 RSS를 제목·요약으로 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}},
  {name:"get_all_school_posts",description:"한봄고 공지 사항·가정통신문·한봄 NEWS·학생작품 및 수상내역·가정통신문(교육청)·공모전 및 모집공고·보건알림·학생생활규정게시판을 통합해 게시 시각순으로 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
  {name:"search_all_school_posts",description:"한봄고 공지 사항·가정통신문·한봄 NEWS·학생작품 및 수상내역·가정통신문(교육청)·공모전 및 모집공고·보건알림·학생생활규정게시판을 함께 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}}
-].map(t=>({...t,annotations:{readOnlyHint:true,destructiveHint:false}}));
+];
+
+const EXTRA_TOOL_ROUTING=Object.fromEntries(EXTRA_BOARD_CATALOG.flatMap(b=>[["get_"+b.id+"_posts",b.id],["search_"+b.id+"_posts",b.id]]));
+const EXTRA_TOOLS=EXTRA_BOARD_CATALOG.flatMap(b=>[
+ {name:"get_"+b.id+"_posts",description:"한봄고 "+(b.group==="features"?"학교특색활동 · ":b.group==="curriculum"?"교과자료실 · ":"")+b.label+" RSS 최신 게시물을 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
+ {name:"search_"+b.id+"_posts",description:"한봄고 "+(b.group==="features"?"학교특색활동 · ":b.group==="curriculum"?"교과자료실 · ":"")+b.label+" RSS 게시물을 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}}
+]);
+const GENERIC_TOOLS=[
+ {name:"get_board_posts",description:"31개 학교 RSS에서 카테고리 하나 또는 all/features/curriculum 집계를 조회합니다.",inputSchema:{type:"object",properties:{category:categorySchema,limit:limitSchema},required:["category"],additionalProperties:false}},
+ {name:"search_board_posts",description:"카테고리 하나 또는 all/features/curriculum 집계를 지정해 학교 RSS를 검색합니다.",inputSchema:{type:"object",properties:{category:categorySchema,query:querySchema,limit:limitSchema},required:["category","query"],additionalProperties:false}}
+];
+const TOOL=[...BASE_TOOLS,...EXTRA_TOOLS,...GENERIC_TOOLS].map(t=>({...t,annotations:{readOnlyHint:true,destructiveHint:false}}));
+
 async function mcp(request,ctx){
  if(request.method!=="POST")return json({error:"Use stateless MCP POST JSON-RPC"},405);
  const accept=request.headers.get("accept")||"";
@@ -294,7 +306,7 @@ async function mcp(request,ctx){
  if(!Object.hasOwn(p,"id"))return new Response(null,{status:202});
  const ok=result=>json({jsonrpc:"2.0",id:p.id,result});
  const err=(code,message)=>json({jsonrpc:"2.0",id:p.id,error:{code,message}});
- if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"비공식 한봄고 공지 사항·가정통신문·한봄 NEWS·학생작품 및 수상내역·가정통신문(교육청)·공모전 및 모집공고·보건알림·학생생활규정게시판 공개 RSS 읽기 전용 MCP. 자료 출처를 밝히세요."});
+ if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"비공식 한봄고등학교 공개 RSS 31종을 조회·검색하는 읽기 전용 MCP. 공식 학교 원문 출처를 밝혀주세요."});
  if(request.headers.get("mcp-protocol-version")&&!VERSIONS.includes(request.headers.get("mcp-protocol-version")))return err(-32600,"Unsupported protocol version");
  if(p.method==="ping")return ok({});
  if(p.method==="tools/list")return ok({tools:TOOL});
@@ -302,12 +314,12 @@ async function mcp(request,ctx){
    const name=p.params?.name,args=p.params?.arguments??{};
    if(!TOOL.some(x=>x.name===name))return err(-32602,"Unknown tool");
    if(!args||Array.isArray(args)||typeof args!=="object")return err(-32602,"Invalid arguments");
-   const isSearch=name.startsWith("search_"),isStatus=name==="get_school_feed_status";
-   const allowed=isStatus?["category"]:isSearch?["query","limit"]:["limit"];
+   const isSearch=name.startsWith("search_"),isStatus=name==="get_school_feed_status",isGeneric=name==="get_board_posts"||name==="search_board_posts";
+   const allowed=isStatus?["category"]:isGeneric?(isSearch?["category","query","limit"]:["category","limit"]):isSearch?["query","limit"]:["limit"];
    if(Object.keys(args).some(x=>!allowed.includes(x)))return err(-32602,"Unexpected argument");
    if(isSearch&&(typeof args.query!=="string"||!args.query.trim()||args.query.length>100))return err(-32602,"Invalid query");
    if(args.limit!==undefined&&(!Number.isInteger(args.limit)||args.limit<1||args.limit>100))return err(-32602,"Invalid limit");
-   if(isStatus&&args.category!==undefined&&!["all","notice","letter","news","awards","office_letter","opportunities","health","student_rules"].includes(args.category))return err(-32602,"Invalid category");
+   if(isStatus&&args.category!==undefined&&!knownCategory(args.category))return err(-32602,"Invalid category");
    let category="notice";
    if(name.includes("family_letters"))category="letter";
    else if(name.includes("school_news"))category="news";
@@ -317,7 +329,10 @@ async function mcp(request,ctx){
    else if(name.includes("health_notices"))category="health";
    else if(name.includes("student_rules"))category="student_rules";
    else if(name.includes("all_school_posts"))category="all";
+   else if(isGeneric)category=args.category;
+   else if(EXTRA_TOOL_ROUTING[name])category=EXTRA_TOOL_ROUTING[name];
    else if(isStatus)category=args.category||"notice";
+   if(isGeneric&&!knownCategory(args.category))return err(-32602,"Invalid category");
    try{
      const data=await getData(ctx,category);
      const result=isStatus?{category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[]}:filtered(data,isSearch?args.query:"",args.limit??10);
