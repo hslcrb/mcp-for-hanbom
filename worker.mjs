@@ -444,23 +444,31 @@ export default{async fetch(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;
  if(request.method==="OPTIONS"&&(path==="/mcp"||path.startsWith("/api/")))return new Response(null,{status:204,headers:HEADERS});
  if(path==="/mcp")return mcp(request,ctx);
- if(["/api/notices","/api/letters","/api/news","/api/awards","/api/education-letters","/api/opportunities","/api/health-notices","/api/student-rules","/api/posts","/api/feed","/api/search","/api/status"].includes(path)){
-   if(request.method!=="GET")return json({error:"Method not allowed"},405);
-   const fromQuery=url.searchParams.get("category"),category=path==="/api/notices"?"notice":path==="/api/letters"?"letter":path==="/api/news"?"news":path==="/api/awards"?"awards":path==="/api/education-letters"?"office_letter":path==="/api/opportunities"?"opportunities":path==="/api/health-notices"?"health":path==="/api/student-rules"?"student_rules":(fromQuery||(path==="/api/posts"||path==="/api/feed"?"all":"notice"));
-   if(!["notice","letter","news","awards","office_letter","opportunities","health","student_rules","all"].includes(category))return json({error:"Invalid category",allowed:["notice","letter","news","awards","office_letter","opportunities","health","student_rules","all"]},400);
-   try{
-     const data=await getData(ctx,category);
-     if(path==="/api/status")return json({category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[]});
-     const limit=Number(url.searchParams.get("limit")||20);
-     return json(filtered(data,url.searchParams.get("q"),Number.isInteger(limit)?Math.min(100,Math.max(1,limit)):20));
-   }catch(e){return json({error:"RSS unavailable",code:String(e.message||"ERROR"),category},502);}
+ if(path==="/api/meta"||path==="/api/catalog"){
+  if(request.method!=="GET")return json({error:"Method not allowed"},405);
+  return json({name:"HANBOM DATA",version:VERSION,source_count:Object.keys(FEEDS).length,sources:FEEDS,groups:GROUPS,extra_board_catalog:EXTRA_BOARD_CATALOG,api_routes:API_ROUTES,endpoints:["/api/notices","/api/letters","/api/news","/api/awards","/api/education-letters","/api/opportunities","/api/health-notices","/api/student-rules","/api/posts?limit=all","/api/feed?category=<id>","/api/status?category=all","/api/search?q=...&category=all","/api/catalog","/mcp"],categories,authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
  }
- if(path==="/api/meta")return json({name:"HANBOM DATA",version:VERSION,sources:FEEDS,endpoints:["/api/notices","/api/letters","/api/news","/api/awards","/api/education-letters","/api/opportunities","/api/health-notices","/api/student-rules","/api/posts","/api/feed?category=all","/api/search?q=...&category=all","/api/status?category=all","/mcp"],categories:["all","notice","letter","news","awards","office_letter","opportunities","health","student_rules"],authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
+ const legacyRoutes={"/api/notices":"notice","/api/letters":"letter","/api/news":"news","/api/awards":"awards","/api/education-letters":"office_letter","/api/opportunities":"opportunities","/api/health-notices":"health","/api/student-rules":"student_rules"};
+ const direct=legacyRoutes[path]||API_ROUTES[path];
+ if(direct||["/api/posts","/api/feed","/api/search","/api/status"].includes(path)){
+  if(request.method!=="GET")return json({error:"Method not allowed"},405);
+  const selected=direct||url.searchParams.get("category")||((path==="/api/posts"||path==="/api/feed")?"all":"notice");
+  if(!knownCategory(selected))return json({error:"Invalid category",allowed:categories},400);
+  try{
+   const data=await getData(ctx,selected);
+   if(path==="/api/status")return json({category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[]});
+   const param=url.searchParams.get("limit");
+   const n=Number(param||20);
+   const max=100*Object.keys(FEEDS).length;
+   const limit=param==="all"?max:(Number.isInteger(n)?Math.max(1,Math.min(max,n)):20);
+   return json(filtered(data,url.searchParams.get("q"),limit));
+  }catch(e){return json({error:"RSS unavailable",code:String(e.message||"ERROR"),category:selected},502);}
+ }
  if(path.startsWith("/api/"))return json({error:"Not found"},404);
  if(path==="/health")return json({status:"ok",version:VERSION});
  if(path!=="/"&&path!=="/index.html")return json({error:"Not found"},404);
  if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
- // Cloudflare Access paused. Restore by first reattaching the archived Access app to this hostname.
+ // Cloudflare Access paused. Restore by reattaching archived Access applications to this hostname.
  // if(!request.headers.get("cf-access-jwt-assertion"))return json({error:"Dashboard requires Cloudflare Access"},401);
  return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});
 }};
