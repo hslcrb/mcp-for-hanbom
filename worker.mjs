@@ -1,8 +1,9 @@
 
-export const VERSION="0.2.0";
+export const VERSION="0.3.0";
 export const FEEDS=Object.freeze({
   notice:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062",source:"한봄고등학교 공지사항",label:"공지 사항"},
-  letter:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063",source:"한봄고등학교 가정통신문",label:"가정통신문"}
+  letter:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063",source:"한봄고등학교 가정통신문",label:"가정통신문"},
+  news:{url:"https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022",source:"한봄고등학교 한봄 NEWS",label:"한봄 NEWS"}
 });
 const VERSIONS=["2025-03-26","2025-06-18","2025-11-25"];
 const HEADERS={"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","access-control-allow-origin":"*","access-control-allow-methods":"GET,POST,OPTIONS","access-control-allow-headers":"content-type,accept,mcp-protocol-version"};
@@ -20,7 +21,7 @@ export function parseFeed(xml,category="notice"){
 }
 async function readFeed(ctx,category="notice"){
  const feed=FEEDS[category];if(!feed)throw Error("INVALID_CATEGORY");
- // Separate edge-cache keys prevent a notice cache from being mistaken for a family-letter feed.
+ // Separate edge-cache keys prevent different categories from being confused.
  const cache=globalThis.caches?.default,key=new Request("https://hanbom-cache.invalid/feed-v2/"+category);
  if(cache)try{const hit=await cache.match(key);if(hit)return{...await hit.json(),cached:true};}catch{}
  let r;try{r=await fetch(feed.url,{redirect:"manual",headers:{accept:"application/rss+xml,application/atom+xml,application/xml,text/xml"},signal:AbortSignal.timeout(12000)});}catch{throw Error("UPSTREAM_NETWORK_ERROR");}
@@ -39,14 +40,14 @@ export function mergeFeeds(results){
  });
  return {
    category:"all",
-   source:"한봄고등학교 공개 RSS — 공지 사항·가정통신문",
+   source:"한봄고등학교 공개 RSS — 공지 사항·가정통신문·한봄 NEWS",
    sources:successful.map(f=>({category:f.category,source:f.source,source_url:f.source_url,count:f.count,fetched_at:f.fetched_at,cached:f.cached})),
    fetched_at:new Date().toISOString(),count:items.length,items
  };
 }
 async function getData(ctx,category="notice"){
  if(category!=="all")return readFeed(ctx,category);
- const names=["notice","letter"],resolved=await Promise.allSettled(names.map(c=>readFeed(ctx,c)));
+ const names=["notice","letter","news"],resolved=await Promise.allSettled(names.map(c=>readFeed(ctx,c)));
  const good=resolved.map((r,i)=>r.status==="fulfilled"?r.value:null).filter(Boolean);
  if(!good.length)throw Error("ALL_FEEDS_UNAVAILABLE");
  const result=mergeFeeds(good);
@@ -58,7 +59,7 @@ function filtered(data,q,limit){
  const rows=term?data.items.filter(x=>(x.title+" "+x.summary).toLocaleLowerCase("ko").includes(term)):data.items;
  return{...data,count:rows.length,items:rows.slice(0,limit)};
 }
-const categorySchema={type:"string",enum:["notice","letter","all"],description:"notice=공지 사항, letter=가정통신문, all=전체"};
+const categorySchema={type:"string",enum:["notice","letter","news","all"],description:"notice=공지 사항, letter=가정통신문, news=한봄 NEWS, all=전체"};
 const limitSchema={type:"integer",minimum:1,maximum:100,description:"최대 결과 수(기본 10)"};
 const querySchema={type:"string",minLength:1,maxLength:100,description:"제목·요약 검색어"};
 const TOOL=[
@@ -67,8 +68,10 @@ const TOOL=[
  {name:"get_school_feed_status",description:"한봄고등학교 RSS 수집 상태·항목 수·출처를 조회합니다. 기본값 notice로 기존 클라이언트 호환.",inputSchema:{type:"object",properties:{category:categorySchema},additionalProperties:false}},
  {name:"get_family_letters",description:"한봄고등학교 공식 가정통신문 RSS의 최신 항목을 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
  {name:"search_family_letters",description:"한봄고등학교 가정통신문 RSS를 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}},
- {name:"get_all_school_posts",description:"한봄고 공지 사항과 가정통신문을 통합해 게시 시각순으로 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
- {name:"search_all_school_posts",description:"한봄고 공지 사항과 가정통신문을 함께 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}}
+ {name:"get_school_news",description:"한봄고등학교 공식 한봄 NEWS RSS의 최신 게시물을 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
+ {name:"search_school_news",description:"한봄 NEWS RSS에 포함된 게시물을 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}},
+ {name:"get_all_school_posts",description:"한봄고 공지 사항·가정통신문·한봄 NEWS를 통합해 게시 시각순으로 조회합니다.",inputSchema:{type:"object",properties:{limit:limitSchema},additionalProperties:false}},
+ {name:"search_all_school_posts",description:"한봄고 공지 사항·가정통신문·한봄 NEWS를 함께 검색합니다.",inputSchema:{type:"object",properties:{query:querySchema,limit:limitSchema},required:["query"],additionalProperties:false}}
 ].map(t=>({...t,annotations:{readOnlyHint:true,destructiveHint:false}}));
 async function mcp(request,ctx){
  if(request.method!=="POST")return json({error:"Use stateless MCP POST JSON-RPC"},405);
@@ -80,7 +83,7 @@ async function mcp(request,ctx){
  if(!Object.hasOwn(p,"id"))return new Response(null,{status:202});
  const ok=result=>json({jsonrpc:"2.0",id:p.id,result});
  const err=(code,message)=>json({jsonrpc:"2.0",id:p.id,error:{code,message}});
- if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"비공식 한봄고 공지 사항·가정통신문 공개 RSS 읽기 전용 MCP. 자료 출처를 밝히세요."});
+ if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"비공식 한봄고 공지 사항·가정통신문·한봄 NEWS 공개 RSS 읽기 전용 MCP. 자료 출처를 밝히세요."});
  if(request.headers.get("mcp-protocol-version")&&!VERSIONS.includes(request.headers.get("mcp-protocol-version")))return err(-32600,"Unsupported protocol version");
  if(p.method==="ping")return ok({});
  if(p.method==="tools/list")return ok({tools:TOOL});
@@ -93,9 +96,10 @@ async function mcp(request,ctx){
    if(Object.keys(args).some(x=>!allowed.includes(x)))return err(-32602,"Unexpected argument");
    if(isSearch&&(typeof args.query!=="string"||!args.query.trim()||args.query.length>100))return err(-32602,"Invalid query");
    if(args.limit!==undefined&&(!Number.isInteger(args.limit)||args.limit<1||args.limit>100))return err(-32602,"Invalid limit");
-   if(isStatus&&args.category!==undefined&&!["all","notice","letter"].includes(args.category))return err(-32602,"Invalid category");
+   if(isStatus&&args.category!==undefined&&!["all","notice","letter","news"].includes(args.category))return err(-32602,"Invalid category");
    let category="notice";
    if(name.includes("family_letters"))category="letter";
+   else if(name.includes("school_news"))category="news";
    else if(name.includes("all_school_posts"))category="all";
    else if(isStatus)category=args.category||"notice";
    try{
@@ -140,12 +144,13 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 </style>
 </head>
 <body>
-<main aria-label="한봄고등학교 공지와 가정통신문">
+<main aria-label="한봄고등학교 공지, 가정통신문과 한봄 NEWS">
 <h1>한봄고 홈페이지 공지사항 MCP</h1>
 <nav class="filters" aria-label="게시물 유형">
 <button type="button" data-category="all" aria-pressed="true">전체 보기</button>
 <button type="button" data-category="notice" aria-pressed="false">공지 사항</button>
 <button type="button" data-category="letter" aria-pressed="false">가정통신문</button>
+<button type="button" data-category="news" aria-pressed="false">한봄 NEWS</button>
 </nav>
 <ol id="notices" aria-live="polite" aria-busy="true"></ol>
 </main>
@@ -153,11 +158,11 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
 (function(){
  const list=document.getElementById("notices");
  const buttons=[...document.querySelectorAll(".filters button")];
- let category="all",feeds={notice:[],letter:[]},failed={notice:false,letter:false};
+ let category="all",feeds={notice:[],letter:[],news:[]},failed={notice:false,letter:false,news:false};
  const message=text=>{const li=document.createElement("li");li.textContent=text;list.replaceChildren(li);};
  const compare=(a,b)=>(Date.parse(b.published_at||"")||0)-(Date.parse(a.published_at||"")||0);
  function render(){
-   const data=category==="all"?[...feeds.notice,...feeds.letter].sort(compare):feeds[category];
+   const data=category==="all"?[...feeds.notice,...feeds.letter,...feeds.news].sort(compare):feeds[category];
    const frag=document.createDocumentFragment();
    for(const entry of data){
      if(typeof entry.title!=="string"||!entry.title.trim())continue;
@@ -170,7 +175,7 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
      li.append(text);frag.append(li);
    }
    if(frag.childNodes.length){list.replaceChildren(frag);}
-   else if(category==="all"?(failed.notice&&failed.letter):failed[category])message("게시물을 불러올 수 없습니다.");
+   else if(category==="all"?(failed.notice&&failed.letter&&failed.news):failed[category])message("게시물을 불러올 수 없습니다.");
    else message("표시할 게시물이 없습니다.");
  }
  function select(next){
@@ -180,10 +185,10 @@ li a:focus-visible{outline:2px solid #111;outline-offset:5px}
  }
  for(const button of buttons)button.addEventListener("click",()=>select(button.dataset.category));
  async function refresh(){
-   const categories=["notice","letter"];
+   const categories=["notice","letter","news"];
    await Promise.all(categories.map(async kind=>{
      try{
-       const response=await fetch(kind==="notice"?"/api/notices?limit=100":"/api/letters?limit=100",{cache:"no-store"});
+       const response=await fetch({notice:"/api/notices?limit=100",letter:"/api/letters?limit=100",news:"/api/news?limit=100"}[kind],{cache:"no-store"});
        if(!response.ok)throw Error("RSS_NOT_AVAILABLE");
        const result=await response.json();
        feeds[kind]=Array.isArray(result.items)?result.items:[];
@@ -203,10 +208,10 @@ export default{async fetch(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;
  if(request.method==="OPTIONS"&&(path==="/mcp"||path.startsWith("/api/")))return new Response(null,{status:204,headers:HEADERS});
  if(path==="/mcp")return mcp(request,ctx);
- if(["/api/notices","/api/letters","/api/posts","/api/feed","/api/search","/api/status"].includes(path)){
+ if(["/api/notices","/api/letters","/api/news","/api/posts","/api/feed","/api/search","/api/status"].includes(path)){
    if(request.method!=="GET")return json({error:"Method not allowed"},405);
-   const fromQuery=url.searchParams.get("category"),category=path==="/api/notices"?"notice":path==="/api/letters"?"letter":(fromQuery||(path==="/api/posts"||path==="/api/feed"?"all":"notice"));
-   if(!["notice","letter","all"].includes(category))return json({error:"Invalid category",allowed:["notice","letter","all"]},400);
+   const fromQuery=url.searchParams.get("category"),category=path==="/api/notices"?"notice":path==="/api/letters"?"letter":path==="/api/news"?"news":(fromQuery||(path==="/api/posts"||path==="/api/feed"?"all":"notice"));
+   if(!["notice","letter","news","all"].includes(category))return json({error:"Invalid category",allowed:["notice","letter","news","all"]},400);
    try{
      const data=await getData(ctx,category);
      if(path==="/api/status")return json({category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[]});
@@ -214,7 +219,7 @@ export default{async fetch(request,env,ctx){
      return json(filtered(data,url.searchParams.get("q"),Number.isInteger(limit)?Math.min(100,Math.max(1,limit)):20));
    }catch(e){return json({error:"RSS unavailable",code:String(e.message||"ERROR"),category},502);}
  }
- if(path==="/api/meta")return json({name:"HANBOM DATA",version:VERSION,sources:FEEDS,endpoints:["/api/notices","/api/letters","/api/posts","/api/feed?category=all","/api/search?q=...&category=all","/api/status?category=all","/mcp"],categories:["all","notice","letter"],authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
+ if(path==="/api/meta")return json({name:"HANBOM DATA",version:VERSION,sources:FEEDS,endpoints:["/api/notices","/api/letters","/api/news","/api/posts","/api/feed?category=all","/api/search?q=...&category=all","/api/status?category=all","/mcp"],categories:["all","notice","letter","news"],authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
  if(path.startsWith("/api/"))return json({error:"Not found"},404);
  if(path==="/health")return json({status:"ok",version:VERSION});
  if(path!=="/"&&path!=="/index.html")return json({error:"Not found"},404);
