@@ -123,3 +123,15 @@ npm run dev
 - MCP 신규 도구: `get_school_news`, `search_school_news` (기존 7개 유지, 총 9개). `get_school_feed_status`의 `category=news`도 지원.
 - 원본 RSS는 학교 홈페이지에 귀속. 전체 공개 읽기 전용·Access 보관·GitHub `main` 자동배포 유지, GitHub Actions 없음.
 - [통합 개발 및 검증 기록](docs/HANBOM_NEWS_2026-11-10.md).
+
+## 2026-11-10 · 학생작품 및 수상내역 RSS 추가
+
+- 새 공식 RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17172&bbsId=10010`.
+- 화면 pill 5개: **전체 보기 / 공지 사항 / 가정통신문 / 한봄 NEWS / 학생작품 및 수상내역**.
+- 새 REST API: `GET /api/awards?limit=20&q=`. 기존 `/api/notices`, `/api/letters`, `/api/news`, `/api/posts` 모두 유지.
+- `/api/feed?category=awards`, `/api/search?q=...&category=awards`, `/api/status?category=awards` 지원.
+- 전체 보기에서는 네 피드를 날짜순으로 병합하며 어느 하나가 실패해도 가능한 나머지 결과를 반환하고 실패 내역을 명시.
+- 새 MCP 도구: `get_student_works_awards`, `search_student_works_awards`. 이전 9개 유지 → 총 11개.
+- 순백색 바탕·주아체 H1·모노톤 pill 및 호버효과 제거 유지. 현재 인증 없는 공개 서비스 및 복구용 Cloudflare Access 백업 유지.
+- GitHub Actions 없이 `main` → Cloudflare Workers Builds 자동 배포.
+- [학생작품·수상 RSS 개발 기록](docs/STUDENT_WORKS_AWARDS_2026-11-10.md).
