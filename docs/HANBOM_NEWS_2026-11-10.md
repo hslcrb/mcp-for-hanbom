@@ -50,3 +50,15 @@ URL `https://data.hanbom.rhee.life/mcp`, Streamable HTTP, 공개 무인증. 기�
 ## 검증 상태
 
 로컬 Node 테스트 및 Workers Builds 성공 여부, 프로덕션 `/api/news`, `/api/posts`, MCP `tools/list` 응답을 확인하고 이 파일에 실제 검증 결과를 추가 기록한다.
+
+## 프로덕션 실검증 (2026-11-10 KST)
+
+- 구현 커밋: `1c4567ac9b046567cecb1b5ade2f48131bc91c6c`.
+- Cloudflare Workers Builds ID: `d3f4a1eb-5fa3-4509-98e5-5f907491cea0`.
+- Node 구문·단위 테스트 **16/16 통과**, 실패 0, Build 및 Deploy 명령 성공, `data.hanbom.rhee.life` custom domain 배포 로그 확인.
+- 실제 Cloudflare Browser Rendering HTTP GET `https://data.hanbom.rhee.life/api/news?limit=5`에서 `category=news`, `count=26` 정상 응답.
+- 공식 NEWS 예시 3건: `취업 산학맞춤반 수료식`, `'캡스톤 디자인' 공개 수업`, `에스토니아 교육부장관, 수업 참관` (원문 URL 포함).
+- 실제 통합 GET `/api/posts?limit=1`: `count=179`, `partial=false`, `failed_feeds=[]`, sources = 공지 사항 53 · 가정통신문 100 · 한봄 NEWS 26.
+- 숫자는 해당 시점 원천 RSS가 제공한 항목 수(가정통신문 100건은 처리 상한)이며 학교 게시판 전체 기록의 총건수는 아님.
+- 4개 pill 버튼의 HTML·변경 로직, 3개 피드 병합, 기존 REST 유지, 신규 MCP 도구 2개와 도구 목록은 Node 테스트 검증.
+- Cloudflare 브라우저에서 직접 각 pill 버튼을 클릭하는 시각/기능 검증은 별도 수행하지 않았음. ChatGPT에 이미 연결된 MCP 앱은 이전 스키마를 캐시할 수 있으므로 새 도구가 안 보이면 연결 새로 고침 필요.

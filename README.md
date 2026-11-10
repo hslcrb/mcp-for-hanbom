@@ -2,7 +2,7 @@
 
 > **현재 운영 상태 (2026-11-10): 전체 공개 · Cloudflare Access 비적용.** 대시보드, REST, MCP 모두 로그인 없이 접근할 수 있습니다. 예전 소유자 전용 정책과 공개 Bypass 정책은 삭제하지 않고 별도 Access 앱에 연결해 보존했습니다. 재보호 방법: [Access 일시 해제·복구 문서](docs/ACCESS_SUSPENSION_2026-11-10.md).
 
-> **비공식 학생 개발 프로젝트** · 한봄고등학교 공식 공지사항 RSS를 REST API, 원격 MCP, 개인 대시보드로 제공하는 Cloudflare Workers 서비스.
+> **비공식 학생 개발 프로젝트** · 한봄고등학교의 공개 공지사항·가정통신문·한봄 NEWS RSS를 REST API, 원격 MCP, 공개 대시보드로 제공하는 Cloudflare Workers 서비스.
 
 ## 서비스 주소 (Canonical)
 
@@ -10,6 +10,9 @@
 | --- | --- | --- |
 | 공개 대시보드 | https://data.hanbom.rhee.life/ | **누구나 (Access 일시 해제)** |
 | REST 공지 | https://data.hanbom.rhee.life/api/notices | 모두 공개, 읽기 전용 |
+| 가정통신문 | https://data.hanbom.rhee.life/api/letters | 모두 공개, 읽기 전용 |
+| 한봄 NEWS | https://data.hanbom.rhee.life/api/news | 모두 공개, 읽기 전용 |
+| 통합 보기 | https://data.hanbom.rhee.life/api/posts | 모두 공개, 읽기 전용 |
 | REST 검색 | https://data.hanbom.rhee.life/api/search?q=입학 | 모두 공개, 읽기 전용 |
 | REST 상태 | https://data.hanbom.rhee.life/api/status | 모두 공개, 읽기 전용 |
 | API 메타데이터 | https://data.hanbom.rhee.life/api/meta | 모두 공개, 읽기 전용 |
@@ -19,16 +22,17 @@
 
 ## 데이터 출처
 
-- 공식 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062
+- 공지 사항 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17249&bbsId=10062
+- 가정통신문 RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17252&bbsId=10063
+- 한봄 NEWS RSS: https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022
 - 학교 홈페이지: https://hanbom-h.goesw.kr/
 - RSS에 노출된 공지 일부만 조회할 수 있습니다. 전체 공지 및 첨부파일은 반드시 공식 원문에서 확인해야 합니다.
 
 ## 기능 및 MCP
 
 - Worker 하나로 RSS·REST·Stateless MCP(Streamable HTTP JSON-RPC)·반응형 개인 대시보드 운영.
-- GET `/api/notices?limit=20&q=`, GET `/api/search?q=...`, GET `/api/status`, GET `/api/meta`.
-- POST `/mcp`: `initialize`, `ping`, `tools/list`, `tools/call`.
-- MCP 도구: `get_school_notices`, `search_school_notices`, `get_school_feed_status`.
+- REST: GET `/api/notices`, `/api/letters`, `/api/news`, `/api/posts`, `/api/feed?category=all|notice|letter|news`, `/api/search?q=...&category=all`, `/api/status?category=all`, `/api/meta`.
+- MCP: POST `/mcp` (`initialize`, `ping`, `tools/list`, `tools/call`). 기존 도구 7개에 `get_school_news`, `search_school_news`를 추가해 총 9개 제공.
 - 상류 URL 고정, 3분 단위 Cloudflare edge 캐시, 700KB 응답 상한, 요청 타임아웃, 실패 시 오류 표시.
 - 공개 쓰기 기능·학생 개인정보 취득·학교 홈페이지 변경 기능 없음.
 
@@ -38,7 +42,7 @@
 
 - [일시 해제] 대시보드 `/`를 보호하던 Cloudflare Access 단일 이메일 정책. 현재 로그인 불필요.
 - [일시 해제] `/mcp`와 `/api/*`의 Cloudflare Access Bypass 정책. 현재 Access 자체를 적용하지 않으며 두 서비스는 공개 유지.
-- Worker의 대시보드 인증 헤더 확인은 보조 수단이며, **실제 인증 강제는 Cloudflare Access 정책**이 담당합니다.
+- 대시보드의 이전 인증 헤더 검사는 **현재 주석 처리**해 실행되지 않습니다. 재보호 시 Cloudflare Access 앱을 복원한 뒤 필요하면 보조 검사도 활성화합니다.
 - `workers.dev` 비활성화, Preview URLs 비활성화, Preview builds 비활성화.
 - 현재 MCP는 **인증 없는 공개 접근**입니다. OAuth 2.1/PKCE는 아직 구현되지 않았으며, 등록 화면에서 OAuth를 선택하면 안 됩니다.
 

@@ -10,7 +10,7 @@
 | 항목 / UI 명칭 | 입력값 | 비고 |
 | --- | --- | --- |
 | Name / 표시명 | `HANBOM Data MCP` | 사용자에게 표시할 이름 |
-| Description / 설명 | `한봄고등학교의 공개 공지사항 RSS를 검색하고 확인하는 비공식 읽기 전용 도구` | 선택 사항 |
+| Description / 설명 | `한봄고등학교 공지사항·가정통신문·한봄 NEWS RSS 조회·검색용 비공식 읽기 전용 도구` | 선택 사항 |
 | Server URL / URL | **`https://data.hanbom.rhee.life/mcp`** | 끝에 `/mcp` 필수 |
 | Transport / Connection | `Remote MCP server` / `Streamable HTTP` | 지원 UI에서 선택 |
 | Authentication / 인증 | **`None` / `No authentication`** | 현재 무인증 서비스 |
@@ -42,7 +42,7 @@ None
 **Description**
 
 ```text
-한봄고등학교의 공개 공지사항 RSS를 검색하고 확인하는 비공식 읽기 전용 MCP 서버
+한봄고등학교 공지사항·가정통신문·한봄 NEWS의 공개 RSS를 조회하고 검색하는 비공식 읽기 전용 MCP 서버
 ```
 
 ## MCP 서버가 제공하는 도구
@@ -51,13 +51,22 @@ None
 | --- | --- | --- |
 | `get_school_notices` | `limit` (정수 1~100, 선택) | RSS 내 최근 공지 |
 | `search_school_notices` | `query` (필수), `limit` (선택) | RSS에 포함된 제목·요약 검색 |
-| `get_school_feed_status` | 없음 | 수집 시각·건수·원천 |
+| `get_school_feed_status` | `category` 선택 (`notice`/`letter`/`news`/`all`, 기본 notice) | 유형별 RSS 수집 시각·건수·원천 |
+| `get_family_letters` | `limit` 선택 | 가정통신문 RSS 최신 게시물 |
+| `search_family_letters` | `query` 필수, `limit` 선택 | 가정통신문 검색 |
+| `get_school_news` | `limit` 선택 | 한봄 NEWS RSS 최신 게시물 |
+| `search_school_news` | `query` 필수, `limit` 선택 | 한봄 NEWS 검색 |
+| `get_all_school_posts` | `limit` 선택 | 3개 게시판 날짜순 통합 |
+| `search_all_school_posts` | `query` 필수, `limit` 선택 | 3개 게시판 통합 검색 |
 
 ## HTTP 연결 점검 예시
 
 ```bash
 curl -i 'https://data.hanbom.rhee.life/api/meta'
 curl -i 'https://data.hanbom.rhee.life/api/notices?limit=3'
+curl -i 'https://data.hanbom.rhee.life/api/letters?limit=3'
+curl -i 'https://data.hanbom.rhee.life/api/news?limit=3'
+curl -i 'https://data.hanbom.rhee.life/api/posts?limit=5'
 curl -sS -X POST 'https://data.hanbom.rhee.life/mcp' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
@@ -77,3 +86,10 @@ curl -sS -X POST 'https://data.hanbom.rhee.life/mcp' \
 ## 공식성·정보 범위
 
 학교 공식 웹사이트의 **공개 RSS**가 출처입니다. 프로젝트는 비공식이며 개인정보·비공개 공문·내부 시스템에 접근하지 않습니다. RSS에 존재하지 않는 공지를 추정 생성하지 않습니다.
+
+## 2026-11-10 · 한봄 NEWS 도구 추가
+
+- NEWS RSS: `https://hanbom-h.goesw.kr/hanbom-h/na/ntt/selectRssFeed.do?mi=17187&bbsId=10022`.
+- 서버 주소 및 인증 설정은 변함없음: `https://data.hanbom.rhee.life/mcp` / `None`.
+- 도구 2개가 추가되어 **총 9개**. 기존 연결된 ChatGPT 앱에 신규 도구가 나타나지 않으면 앱 도구 목록/연결을 새로 고쳐야 할 수 있음.
+- 실서비스 뉴스 조회 결과 및 개발 기록: [HANBOM_NEWS_2026-11-10.md](HANBOM_NEWS_2026-11-10.md).
