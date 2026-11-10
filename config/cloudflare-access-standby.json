@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "generated_date": "2026-11-10",
+  "service": "HANBOM DATA",
+  "worker": "mcp-for-hanbom",
+  "repository": "hslcrb/mcp-for-hanbom",
+  "live_domain": "data.hanbom.rhee.life",
+  "suspended_domain": "access-paused-hanbom.rhee.life",
+  "current_mode": "public_no_access_on_live_domain",
+  "access_policy_resources": {
+    "owner_policy": {
+      "id": "4037d853-56f2-432c-acbc-748d1f1c91e0",
+      "name": "HANBOM owner only",
+      "decision": "allow",
+      "include": [
+        {
+          "email": {
+            "email": "dlghtp581@naver.com"
+          }
+        }
+      ]
+    },
+    "public_policy": {
+      "id": "79c1c411-b483-4f69-a255-2313843b80b0",
+      "name": "HANBOM public read-only MCP and REST",
+      "decision": "bypass",
+      "include": [
+        {
+          "everyone": {}
+        }
+      ]
+    }
+  },
+  "apps": [
+    {
+      "id": "c2a9c08b-1911-4cfa-bbea-fdec13132efe",
+      "name": "[PAUSED] HANBOM DATA - Owner Dashboard",
+      "type": "self_hosted",
+      "current_domain": "access-paused-hanbom.rhee.life",
+      "restore_domain": "data.hanbom.rhee.life",
+      "policy_id": "4037d853-56f2-432c-acbc-748d1f1c91e0",
+      "session_duration": "12h"
+    },
+    {
+      "id": "c09098d0-5abb-48e6-bcf9-1c5b78ce7fdb",
+      "name": "[PAUSED] HANBOM DATA - Public MCP",
+      "type": "self_hosted",
+      "current_domain": "access-paused-hanbom.rhee.life/mcp",
+      "restore_domain": "data.hanbom.rhee.life/mcp",
+      "policy_id": "79c1c411-b483-4f69-a255-2313843b80b0",
+      "session_duration": "12h"
+    },
+    {
+      "id": "b466fe61-543f-4b6a-a02f-7a47bd67dcc7",
+      "name": "[PAUSED] HANBOM DATA - Public REST",
+      "type": "self_hosted",
+      "current_domain": "access-paused-hanbom.rhee.life/api/*",
+      "restore_domain": "data.hanbom.rhee.life/api/*",
+      "policy_id": "79c1c411-b483-4f69-a255-2313843b80b0",
+      "session_duration": "12h"
+    }
+  ],
+  "current_production_verification": {
+    "github_commit": "7ff4c294d7cf4d7485677855a45b9d6adcb61b2e",
+    "cloudflare_build_id": "140ce060-593b-417e-bd83-8aedee9c6f9d",
+    "build_outcome": "success",
+    "tests_passed": 9,
+    "tests_failed": 0,
+    "version_id": "c81e8b86-41b5-48ec-88d3-d2c4aa0a6b1c",
+    "percentage_deployed": 100,
+    "live_access_apps": 0,
+    "archived_access_apps": 3,
+    "dns_records_on_archived_host": 0,
+    "account_default_deny": false
+  },
+  "note": "No credentials or API tokens. Re-enabling requires moving apps to restore_domain and verifying policies; worker header assertion guard is retained in comments. Other Cloudflare services unaffected."
+}

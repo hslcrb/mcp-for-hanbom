@@ -92,3 +92,5 @@ npm run dev
 - Worker의 Access Assertion 인증 검사 구문은 코드 주석으로 보존하되 현재 실행하지 않습니다.
 - 모든 HANBOM 전용 Access 앱 3개는 라이브 서비스 주소에서 분리하여 비활성화 상태로 보관합니다. 재사용 정책 2개도 보존합니다.
 - 복구 방법 및 정책 ID: [docs/ACCESS_SUSPENSION_2026-11-10.md](docs/ACCESS_SUSPENSION_2026-11-10.md).
+
+**실행 결과 검증 (2026-11-10):** Cloudflare Workers Builds 성공(9/9 테스트), 현재 도메인 Access 앱 0개, 보관 앱 3개·재사용 정책 2개 유지. ChatGPT MCP 호출 및 RSS 53건 확인. [복구용 머신리더블 정책 파일](config/cloudflare-access-standby.json).

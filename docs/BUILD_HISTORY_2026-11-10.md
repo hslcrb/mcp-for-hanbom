@@ -115,3 +115,14 @@
 - Cloudflare Access 관련 앱과 reusable policy는 삭제하지 않고 **서비스가 연결되지 않은 보관용 호스트**로 이전해 현재 사용자 접속에는 정책이 작동하지 않도록 처리.
 - GitHub `main` → Cloudflare Workers Builds 자동 배포 유지. GitHub Actions 없음.
 - 세부 복구 절차와 실제 Access 설정 기록: [ACCESS_SUSPENSION_2026-11-10.md](ACCESS_SUSPENSION_2026-11-10.md).
+
+### 공개 전환 후 실제 검증 결과
+
+- Cloudflare `main` build UUID `140ce060-593b-417e-bd83-8aedee9c6f9d`: `success`, 테스트 **9/9 통과**.
+- Worker 최종 버전 `c81e8b86-41b5-48ec-88d3-d2c4aa0a6b1c` (검증 당시 100%).
+- 실제 서비스 호스트 Access 앱 수 **0개**; 보관용 접근 제어 앱 **3개**.
+- 보존된 정책: 소유자 이메일 Allow 1개, 누구나 Bypass 1개(두 공개 앱에서 재사용).
+- Cloudflare 계정 전체 미등록 호스트 차단 `deny_unmatched_requests = false`, Access 일괄 보호 앱 없음.
+- ChatGPT 등록 MCP로 RSS `count = 53`을 다시 조회 성공.
+- 신규 `h1`: **한봄고 홈페이지 공지사항 MCP**.
+- 상세: [일시 해제 및 복구 문서](ACCESS_SUSPENSION_2026-11-10.md). 실제 외부 브라우저 익명 접속 실측은 별개.
