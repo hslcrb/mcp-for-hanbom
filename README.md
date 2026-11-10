@@ -1,12 +1,14 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+> **현재 운영 상태 (2026-11-10): 전체 공개 · Cloudflare Access 비적용.** 대시보드, REST, MCP 모두 로그인 없이 접근할 수 있습니다. 예전 소유자 전용 정책과 공개 Bypass 정책은 삭제하지 않고 별도 Access 앱에 연결해 보존했습니다. 재보호 방법: [Access 일시 해제·복구 문서](docs/ACCESS_SUSPENSION_2026-11-10.md).
+
 > **비공식 학생 개발 프로젝트** · 한봄고등학교 공식 공지사항 RSS를 REST API, 원격 MCP, 개인 대시보드로 제공하는 Cloudflare Workers 서비스.
 
 ## 서비스 주소 (Canonical)
 
 | 항목 | URL | 접근 정책 |
 | --- | --- | --- |
-| 개인 대시보드 | https://data.hanbom.rhee.life/ | 지정 이메일 1명만 Cloudflare Access 허용 |
+| 공개 대시보드 | https://data.hanbom.rhee.life/ | **누구나 (Access 일시 해제)** |
 | REST 공지 | https://data.hanbom.rhee.life/api/notices | 모두 공개, 읽기 전용 |
 | REST 검색 | https://data.hanbom.rhee.life/api/search?q=입학 | 모두 공개, 읽기 전용 |
 | REST 상태 | https://data.hanbom.rhee.life/api/status | 모두 공개, 읽기 전용 |
@@ -32,8 +34,10 @@
 
 ## 보안과 인증
 
-- 대시보드 `/`는 Cloudflare Access로 `dlghtp581@naver.com`만 허용합니다.
-- `/mcp` 와 `/api/*`는 각각 독립된 Cloudflare Access **Bypass Everyone** 규칙으로 공개합니다.
+**2026-11-10 이후 현재 상태: 전체 공개.** 아래의 기존 제한사항은 일시 해제됐으며, 복구를 위한 정책 템플릿으로만 유지됩니다. [복구 가이드](docs/ACCESS_SUSPENSION_2026-11-10.md)를 참고하세요.
+
+- [일시 해제] 대시보드 `/`를 보호하던 Cloudflare Access 단일 이메일 정책. 현재 로그인 불필요.
+- [일시 해제] `/mcp`와 `/api/*`의 Cloudflare Access Bypass 정책. 현재 Access 자체를 적용하지 않으며 두 서비스는 공개 유지.
 - Worker의 대시보드 인증 헤더 확인은 보조 수단이며, **실제 인증 강제는 Cloudflare Access 정책**이 담당합니다.
 - `workers.dev` 비활성화, Preview URLs 비활성화, Preview builds 비활성화.
 - 현재 MCP는 **인증 없는 공개 접근**입니다. OAuth 2.1/PKCE는 아직 구현되지 않았으며, 등록 화면에서 OAuth를 선택하면 안 됩니다.
@@ -81,3 +85,10 @@ npm run dev
 - H1만 주아체로, 아래 공지 목록은 기존 기본 서체로 유지. 기존 백색 배경/중앙 목록/링크 호버 무효 유지.
 - 외부 웹폰트 로딩을 위해 HTML 응답 CSP의 `font-src https://cdn.jsdelivr.net`를 허용했습니다.
 - 단일 이메일 Cloudflare Access, 공개 REST, MCP 서버, GitHub `main` 자동배포는 변경하지 않았습니다.
+
+## 2026-11-10 · 대시보드 전면 공개 / H1 변경
+
+- 화면 제목: **한봄고 홈페이지 공지사항 MCP** (Juache / 주아체 CDN 유지).
+- Worker의 Access Assertion 인증 검사 구문은 코드 주석으로 보존하되 현재 실행하지 않습니다.
+- 모든 HANBOM 전용 Access 앱 3개는 라이브 서비스 주소에서 분리하여 비활성화 상태로 보관합니다. 재사용 정책 2개도 보존합니다.
+- 복구 방법 및 정책 ID: [docs/ACCESS_SUSPENSION_2026-11-10.md](docs/ACCESS_SUSPENSION_2026-11-10.md).

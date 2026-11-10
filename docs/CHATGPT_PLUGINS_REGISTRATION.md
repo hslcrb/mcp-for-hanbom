@@ -1,5 +1,8 @@
 # ChatGPT Plugins 등록 입력값 — HANBOM DATA MCP
 
+**2026-11-10 변경:** 대시보드까지 전면 공개로 전환했습니다. MCP 주소와 인증값은 기존대로 `https://data.hanbom.rhee.life/mcp` / `None`을 유지합니다. ([Access 복구 가이드](ACCESS_SUSPENSION_2026-11-10.md))
+
+
 > 2026-11-10 기준. **새 정식 주소만 사용**. 이전 `hanbom.rhee.life/mcp`는 등록하거나 계속 사용하지 않습니다.
 
 ## 등록 화면의 각 항목별 입력값

@@ -9,15 +9,23 @@ test("dashboard is white centered plain notices list only",async()=>{
   assert.equal(response.status,200);
   const html=await response.text();
   assert.match(html,/html,body\{min-height:100%;background:#fff\}/);
-  assert.match(html,/<main aria-label="한봄고등학교 공지사항 목록"><h1>한봄고 공지사항 MCP<\/h1><ol id="notices"/);
+  assert.match(html,/<main aria-label="한봄고등학교 공지사항 목록"><h1>한봄고 홈페이지 공지사항 MCP<\/h1><ol id="notices"/);
   assert.match(html,/text-align:center/);
   assert.match(html,/li a:visited,li a:hover,li a:active/);
   assert.doesNotMatch(html,/<(?:header|footer|aside|button|input|h2|time)\b/i);
   assert.doesNotMatch(html,/(?:새로고침|개인 대시보드|최근 공지|수집 게시물|검색창)/);
 });
-test("dashboard still requires Cloudflare Access assertion",async()=>{
+test("dashboard is publicly accessible without any Cloudflare Access assertion",async()=>{
   const response=await worker.fetch(new Request("https://data.hanbom.rhee.life/"),{},{});
-  assert.equal(response.status,401);
+  assert.equal(response.status,200);
+  const html=await response.text();
+  assert.match(html,/<h1>한봄고 홈페이지 공지사항 MCP<\/h1>/);
+  assert.doesNotMatch(html,/(?:Cf-Access-Jwt-Assertion|Cloudflare Access login)/i);
+});
+test("HEAD request does not require login and contains no body",async()=>{
+  const response=await worker.fetch(new Request("https://data.hanbom.rhee.life/",{method:"HEAD"}),{},{});
+  assert.equal(response.status,200);
+  assert.equal(await response.text(),"");
 });
 test("public REST and MCP tool registry remain intact",async()=>{
   const rest=await worker.fetch(new Request("https://data.hanbom.rhee.life/api/meta"),{},{});
@@ -35,7 +43,7 @@ test("Juache heading loads CDN font while preserving the white list and CSP", as
   assert.equal(response.status,200);
   const html=await response.text();
   assert.equal((html.match(/<h1>/g)||[]).length,1);
-  assert.match(html,/<h1>한봄고 공지사항 MCP<\/h1>/);
+  assert.match(html,/<h1>한봄고 홈페이지 공지사항 MCP<\/h1>/);
   assert.match(html,/@font-face\s*\{/);
   assert.match(html,/font-family: 'Juache'/);
   assert.match(html,/https:\/\/cdn\.jsdelivr\.net\/gh\/projectnoonnu\/noonfonts_one@1\.0\/BMJUA\.woff/);
@@ -43,4 +51,11 @@ test("Juache heading loads CDN font while preserving the white list and CSP", as
   assert.match(html,/font-display: swap;/);
   assert.match(html,/html,body\{min-height:100%;background:#fff\}/);
   assert.match(response.headers.get("content-security-policy"),/font-src https:\/\/cdn\.jsdelivr\.net/);
+});
+
+test("public API metadata reflects disabled Access enforcement", async()=>{
+  const r=await worker.fetch(new Request("https://data.hanbom.rhee.life/api/meta"),{},{});
+  assert.equal(r.status,200);
+  const payload=await r.json();
+  assert.match(payload.auth.dashboard,/^public/);
 });

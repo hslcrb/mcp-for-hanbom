@@ -104,3 +104,14 @@
 ### 검증 주의
 
 운영 배포의 성공과 실제 RSS 수신·MCP 연결 성공·OTP 로그인 성공을 혼동하지 않습니다. 후자 3가지는 이 턴에서 HTTP 브라우저 실측이 되지 않았습니다. 자세한 이전 기록과 Cloudflare 설정은 [도메인 이전 기술기](DOMAIN_MIGRATION_2026-11-10.md), [플러그인스 등록 가이드](CHATGPT_PLUGINS_REGISTRATION.md), [배포 매뉴얼](DEPLOYMENT.md), [Access 보안 매뉴얼](ACCESS_SECURITY.md)를 참조하세요.
+
+---
+
+## 추가 이력 — 2026-11-10 · 공개 전환 및 제목 수정
+
+- 디자인: H1을 `한봄고 홈페이지 공지사항 MCP`로 변경. 주아체 CDN, 순백 배경, 중앙 목록 레이아웃 및 무호버 스타일은 유지.
+- 인증: 기존 Worker 루트의 `cf-access-jwt-assertion` 검사를 **주석화**하여 미인증 GET/HEAD도 HTML을 반환하도록 변경.
+- REST `/api/meta` 응답에서 대시보드 인증 상태를 `public`로 교정.
+- Cloudflare Access 관련 앱과 reusable policy는 삭제하지 않고 **서비스가 연결되지 않은 보관용 호스트**로 이전해 현재 사용자 접속에는 정책이 작동하지 않도록 처리.
+- GitHub `main` → Cloudflare Workers Builds 자동 배포 유지. GitHub Actions 없음.
+- 세부 복구 절차와 실제 Access 설정 기록: [ACCESS_SUSPENSION_2026-11-10.md](ACCESS_SUSPENSION_2026-11-10.md).
