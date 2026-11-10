@@ -162,11 +162,13 @@ async function mcp(request,ctx){
    const name=p.params?.name,args=p.params?.arguments??{};
    if(!TOOL.some(x=>x.name===name))return err(-32602,"Unknown tool");
    if(!args||Array.isArray(args)||typeof args!=="object")return err(-32602,"Invalid arguments");
-   const isSearch=name.startsWith("search_"),isStatus=name==="get_school_feed_status",isGeneric=name==="get_board_posts"||name==="search_board_posts";
-   const allowed=isStatus?["category"]:isGeneric?(isSearch?["category","query","limit"]:["category","limit"]):isSearch?["query","limit"]:["limit"];
+   const isSearch=name.startsWith("search_"),isStatus=name==="get_school_feed_status",isGeneric=name==="get_board_posts"||name==="search_board_posts",isList=name==="list_school_boards";
+   const paginated=isStatus||isGeneric||name.includes("all_school_posts");
+   const allowed=isList?[]:isStatus?["category","shard"]:isGeneric?(isSearch?["category","query","limit","shard"]:["category","limit","shard"]):isSearch?(paginated?["query","limit","shard"]:["query","limit"]):(paginated?["limit","shard"]:["limit"]);
    if(Object.keys(args).some(x=>!allowed.includes(x)))return err(-32602,"Unexpected argument");
    if(isSearch&&(typeof args.query!=="string"||!args.query.trim()||args.query.length>100))return err(-32602,"Invalid query");
    if(args.limit!==undefined&&(!Number.isInteger(args.limit)||args.limit<1||args.limit>100))return err(-32602,"Invalid limit");
+   if(args.shard!==undefined&&(!Number.isInteger(args.shard)||args.shard<0||args.shard>=SHARD_COUNT))return err(-32602,"Invalid shard");
    if(isStatus&&args.category!==undefined&&!knownCategory(args.category))return err(-32602,"Invalid category");
    let category="notice";
    if(name.includes("family_letters"))category="letter";
@@ -181,9 +183,10 @@ async function mcp(request,ctx){
    else if(EXTRA_TOOL_ROUTING[name])category=EXTRA_TOOL_ROUTING[name];
    else if(isStatus)category=args.category||"notice";
    if(isGeneric&&!knownCategory(args.category))return err(-32602,"Invalid category");
+   if(isList){const result={count:BOARD_CATALOG.length,menus:MENU_CATALOG,boards:BOARD_CATALOG,shard_size:SHARD_SIZE,shard_count:SHARD_COUNT};return ok({content:[{type:"text",text:JSON.stringify(result)}],structuredContent:result});}
    try{
-     const data=await getData(ctx,category);
-     const result=isStatus?{category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[]}:filtered(data,isSearch?args.query:"",args.limit??10);
+     const data=await getData(ctx,category,args.shard??0);
+     const result=isStatus?{category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[],shard:data.shard,shard_count:data.shard_count,next_shard:data.next_shard,has_more:data.has_more,total_source_count:data.total_source_count,complete:data.complete}:filtered(data,isSearch?args.query:"",args.limit??10);
      return ok({content:[{type:"text",text:JSON.stringify(result)}],structuredContent:result});
    }catch(e){return ok({isError:true,content:[{type:"text",text:"RSS unavailable: "+String(e.message||"ERROR")}]});}
  }
@@ -325,29 +328,42 @@ export default{async fetch(request,env,ctx){
  if(path==="/mcp")return mcp(request,ctx);
  if(path==="/api/meta"||path==="/api/catalog"){
   if(request.method!=="GET")return json({error:"Method not allowed"},405);
-  return json({name:"HANBOM DATA",version:VERSION,source_count:Object.keys(FEEDS).length,sources:FEEDS,groups:GROUPS,extra_board_catalog:EXTRA_BOARD_CATALOG,api_routes:API_ROUTES,endpoints:["/api/notices","/api/letters","/api/news","/api/awards","/api/education-letters","/api/opportunities","/api/health-notices","/api/student-rules","/api/posts?limit=all","/api/feed?category=<id>","/api/status?category=all","/api/search?q=...&category=all","/api/catalog","/mcp"],categories,authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
+  return json({name:"HANBOM DATA",version:VERSION,source_count:BOARD_CATALOG.length,menu_count:MENU_CATALOG.length,
+   sources:FEEDS,menus:MENU_CATALOG,groups:GROUPS,extra_board_catalog:EXTRA_BOARD_CATALOG,new_board_catalog:NEW_BOARD_CATALOG,
+   catalog:BOARD_CATALOG,api_routes:ALL_API_ROUTES,shard_size:SHARD_SIZE,shard_count:SHARD_COUNT,
+   categories,endpoints:["/api/posts?shard=0&limit=all","/api/posts?shard=1&limit=all","/api/posts?shard=2&limit=all",
+   "/api/feed?category=<id>","/api/search?q=...&category=<id>","/api/status?category=all&shard=0",
+   "/api/board/<id>","/api/catalog","/mcp"],
+   authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},
+   auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
  }
- const legacyRoutes={"/api/notices":"notice","/api/letters":"letter","/api/news":"news","/api/awards":"awards","/api/education-letters":"office_letter","/api/opportunities":"opportunities","/api/health-notices":"health","/api/student-rules":"student_rules"};
- const direct=legacyRoutes[path]||API_ROUTES[path];
+ const direct=ALL_API_ROUTES[path];
  if(direct||["/api/posts","/api/feed","/api/search","/api/status"].includes(path)){
   if(request.method!=="GET")return json({error:"Method not allowed"},405);
-  const selected=direct||url.searchParams.get("category")||((path==="/api/posts"||path==="/api/feed")?"all":"notice");
-  if(!knownCategory(selected))return json({error:"Invalid category",allowed:categories},400);
+  const category=direct||url.searchParams.get("category")||((path==="/api/posts"||path==="/api/feed")?"all":"notice");
+  if(!knownCategory(category))return json({error:"Invalid category",allowed:categories},400);
+  const shardText=url.searchParams.get("shard")||"0";
+  if(!/^(0|[1-9]\d*)$/.test(shardText)||Number(shardText)>=SHARD_COUNT)return json({error:"Invalid shard",shard_count:SHARD_COUNT},400);
   try{
-   const data=await getData(ctx,selected);
-   if(path==="/api/status")return json({category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,partial:data.partial??false,failed_feeds:data.failed_feeds??[]});
-   const param=url.searchParams.get("limit");
-   const n=Number(param||20);
-   const max=100*Object.keys(FEEDS).length;
-   const limit=param==="all"?max:(Number.isInteger(n)?Math.max(1,Math.min(max,n)):20);
+   const data=await getData(ctx,category,Number(shardText));
+   if(path==="/api/status")return json({category:data.category,source:data.source,source_url:data.source_url??null,sources:data.sources??null,
+    feed_title:data.feed_title??null,fetched_at:data.fetched_at,count:data.count,cached:data.cached??null,
+    partial:data.partial??false,failed_feeds:data.failed_feeds??[],shard:data.shard,shard_count:data.shard_count,
+    next_shard:data.next_shard,has_more:data.has_more,total_source_count:data.total_source_count,complete:data.complete});
+   const param=url.searchParams.get("limit"),num=Number(param||20);
+   const limit=param==="all"?100*SHARD_SIZE:(Number.isInteger(num)?Math.max(1,Math.min(100*SHARD_SIZE,num)):20);
    return json(filtered(data,url.searchParams.get("q"),limit));
-  }catch(e){return json({error:"RSS unavailable",code:String(e.message||"ERROR"),category:selected},502);}
+  }catch(e){
+   const error=String(e.message||"RSS_ERROR");
+   return json({error:"RSS unavailable",code:error,category},error==="INVALID_SHARD"?400:502);
+  }
  }
  if(path.startsWith("/api/"))return json({error:"Not found"},404);
  if(path==="/health")return json({status:"ok",version:VERSION});
  if(path!=="/"&&path!=="/index.html")return json({error:"Not found"},404);
  if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
- // Cloudflare Access paused. Restore by reattaching archived Access applications to this hostname.
+ // Cloudflare Access intentionally paused; archived Zero Trust applications remain available for restoration.
  // if(!request.headers.get("cf-access-jwt-assertion"))return json({error:"Dashboard requires Cloudflare Access"},401);
- return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});
+ return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store",
+  "x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});
 }};
