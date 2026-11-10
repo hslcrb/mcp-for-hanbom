@@ -89,12 +89,12 @@ test("pill navigation shows all eight filters and keeps white aesthetic",async()
  assert.match(html,/background:#fff/);
  assert.match(html,/nav\.filters button:hover\{filter:none/);
 });
-test("API combines five feeds and routes education office letters without breaking older paths",async()=>{
+test("legacy office-letter routes still work with empty health and opportunities fixtures",async()=>{
  const original=globalThis.fetch;
  globalThis.fetch=async url=>{
   const target=String(url);
-  const office=target.includes("bbsId=10064"),awards=target.includes("bbsId=10010"),news=target.includes("bbsId=10022"),letter=target.includes("bbsId=10063"),opportunities=target.includes("bbsId=10065");
-  const xml=opportunities?'<rss version="2.0"><channel><title>게시판 RSS</title></channel></rss>':office?'<rss><item><title>교육청의 새 통신문</title><pubDate>Fri, 13 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
+  const office=target.includes("bbsId=10064"),awards=target.includes("bbsId=10010"),news=target.includes("bbsId=10022"),letter=target.includes("bbsId=10063"),opportunities=target.includes("bbsId=10065"),health=target.includes("bbsId=10066");
+  const xml=(opportunities||health)?'<rss version="2.0"><channel><title>게시판 RSS</title></channel></rss>':office?'<rss><item><title>교육청의 새 통신문</title><pubDate>Fri, 13 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
   :awards?'<rss><item><title>학생 작품 수상</title><pubDate>Thu, 12 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
   :news?'<rss><item><title>한봄 NEWS 소식</title><pubDate>Wed, 11 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
   :letter?'<rss><item><title>가정통신문 소식</title><pubDate>Tue, 10 Nov 2026 12:00:00 GMT</pubDate></item></rss>'
