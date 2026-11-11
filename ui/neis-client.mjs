@@ -1,5 +1,5 @@
 /** Client-only NEIS portal. All API requests go to this Worker's public proxy; no API key in browser. */
-export const NEIS_CLIENT=String.raw\`
+export const NEIS_CLIENT=String.raw`
 (function(){
  const tabs=document.getElementById("neis-tabs");
  const controls=document.getElementById("neis-controls");
@@ -211,4 +211,4 @@ export const NEIS_CLIENT=String.raw\`
  controlsFor(current);
  load();
 })();
-\`;
+`;
