@@ -1,0 +1,3 @@
+# Local development only — never commit your actual .dev.vars
+NEIS_API_KEY=replace-with-your-own-neis-development-key
+UNIVERSITY_INFO_API_KEY=replace-with-your-own-data-go-kr-development-key
