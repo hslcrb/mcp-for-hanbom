@@ -18,6 +18,17 @@ export const NEIS_SCHOOL=Object.freeze({
  provider:"교육부 · 나이스 교육정보 개방 포털"
 });
 
+// School identifiers are public configuration. Secret API credentials remain separate.
+// Read the runtime Worker bindings so deployment environments can select their school.
+export function schoolConfig(env){
+ const educationOffice=/^[A-Z][0-9]{2}$/.test(env?.NEIS_EDUCATION_OFFICE_CODE||"")?env.NEIS_EDUCATION_OFFICE_CODE:NEIS_SCHOOL.educationOffice;
+ const schoolCode=/^[0-9]{7,10}$/.test(env?.NEIS_SCHOOL_CODE||"")?env.NEIS_SCHOOL_CODE:NEIS_SCHOOL.schoolCode;
+ const unified=educationOffice+schoolCode;
+ const configuredUnified=String(env?.NEIS_UNIFIED_SCHOOL_CODE||"");
+ return {name:NEIS_SCHOOL.name,educationOffice,schoolCode,
+  unifiedSchoolCode:configuredUnified===unified?configuredUnified:unified};
+}
+
 export const NEIS_DEPARTMENTS=Object.freeze([
  "뷰티아트과","캐릭터창작과","시각디자인과",
  "빅데이터정보과","스마트제어과","사운드디자인과"
@@ -193,8 +204,9 @@ async function fetchFromNeis(dataset,params,pIndex,pSize,env){
  let data;try{data=JSON.parse(raw);}catch{throw new NeisError("NEIS_INVALID_JSON");}
  return parseNeisResponse(dataset,data);
 }
-function paramsFor(kind,args){
- const out={ATPT_OFCDC_SC_CODE:NEIS_SCHOOL.educationOffice,SD_SCHUL_CODE:NEIS_SCHOOL.schoolCode};
+function paramsFor(kind,args,env){
+ const school=schoolConfig(env);
+ const out={ATPT_OFCDC_SC_CODE:school.educationOffice,SD_SCHUL_CODE:school.schoolCode};
  if(kind==="school")return out;
  const {from,to}=args;
  if(kind==="meals"){
@@ -246,7 +258,7 @@ async function fetchDataset(kind,args,env,ctx){
  // A missing secret must never fall back to the NEIS public 5-row sample key.
  if(typeof env?.NEIS_API_KEY!=="string"||env.NEIS_API_KEY.length<24)
   throw new NeisError("NEIS_KEY_NOT_CONFIGURED",503);
- const endpoint=NEIS_ENDPOINTS[kind],params=paramsFor(kind,args);
+ const endpoint=NEIS_ENDPOINTS[kind],params=paramsFor(kind,args,env);
  // Calendar responses can differ by grade even with the same upstream query.
  const cacheScope=kind==="calendar"&&args.grade?{...params,LOCAL_GRADE:args.grade}:params;
  const cache=globalThis.caches?.default,key=new Request(publicCacheKey(kind,cacheScope));
@@ -264,7 +276,7 @@ async function fetchDataset(kind,args,env,ctx){
   if(!data.rows.length||data.rows.length<pSize||fetched.length>=total)break;
  }
  const normalized=normalize(kind,fetched,args);
- const response={kind,school:NEIS_SCHOOL.name,school_code:NEIS_SCHOOL.schoolCode,
+ const response={kind,school:NEIS_SCHOOL.name,school_code:schoolConfig(env).schoolCode,
   source:"나이스 교육정보 개방 포털",endpoint:HOST+"/hub/"+endpoint,
   params:{...args},total:kind==="calendar"&&args.grade?normalized.length:total,
   count:normalized.length,items:normalized,
@@ -304,8 +316,10 @@ async function todayOverview(args,env,ctx){
   updated_at:new Date().toISOString()};
 }
 export function neisMeta(env){
- return{service:"HANBOM DATA · NEIS",school:NEIS_SCHOOL.name,
-  office_code:NEIS_SCHOOL.educationOffice,school_code:NEIS_SCHOOL.schoolCode,
+ const school=schoolConfig(env);
+ return{service:"HANBOM DATA · NEIS",school:school.name,
+  office_code:school.educationOffice,school_code:school.schoolCode,
+  unified_school_code:school.unifiedSchoolCode,
   data_source:NEIS_SCHOOL.provider,source_url:HOST,
   datasets:{...NEIS_ENDPOINTS},key_configured:typeof env?.NEIS_API_KEY==="string"&&env.NEIS_API_KEY.length>=24,
   key_issued_on:NEIS_SCHOOL.keyIssuedOn,authorization:"Cloudflare Worker Secret (server side only)",
