@@ -26,7 +26,7 @@ export function PillButton({id,label,selected=false,href=null,icons=[]}) {
     const visual=icons.map(icon=>{
       if(icon!=="chatgpt"&&icon!=="claude")throw Error("INVALID_PILL_ICON");
       return '<img class="pill-icon pill-icon-'+icon+'" src="/assets/logos/'+icon+
-       '.svg" width="16" height="16" alt="" aria-hidden="true">';
+       '.svg" width="24" height="24" alt="" aria-hidden="true">';
     }).join("");
     return '<hanbom-pill><a class="pill-button pill-link" href="'+escapeHtml(href)+'">'+
       visual+'<span class="pill-link-label">'+escapeHtml(label)+'</span></a></hanbom-pill>';
