@@ -1,3 +1,49 @@
+# HANBOM DATA MCP — 현재 등록 가이드 (v3.0.0)
+
+**MCP 서버 URL:** `https://data.hanbom.rhee.life/mcp`
+
+| 항목 | 설정 |
+|---|---|
+| 표시 이름 | `HANBOM Data MCP` |
+| 통신 | `Streamable HTTP` |
+| 인증 | `None` (현재 공개 읽기 전용) |
+| 도구 수 | **78개** (기존 학교 RSS·NEIS 74개 + 대학알리미 4개) |
+| 별도 사용자용 데이터 API 키 | 불필요 (서버에서 Worker Secrets 사용) |
+
+[ChatGPT·Claude 연결 화면](https://data.hanbom.rhee.life/mcp-setup) ·
+[대학알리미 데이터 페이지](https://data.hanbom.rhee.life/universities) ·
+[전체 API 명세](API_REFERENCE.md)
+
+### 신규 대학알리미 MCP 도구
+
+| 도구 | 입력 | 작업 |
+|---|---|---|
+| `get_university_education_catalog` | 없음 | 6개 지표 및 12개 공식 API 경로 |
+| `get_university_education_comparison` | `metric`, `schoolId`, `year`, `page?`, `size?`, `indicatorId?` | 대학 학교 ID·공시년도별 교육여건 |
+| `get_university_education_region` | `metric`, `schoolDivisionCode`, `page?`, `size?`, `indicatorId?` | 공식 학교구분 코드별 지역통계 |
+| `get_university_education_status` | 없음 | 공개 서비스 메타데이터와 키 설정 여부 확인 |
+
+데이터 지표: `library`, `dormitory`, `burden`, `endowment`, `materials`, `campus`.
+
+**유의사항:** 학교 ID(`schlId`)와 학교구분 코드(`schlDivCd`)는
+원본 대학알리미의 공식 코드를 입력해야 한다. 제공된 교육여건 API
+명세에는 인명/학교명으로부터 코드를 자동 검색하는 기능이 없다.
+추정한 코드 또는 데이터가 없는 입력에 대해서는 공시 통계를
+만들어 반환하지 않는다.
+
+개발계정의 실제 서비스 인증키는 2026-11-11 발급분을
+Cloudflare Secret `UNIVERSITY_INFO_API_KEY`에만 저장.
+NEIS 인증키는 `NEIS_API_KEY`로 별도 보관. 공개 채팅·MCP·REST에서
+두 값을 직접 입력하거나 조회할 필요가 없다.
+
+기존 74개 도구 이름과 RSS 샤드(0·1·2) 규칙은 변경되지 않았다.
+이미 연결된 MCP 앱에서는 신규 도구를 사용하기 위해 도구
+목록 재검색/연결 갱신이 필요할 수 있다.
+
+---
+
+## 이전 v2.x 등록 과정 — 역사 기록
+
 
 ## 2026-11-11 · 연결 안내 페이지
 
@@ -6,7 +52,7 @@
 - SVG 원본은 `hslcrb/chatgptweb-transbank/frontier-llms-logos`의 ChatGPT/Claude 2개를 복사해 자체 호스팅합니다.
 - 관련 문서: [MCP_SETUP_GUIDE_2026-11-11.md](MCP_SETUP_GUIDE_2026-11-11.md).
 
-# ChatGPT Plugins 등록 입력값 — HANBOM DATA MCP
+### 당시 ChatGPT Plugins 등록 입력값 — HANBOM DATA MCP
 
 ## 2026-11-11 · NEIS 학교 교육정보 도구 6개 추가 (v2.3.0)
 
