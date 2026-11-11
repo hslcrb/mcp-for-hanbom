@@ -1,5 +1,5 @@
 /** NEIS portal visual system: same muted palette as HANBOM DATA, modular and responsive. */
-export const NEIS_STYLES=String.raw\`
+export const NEIS_STYLES=String.raw`
 .neis-page{display:grid;grid-template-columns:minmax(0,1fr);width:min(1120px,calc(100% - 36px));padding-top:112px;gap:0}
 .neis-return{position:absolute;top:24px;left:0}
 .neis-hero{text-align:center;display:grid;justify-items:center;gap:13px;margin:0 0 34px}
@@ -44,4 +44,4 @@ export const NEIS_STYLES=String.raw\`
 @media(max-width:800px){.neis-results{grid-template-columns:minmax(0,1fr)}.neis-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.neis-page{width:calc(100% - 32px);padding-top:115px}.neis-hero{margin-bottom:26px}.neis-intro{font-size:14px}.neis-tabs{gap:7px}.neis-tabs button{padding:10px 13px;font-size:13px}.neis-controls{padding:16px;justify-content:stretch}.neis-field{flex:1 1 125px}.neis-go{flex:1 1 100%;width:100%}.neis-card{padding:19px;border-radius:20px}.neis-card-title{font-size:17px}.neis-summary-card{padding:13px 10px}.neis-summary-card strong{font-size:20px}}
 @media(max-width:360px){.neis-page{width:calc(100% - 28px)}.neis-return{top:13px}.neis-return .pill-link{font-size:13px;padding:9px 12px}.neis-summary-card strong{font-size:17px}}
-\`;
+`;
