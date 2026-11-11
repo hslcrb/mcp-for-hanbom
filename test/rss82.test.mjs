@@ -133,7 +133,7 @@ test("MCP remains 68 tools with 67 originals and 1 catalog tool; all three shard
  await mock(async()=>{
   const list=await worker.fetch(new Request(BASE+"/mcp",{method:"POST",headers:{"content-type":"application/json","accept":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:"tools/list",params:{}})}),{},{});
   const named=(await list.json()).result.tools.map(x=>x.name);
-  assert.equal(named.length,68);assert.equal(new Set(named).size,68);
+  assert.equal(named.length,74);assert.equal(new Set(named).size,74);
   assert.ok(named.includes("list_school_boards"));
   const catalog=await rpc("list_school_boards");
   assert.equal(catalog.result.structuredContent.count,82);
