@@ -101,7 +101,7 @@ export function renderMcpSetupPage(){
     ${claude}
     <div class="guide-actions">
      <a class="guide-link primary" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">Claude 열기</a>
-     <a class="guide-link" href="https://support.claude.com/ko/articles/11175166" target="_blank" rel="noopener noreferrer">공식 연결 안내</a>
+     <a class="guide-link" href="https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp" target="_blank" rel="noopener noreferrer">공식 연결 안내</a>
     </div>
    </article>
   </div>
