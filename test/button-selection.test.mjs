@@ -15,7 +15,7 @@ test("selection prevention applies to both pages without disabling RSS text or M
   assert.equal(response.status,200);
   const html=await response.text();
   assert.match(html,/button,button \*,a\.pill-link,a\.pill-link \*,a\.guide-link,a\.guide-link \*\{-webkit-user-select:none;user-select:none\}/);
-  assert.match(html,/\bid="notices"\b|\bclass="setup-field-value"\b/);
+  assert.match(html,/id="notices"|class="setup-field-value"/);
   assert.doesNotMatch(SITE_STYLES,/(?:^|[,{}])(?:body|html|li|\.setup-field-value)\s*\{[^}]*user-select:none/);
  }
 });
