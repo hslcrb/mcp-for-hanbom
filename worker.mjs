@@ -7,7 +7,9 @@ import {SITE_STYLES} from "./ui/site-styles.mjs";
 import {SITE_CLIENT} from "./ui/site-client.mjs";
 import {ThemeSwitch} from "./ui/theme-components.mjs";
 import {THEME_BOOT,THEME_CLIENT} from "./ui/theme-client.mjs";
-export const VERSION="2.2.1";
+import {renderNeisPage} from "./ui/neis-page.mjs";
+import {NEIS_TOOLS,NEIS_API_PATHS,isNeisTool,invokeNeisTool,handleNeisApi,NeisError} from "./neis.mjs";
+export const VERSION="2.3.0";
 export {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS};
 export const FEEDS=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.id,{
  url:b.url,source:"한봄고등학교 "+b.parent+" · "+b.label,label:b.label,
@@ -148,12 +150,12 @@ const GENERIC_TOOLS=[
 const SHARD_ARG={type:"integer",minimum:0,maximum:SHARD_COUNT-1,description:"all 집계에서는 0~2페이지를 순서대로 조회. 메뉴/개별 게시판은 0만 유효."};
 const SHARDED_TOOLS=new Set(["get_school_feed_status","get_all_school_posts","search_all_school_posts","get_board_posts","search_board_posts"]);
 const CATALOG_TOOL={name:"list_school_boards",description:"학교 공식 공개 RSS 82개에 대한 게시판 ID·상위 메뉴·원본 주소·REST 경로 목록을 제공합니다.",inputSchema:{type:"object",properties:{},additionalProperties:false}};
-const TOOL=[...BASE_TOOLS,...EXTRA_TOOLS,...GENERIC_TOOLS,CATALOG_TOOL].map(t=>({
+const TOOL=[...BASE_TOOLS,...EXTRA_TOOLS,...GENERIC_TOOLS,CATALOG_TOOL,...NEIS_TOOLS].map(t=>({
  ...t,inputSchema:SHARDED_TOOLS.has(t.name)?{...t.inputSchema,properties:{...t.inputSchema.properties,shard:SHARD_ARG}}:t.inputSchema,
  annotations:{readOnlyHint:true,destructiveHint:false}
 }));
 
-async function mcp(request,ctx){
+async function mcp(request,ctx,env){
  if(request.method!=="POST")return json({error:"Use stateless MCP POST JSON-RPC"},405);
  const accept=request.headers.get("accept")||"";
  if(accept&&!accept.includes("application/json")&&!accept.includes("*/*"))return json({error:"Accept application/json required"},406);
@@ -163,7 +165,7 @@ async function mcp(request,ctx){
  if(!Object.hasOwn(p,"id"))return new Response(null,{status:202});
  const ok=result=>json({jsonrpc:"2.0",id:p.id,result});
  const err=(code,message)=>json({jsonrpc:"2.0",id:p.id,error:{code,message}});
- if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"학교 RSS 82개를 읽기 전용으로 조회·검색합니다. all 카테고리는 3개 shard(0,1,2)를 순서대로 호출해야 전체를 확인할 수 있습니다. 상담·민원은 개인정보 보호를 위해 제목·요약을 축약합니다."});
+ if(p.method==="initialize")return ok({protocolVersion:VERSIONS.includes(p.params?.protocolVersion)?p.params.protocolVersion:"2025-11-25",capabilities:{tools:{listChanged:false}},serverInfo:{name:"hanbom-rss-mcp",version:VERSION},instructions:"학교 RSS 82개와 한봄고 NEIS 급식·학사일정·시간표·학교정보를 읽기 전용으로 조회·검색합니다. RSS all 카테고리는 shard 0,1,2로 나눠 호출합니다. NEIS 인증키는 Cloudflare Secret에 보관되며 응답으로 반환되지 않습니다. 상담·민원 게시물의 제목·요약은 비식별 처리합니다."});
  if(request.headers.get("mcp-protocol-version")&&!VERSIONS.includes(request.headers.get("mcp-protocol-version")))return err(-32600,"Unsupported protocol version");
  if(p.method==="ping")return ok({});
  if(p.method==="tools/list")return ok({tools:TOOL});
@@ -171,6 +173,14 @@ async function mcp(request,ctx){
    const name=p.params?.name,args=p.params?.arguments??{};
    if(!TOOL.some(x=>x.name===name))return err(-32602,"Unknown tool");
    if(!args||Array.isArray(args)||typeof args!=="object")return err(-32602,"Invalid arguments");
+   if(isNeisTool(name)){
+     try{return ok(await invokeNeisTool(name,args,env,ctx));}
+     catch(e){
+       if(e instanceof NeisError&&e.status===400)return err(-32602,"Invalid NEIS arguments");
+       const code=e instanceof NeisError?e.code:"NEIS_DATA_UNAVAILABLE";
+       return ok({isError:true,content:[{type:"text",text:code}]});
+     }
+   }
    const isSearch=name.startsWith("search_"),isStatus=name==="get_school_feed_status",isGeneric=name==="get_board_posts"||name==="search_board_posts",isList=name==="list_school_boards";
    const paginated=isStatus||isGeneric||name.includes("all_school_posts");
    const allowed=isList?[]:isStatus?["category","shard"]:isGeneric?(isSearch?["category","query","limit","shard"]:["category","limit","shard"]):isSearch?(paginated?["query","limit","shard"]:["query","limit"]):(paginated?["limit","shard"]:["limit"]);
@@ -204,6 +214,7 @@ async function mcp(request,ctx){
 
 const pillNavigation=PillNavigation({menus:MENU_CATALOG,boards:BOARD_CATALOG});
 const mcpSetupLauncher=PillButton({href:"/mcp-setup",label:"MCP 설정하기",icons:["chatgpt","claude"]});
+const neisLauncher=PillButton({href:"/neis",label:"나이스 교육정보"});
 const themeSwitch=ThemeSwitch();
 const clientScript=SITE_CLIENT
  .replace("__GROUPS__",JSON.stringify(Object.fromEntries(MENU_CATALOG.map(menu=>[menu.id,menu.ids]))))
@@ -226,7 +237,7 @@ ${SITE_STYLES}
  <main aria-label="한봄고등학교 공개 RSS 82개 게시판">
   <h1>한봄고 홈페이지 공지사항 MCP</h1>
   ${themeSwitch}
-  <div class="setup-launch">${mcpSetupLauncher}</div>
+  <div class="setup-launch">${mcpSetupLauncher}${neisLauncher}</div>
   ${pillNavigation}
   <ol id="notices" aria-live="polite" aria-busy="true"></ol>
  </main>
@@ -242,7 +253,16 @@ ${THEME_CLIENT}
 export default{async fetch(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;
  if(request.method==="OPTIONS"&&(path==="/mcp"||path.startsWith("/api/")))return new Response(null,{status:204,headers:HEADERS});
- if(path==="/mcp")return mcp(request,ctx);
+ if(path==="/mcp")return mcp(request,ctx,env);
+ if(path==="/neis"||path==="/neis/"){
+  if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
+  return new Response(request.method==="HEAD"?null:renderNeisPage(),{headers:{
+   "content-type":"text/html; charset=utf-8","cache-control":"no-store",
+   "x-content-type-options":"nosniff",
+   "content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+  }});
+ }
+ if(Object.hasOwn(NEIS_API_PATHS,path))return handleNeisApi(request,env,ctx);
  if(path==="/mcp-setup"||path==="/mcp-setup/"){
   if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
   return new Response(request.method==="HEAD"?null:renderMcpSetupPage(),{headers:{
@@ -267,7 +287,7 @@ export default{async fetch(request,env,ctx){
    catalog:BOARD_CATALOG,api_routes:ALL_API_ROUTES,shard_size:SHARD_SIZE,shard_count:SHARD_COUNT,
    categories,endpoints:["/api/posts?shard=0&limit=all","/api/posts?shard=1&limit=all","/api/posts?shard=2&limit=all",
    "/api/feed?category=<id>","/api/search?q=...&category=<id>","/api/status?category=all&shard=0",
-   "/api/board/<id>","/api/catalog","/mcp"],
+   "/api/board/<id>","/api/catalog","/api/neis/meta","/api/neis/school","/api/neis/meals","/api/neis/calendar","/api/neis/timetable","/api/neis/today","/mcp"],
    authentication:{dashboard:"public",api:"public",mcp:"public — OAuth planned, not enabled"},
    auth:{dashboard:"public (Access rules archived for restoration)",api:"public",mcp:"public — OAuth planned, not enabled"}});
  }
