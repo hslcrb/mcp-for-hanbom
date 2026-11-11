@@ -124,3 +124,10 @@
 - Claude 절차는 Anthropic 공식 [원격 MCP 사용자 정의 커넥터 안내](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)를 참고.
 - 두 외부 서비스에 **실제 계정 연결 자체를 실행하지는 않았음**. 이 페이지는 설정법과 복사를 제공하며, 연결은 각 이용자가 별도로 승인해야 한다.
 - 기존 등록 주소·인증 값(`https://data.hanbom.rhee.life/mcp`, `None`) 유지. 기존 82개 RSS·68개 MCP 도구 그대로.
+
+## 2026-11-11 · ChatGPT·Claude SVG 크기 개선 (v2.2.1)
+
+- **메인 설정 pill**의 아이콘 CSS 크기를 기존 1em/15px에서 **1.6em/24px**으로 확대. `--setup-brand-icon-size` 변수 하나로 두 SVG를 동일하게 제어.
+- 두 아이콘과 레이블 사이 간격은 12px. 원본 SVG 형상·색·경로는 변경하지 않고 다크모드 ChatGPT 반전도 유지.
+- **MCP 안내 카드**의 두 로고는 기존 **28px → 36px**, 아이콘 주변 둥근 프레임은 **54px → 66px**로 확대.
+- `test/mcp-setup.test.mjs`에서 두 로고가 동일하게 확대됐는지 검증. 실제 Cloudflare 배포/브라우저 실측 결과는 아래에 추록.
