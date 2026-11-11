@@ -7,7 +7,7 @@ import {SITE_STYLES} from "./ui/site-styles.mjs";
 import {SITE_CLIENT} from "./ui/site-client.mjs";
 import {ThemeSwitch} from "./ui/theme-components.mjs";
 import {THEME_BOOT,THEME_CLIENT} from "./ui/theme-client.mjs";
-export const VERSION="2.2.0";
+export const VERSION="2.2.1";
 export {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS};
 export const FEEDS=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.id,{
  url:b.url,source:"한봄고등학교 "+b.parent+" · "+b.label,label:b.label,
