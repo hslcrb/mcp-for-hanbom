@@ -54,7 +54,7 @@ test("homepage adds exactly one setup pill without altering 129 existing categor
  const res=await worker.fetch(new Request(base+"/"),{},{});
  assert.equal(res.status,200);
  const html=await res.text();
- assert.equal((html.match(/<hanbom-pill/g)||[]).length,131);
+ assert.equal((html.match(/<hanbom-pill/g)||[]).length,132);
  assert.equal((html.match(/data-category="/g)||[]).length,129);
  assert.equal((html.match(/class="pill-icon/g)||[]).length,2);
  assert.match(html,/<div class="setup-launch"><hanbom-pill><a class="pill-button pill-link" href="\/mcp-setup">/);
