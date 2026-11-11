@@ -162,8 +162,8 @@ test("MCP tools extend existing 68 without changing RSS paths or exposing secret
  });
  const res=await worker.fetch(req,env,{});
  const names=(await res.json()).result.tools.map(x=>x.name);
- assert.equal(names.length,74);
- assert.equal(new Set(names).size,74);
+ assert.equal(names.length,78);
+ assert.equal(new Set(names).size,78);
  assert.ok(names.includes("get_board_posts"));
  for(const t of NEIS_TOOLS)assert.ok(names.includes(t.name));
  const status=await rpc("get_neis_connection_status",{});
