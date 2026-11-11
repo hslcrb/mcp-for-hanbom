@@ -1,5 +1,14 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+## 2026-11-11 · ChatGPT·Claude MCP 설정 페이지 (v2.2.0)
+
+- 홈페이지 **MCP 설정하기** pill 클릭 시 [설정 안내 페이지](https://data.hanbom.rhee.life/mcp-setup)로 이동.
+- [사용자 지정 SVG 두 개](https://github.com/hslcrb/chatgptweb-transbank/tree/main/frontier-llms-logos)를 로컬 자산으로 저장, pill 내부에 **1em** 아이콘으로 표시.
+- ChatGPT Plugins와 Claude Connectors 연결 절차, 주소·이름 복사 기능, 반응형 둥근 카드 및 다크모드 지원.
+- 기존 82개 공개 RSS·68개 MCP 도구·테마·Cloudflare main 자동 배포 유지.
+- [전체 구현기](docs/MCP_SETUP_GUIDE_2026-11-11.md).
+
+
 ## 2026-11-11 · 다크모드 추가 (v2.1.0)
 
 - **자동(시스템 설정) / 라이트 / 다크** 3가지 테마 선택. 자동이 기본값이며 선택값을 저장할 수 있습니다.

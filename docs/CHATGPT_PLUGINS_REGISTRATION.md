@@ -1,3 +1,11 @@
+
+## 2026-11-11 · 연결 안내 페이지
+
+- **웹 안내:** https://data.hanbom.rhee.life/mcp-setup
+- ChatGPT와 Claude 각각의 최신 웹 등록 절차, `HANBOM Data MCP` 이름/서버 URL 복사 버튼, 공식 링크를 제공합니다.
+- SVG 원본은 `hslcrb/chatgptweb-transbank/frontier-llms-logos`의 ChatGPT/Claude 2개를 복사해 자체 호스팅합니다.
+- 관련 문서: [MCP_SETUP_GUIDE_2026-11-11.md](MCP_SETUP_GUIDE_2026-11-11.md).
+
 # ChatGPT Plugins 등록 입력값 — HANBOM DATA MCP
 
 ## 2026-11-11 현행 등록값 (v2.0.0)
