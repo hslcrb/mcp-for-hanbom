@@ -1,5 +1,12 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+## 2026-11-11 · ChatGPT·Claude 로고 확대 (v2.2.1)
+
+- 메인 **MCP 설정하기** pill의 두 SVG 로고를 **1em(15px) → 1.6em(24px)**으로 확대.
+- 안내 페이지의 ChatGPT·Claude 카드 로고도 **28px → 36px**, 배경 원형 마크 프레임 **54px → 66px**으로 확대.
+- 기존 SVG 모양·pill 컴포넌트·다크모드·모바일·82개 RSS·68개 MCP 도구 유지.
+
+
 ## 2026-11-11 · ChatGPT·Claude MCP 설정 페이지 (v2.2.0)
 
 - 홈페이지 **MCP 설정하기** pill 클릭 시 [설정 안내 페이지](https://data.hanbom.rhee.life/mcp-setup)로 이동.
