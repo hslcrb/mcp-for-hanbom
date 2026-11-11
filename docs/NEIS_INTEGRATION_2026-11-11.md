@@ -90,3 +90,46 @@ MCP URL `https://data.hanbom.rhee.life/mcp`, 인증 `None` 유지.
 - 기존 RSS 82개, 메뉴 23개, 커스텀 접근 정책 아카이브 상태, 개인정보 보호 등 하위호환 유지.
 - `test/neis.test.mjs`에서 실제 키 대신 합성된 가짜 키로 급식·학사일정·시간표·MCP·비공개 키 검증을 자동화.
 - 실제 서비스 테스트 결과, 성공·일부 미제공 분야, 배포 커밋은 검증 후 추가 작성.
+
+---
+
+## 2026-11-11 프로덕션 배포 및 실데이터 검증
+
+### Worker 배포 과정
+
+- 초기 통합 커밋 `1e5f2729a8a54c71e2d75e84ceba93af8dc0f415` 배포는 성공했고 자동 테스트 87/87이 통과했으나, 첫 NEIS 학교정보 실조회에서는 `NEIS_NETWORK_ERROR`가 확인되었다.
+- 실제 네트워크 요청 방식을 개선해 `redirect:"manual"`로 외부 리다이렉트를 차단하고, 명시적인 `Accept` 헤더를 제거했다. 실패 종류는 인증키나 키가 포함된 URL 없이 안전한 코드로만 반환한다.
+- 수정 커밋 `c1c5a33b8ed599c78a6d928e73f66ffa2a7b3481`, Cloudflare Workers Builds `cc400296-c436-4a80-9b2e-1af6922bb5e4`: **테스트 89/89 통과, 실패 0, 배포 성공**.
+- Cloudflare 프로덕션 Worker 버전 `ee4dc332-3005-4a7f-94c7-70117195ad50`, 트래픽 100% 적용 확인.
+- Cloudflare Worker Secret `NEIS_API_KEY` 존재, `/api/neis/meta`는 `key_configured:true` 및 발급일 `2026-11-11` 반환. **실제 인증키 값은 저장소·문서·응답에 기록하지 않았다**.
+- GitHub Actions 미사용, 기존 `main` → Cloudflare Workers Builds 자동 배포 유지.
+
+### 실제 공식 NEIS REST API 검증
+
+| 실서비스 조회 | 결과 |
+|---|---|
+| `/api/neis/meta` | 키 설정 여부 true, 학교코드 `J10 / 7531327`, 공식 데이터셋 4개 |
+| `/api/neis/school` | 한봄고등학교 공식 학교정보 1건 |
+| `/api/neis/meals?from=2026-11-09&to=2026-11-13&limit=30` | 급식 5건, `partial:false` |
+| `/api/neis/calendar?from=2026-11-01&to=2026-11-30&limit=100` | 11월 학사일정 5건, `partial:false` |
+| `/api/neis/timetable?date=2026-11-11&grade=3&limit=100` | 3학년 시간표 66건, `partial:false` |
+| `/api/neis/today?date=2026-11-11&grade=3&className=1` | 11월 11일 급식 1건·일정 0건·시간표 30건, `partial:false` |
+
+- 11월 11일 중식 원본에는 찹쌀밥, 한방닭곰탕, 아삭이고추된장무침 등 학교가 제공한 메뉴가 포함됐다.
+- `0건` 학사일정은 조회 날짜에 해당하는 공식 데이터가 없음을 뜻하며, 생성·추측한 일정으로 대체하지 않았다.
+- 이 수치는 2026년 11월 11일 실시간 조회 당시의 NEIS 응답이며 학교 기록 전체의 누적 건수와 다를 수 있다.
+
+### 운영 브라우저·원격 MCP 검증
+
+- 360px 모바일에서 `/neis` 실제 페이지를 열고 **오늘 요약·급식·학사일정·시간표·학교정보**의 5개 탭을 확인. 급식 카드 5개, 3학년 시간표 카드 66개, 학교정보 카드 1개가 정상 렌더링됐다.
+- 다크모드 전환 후 배경 `rgb(19,22,27)`, 카드 배경 `rgb(32,38,47)` 적용, 문서 가로 넘침 없음.
+- 프로덕션 `POST /mcp`의 `tools/list`에서 **74개 MCP 도구** 확인. 기존 `get_board_posts`가 유지되고 NEIS 조회 도구 6개가 전부 나타남.
+- 실서비스 MCP 도구 `get_neis_connection_status`에서 학교 코드 7531327 및 키 설정 true 확인(인증키 값 미반환).
+- 실서비스 MCP 도구 `get_neis_meals({date:"2026-11-11"})`에서 실제 중식 1건을 오류 없이 반환.
+
+### 보안·범위
+
+- 2026-11-11 발급 인증키만 Cloudflare Secret으로 사용; 과거 발급 키는 쓰지 않음.
+- 비공개 키 원본 파일이 있는 별도 GitHub 저장소를 공개하지 말아야 하며 공개 Worker 응답에는 키 값을 넣지 않는다.
+- 사용자는 API를 통해 학교코드·원본호스트·키를 임의 변경할 수 없고, 요청 범위 및 페이지 수 제한·리다이렉트 차단을 유지한다.
+- 기존 RSS 82종, 개인정보 보호, 공개 MCP, GitHub `main` 자동 배포를 그대로 유지한다.
