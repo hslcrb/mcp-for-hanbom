@@ -86,7 +86,7 @@ test("Worker composes independent UI modules but retains 82-source API and origi
  const response=await worker.fetch(new Request("https://data.hanbom.rhee.life/"),{},{});
  assert.equal(response.status,200);
  const html=await response.text();
- assert.equal((html.match(/<hanbom-pill/g)||[]).length,131);
+ assert.equal((html.match(/<hanbom-pill/g)||[]).length,132);
  assert.equal((html.match(/data-category="/g)||[]).length,129);
  assert.equal((html.match(/data-group="/g)||[]).length,23);
  assert.equal((html.match(/<h1>/g)||[]).length,1);
