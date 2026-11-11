@@ -31,7 +31,7 @@ export function renderMcpSetupPage(){
    '인증은 <strong>No sign in(로그인 없음)</strong>으로 선택하세요. API 키나 OAuth 정보는 입력하지 않습니다.',
    '<strong>Add</strong>로 저장한 후, 채팅의 <strong>+ → Connectors</strong>에서 연결을 켜고 질문해 보세요.'
  ]);
- const icon=id=>'<img class="brand-icon pill-icon-'+id+'" src="/assets/logos/'+id+'.svg" width="28" height="28" alt="" aria-hidden="true">';
+ const icon=id=>'<img class="brand-icon pill-icon-'+id+'" src="/assets/logos/'+id+'.svg" width="36" height="36" alt="" aria-hidden="true">';
  return `<!doctype html>
 <html lang="ko">
 <head>
