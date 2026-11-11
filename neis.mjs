@@ -177,8 +177,14 @@ async function fetchFromNeis(dataset,params,pIndex,pSize,env){
  for(const [name,value] of Object.entries(params))url.searchParams.set(name,String(value));
  let response;
  try{
-  response=await fetch(url.toString(),{method:"GET",redirect:"error",signal:AbortSignal.timeout(TIMEOUT_MS),headers:{"accept":"application/json"}});
- }catch{throw new NeisError("NEIS_NETWORK_ERROR");}
+  response=await fetch(url.toString(),{method:"GET",redirect:"manual",signal:AbortSignal.timeout(TIMEOUT_MS)});
+ }catch(e){
+  // Classify failures without exposing a credential-bearing URL or exception message.
+  if(e?.name==="TimeoutError"||e?.name==="AbortError")throw new NeisError("NEIS_TIMEOUT",504);
+  if(e?.name==="TypeError")throw new NeisError("NEIS_FETCH_TYPE_ERROR",502);
+  throw new NeisError("NEIS_NETWORK_ERROR");
+ }
+ if(response.status>=300&&response.status<400)throw new NeisError("NEIS_UNEXPECTED_REDIRECT");
  if(!response.ok)throw new NeisError("NEIS_UPSTREAM_HTTP_"+response.status);
  if(Number(response.headers.get("content-length")||0)>CONTENT_LIMIT)throw new NeisError("NEIS_RESPONSE_TOO_LARGE");
  let raw;
