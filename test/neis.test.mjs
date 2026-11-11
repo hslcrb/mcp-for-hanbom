@@ -199,3 +199,25 @@ test("NEIS page is SSR accessible and existing RSS homepage remains intact",asyn
  const meta=(await get("/api/catalog")).data;
  assert.equal(meta.source_count,82);
 });
+
+test("NEIS outbound redirects are rejected rather than following credential-bearing URLs",async()=>{
+ const previous=globalThis.fetch;
+ globalThis.fetch=async()=>new Response(null,{status:302,headers:{location:"https://example.invalid/steal"}});
+ try{
+  const response=await get("/api/neis/meals?date=2026-11-11");
+  assert.equal(response.status,502);
+  assert.equal(response.data.error,"NEIS_UNEXPECTED_REDIRECT");
+  assert.equal(JSON.stringify(response.data).includes(fakeCredential),false);
+ }finally{globalThis.fetch=previous;}
+});
+
+test("upstream TypeError never leaks the NEIS key through public error bodies",async()=>{
+ const previous=globalThis.fetch;
+ globalThis.fetch=async()=>{throw new TypeError("sensitive URL: "+fakeCredential);};
+ try{
+  const response=await get("/api/neis/school");
+  assert.equal(response.status,502);
+  assert.equal(response.data.error,"NEIS_FETCH_TYPE_ERROR");
+  assert.equal(JSON.stringify(response.data).includes(fakeCredential),false);
+ }finally{globalThis.fetch=previous;}
+});
