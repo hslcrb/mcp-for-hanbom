@@ -1,5 +1,16 @@
 # HANBOM DATA — 학교 RSS 데이터 허브
 
+## 2026-11-11 · 나이스(NEIS) 공식 교육정보 통합 (v2.3.0)
+
+- **2026년 11월 11일 발급 인증키만** Cloudflare Worker `NEIS_API_KEY` Secret으로 설정. 저장소·HTML·REST·MCP에는 인증키 값을 절대 포함하지 않음.
+- 공식 확인한 한봄고 코드: **경기도교육청 `J10` · 행정표준코드 `7531327`**.
+- [NEIS 전용 대시보드](https://data.hanbom.rhee.life/neis): **오늘 요약 · 급식 · 학사일정 · 고등학교 시간표 · 학교정보**, 날짜·학년·학급·학과 필터 및 다크모드.
+- REST [`/api/neis/meta`](https://data.hanbom.rhee.life/api/neis/meta), `/api/neis/meals`, `/api/neis/calendar`, `/api/neis/timetable`, `/api/neis/school`, `/api/neis/today`, `/api/neis/status`.
+- MCP 신규 조회 도구 **6개** 추가: `get_neis_meals`, `get_neis_school_events`, `get_neis_high_school_timetable`, `get_neis_school_info`, `get_neis_daily_briefing`, `get_neis_connection_status`. 기존 68개 유지 → **총 74개**.
+- 기존 RSS 82개·23개 상위 메뉴·민감 게시물 보호·GitHub `main` Cloudflare Workers Builds 자동 배포 체계 그대로.
+- [나이스 API 설계·개발기](docs/NEIS_INTEGRATION_2026-11-11.md).
+
+
 ## 2026-11-11 · ChatGPT·Claude 로고 확대 (v2.2.1)
 
 - 메인 **MCP 설정하기** pill의 두 SVG 로고를 **1em(15px) → 1.6em(24px)**으로 확대.
@@ -34,9 +45,9 @@
 - [컴포넌트 설계·검증 기록](docs/PILL_COMPONENT_REFACTOR_2026-11-11.md).
 
 
-> **현재 운영 상태 (2026-11-11): RSS 82종 · 23개 메뉴 · 3개 무료 플랜 호환 분할 조회 · MCP 68개 도구 · 전체 공개.** 기존 31개 및 GitHub main 자동배포·Cloudflare Access 복구용 설정은 유지됩니다. 전체 RSS 등록값은 [RSS 82종 개발기](docs/RSS_82_IMPLEMENTATION_2026-11-11.md)와 [원본 카탈로그](config/rss-catalog-82.json)를 참고하세요.
+ > **현재 운영 상태 (2026-11-11): RSS 82종 + NEIS 교육정보 · 23개 메뉴 · 3개 무료 플랜 호환 RSS 분할 조회 · MCP 74개 도구 · 전체 공개.** 기존 31개 및 GitHub main 자동배포·Cloudflare Access 복구용 설정은 유지됩니다. 전체 RSS 등록값은 [RSS 82종 개발기](docs/RSS_82_IMPLEMENTATION_2026-11-11.md)와 [원본 카탈로그](config/rss-catalog-82.json)를 참고하세요.
 
-## 현재 버전 v2.2.0
+## 현재 버전 v2.3.0
 
 - 학교 공식 공개 RSS **82개(기존 31 + 신규 51)**를 파일 원문에 적힌 **23개 상위 메뉴**로 분류.
 - 홈은 기존 흰 배경·주아체·본문 중앙 정렬을 유지하고, 23개 상위 pill 아래에서 각 소속 게시판을 하위 pill로 선택.

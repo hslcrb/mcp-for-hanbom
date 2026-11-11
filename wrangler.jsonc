@@ -9,5 +9,10 @@
       "pattern": "data.hanbom.rhee.life",
       "custom_domain": true
     }
-  ]
+  ],
+  "secrets": {
+    "required": [
+      "NEIS_API_KEY"
+    ]
+  }
 }
