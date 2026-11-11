@@ -9,6 +9,8 @@ export const SITE_STYLES=String.raw`
 :root[data-theme="dark"]{color-scheme:dark;--ink:#edf0f4;--border:#3b434e;--paper:#13161b;--pill-surface:#20262f;--active-bg:#e6ebf2;--active-ink:#151a20;--focus-color:#bec9d9}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]){color-scheme:dark;--ink:#edf0f4;--border:#3b434e;--paper:#13161b;--pill-surface:#20262f;--active-bg:#e6ebf2;--active-ink:#151a20;--focus-color:#bec9d9}}
 *{box-sizing:border-box}
+/* Control labels must not be selected by pointer drag; article text and MCP URLs stay copyable. */
+button,button *,a.pill-link,a.pill-link *,a.guide-link,a.guide-link *{-webkit-user-select:none;user-select:none}
 html,body{min-height:100%;background:#fff}
 html,body{background:var(--paper)}
 body{margin:0;color:var(--ink);font-family:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;-webkit-font-smoothing:antialiased}
