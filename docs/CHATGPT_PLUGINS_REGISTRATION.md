@@ -8,6 +8,24 @@
 
 # ChatGPT Plugins 등록 입력값 — HANBOM DATA MCP
 
+## 2026-11-11 · NEIS 학교 교육정보 도구 6개 추가 (v2.3.0)
+
+**Server URL `https://data.hanbom.rhee.life/mcp` · Transport `Streamable HTTP` · Authentication `None`은 변경 없음.**
+
+기존 RSS 조회 MCP 도구 68개에 공식 나이스(NEIS) 교육정보용 조회·통합 도구 6개를 추가해 **74개**가 됩니다. 인증키는 2026년 11월 11일 발급분만 사용하고 Cloudflare Secret `NEIS_API_KEY`에서 서버가 읽습니다. ChatGPT에 API 키·OAuth·사용자별 인증 정보를 입력할 필요가 없습니다.
+
+| 신규 도구 | 입력 | 역할 |
+|---|---|---|
+| `get_neis_school_info` | 없음 | 한봄고 공식 학교·교육청·주소·행정표준코드 조회 |
+| `get_neis_meals` | `date` 또는 `from`, `to`; `mealType`, `limit` | 식단·알레르기 표시·열량·영양·원산지 |
+| `get_neis_school_events` | `date` 또는 `from`, `to`; `grade`, `limit` | 학사일정·행사명·학년별 여부 |
+| `get_neis_high_school_timetable` | `date` 또는 `from`, `to`; `grade`, `className`, `department`, `semester`, `year`, `limit` | 학과·학년·학급별 고등학교 시간표 |
+| `get_neis_daily_briefing` | `date`, `grade`, `className` | 급식·학사일정·선택적 시간표 통합 |
+| `get_neis_connection_status` | 없음 | 연결 설정/출처/학교코드, 키 값 공개 없음 |
+
+날짜는 `YYYY-MM-DD`; 한봄고 코드는 `J10 / 7531327`. 원본 API의 조회 결과가 빈 경우 0건을 정상 반환합니다. 기존 앱에 새 MCP 도구가 보이지 않으면 도구 목록 재동기화가 필요할 수 있습니다. [전체 API 개발기](NEIS_INTEGRATION_2026-11-11.md).
+
+
 ## 2026-11-11 현행 등록값 (v2.0.0)
 
 | 항목 | 값 |
