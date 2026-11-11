@@ -39,6 +39,9 @@ nav.filters button:focus-visible{outline:2px solid var(--focus-color);outline-of
 .pill-link:focus-visible{outline:2px solid var(--focus-color);outline-offset:3px}
 .pill-link .pill-link-label{display:inline-block;min-width:0}
 .pill-icon{display:inline-block;width:1em;height:1em;min-width:1em;flex:0 0 1em;vertical-align:middle}
+.setup-launch{--setup-brand-icon-size:1.6em}
+.setup-launch .pill-link{gap:12px}
+.setup-launch .pill-icon{width:var(--setup-brand-icon-size);height:var(--setup-brand-icon-size);min-width:var(--setup-brand-icon-size);flex:0 0 var(--setup-brand-icon-size)}
 :root[data-theme="dark"] .pill-icon-chatgpt{filter:invert(1)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]) .pill-icon-chatgpt{filter:invert(1)}}
 
