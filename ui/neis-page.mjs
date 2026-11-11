@@ -30,7 +30,7 @@ export function renderNeisPage(){
    <h1>한봄고 나이스 데이터</h1>
    <p class="neis-intro">교육부 공식 나이스 오픈데이터로 한봄고등학교의 급식, 학사일정, 학과·학년·학급별 시간표를 확인할 수 있어요.</p>
    <div class="neis-tags">
-    <span class="neis-tag">학교 코드 J10 / 7531327</span>
+    <span class="neis-tag">학교 코드 ${NEIS_SCHOOL.educationOffice} / ${NEIS_SCHOOL.schoolCode}</span>
     <span class="neis-tag">공식 교육정보</span>
     <span class="neis-tag">읽기 전용</span>
    </div>
