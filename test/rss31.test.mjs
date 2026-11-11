@@ -111,7 +111,7 @@ test("all 46 specialized MCP tools plus generic pair work with the original 19",
  await mockRemote(async()=>{
   const listed=await rpc("tools/list",{});
   const names=listed.result.tools.map(x=>x.name);
-  assert.equal(names.length,74);assert.equal(new Set(names).size,74);
+  assert.equal(names.length,78);assert.equal(new Set(names).size,78);
   for(const b of EXTRA_BOARD_CATALOG){
    const getName="get_"+b.id+"_posts",searchName="search_"+b.id+"_posts";
    assert.ok(names.includes(getName));assert.ok(names.includes(searchName));
