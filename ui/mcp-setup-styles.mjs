@@ -23,8 +23,8 @@ export const SETUP_STYLES=String.raw`
 .setup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch}
 .guide-card{display:flex;flex-direction:column;gap:20px;min-width:0;border:1px solid var(--border);background:var(--pill-surface);border-radius:28px;padding:clamp(22px,3.2vw,34px)}
 .guide-heading{display:flex;align-items:center;gap:12px}
-.guide-mark{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;flex:0 0 54px;border:1px solid var(--border);border-radius:17px;background:var(--paper)}
-.guide-mark .brand-icon{width:1em;height:1em;display:block;font-size:28px}
+.guide-mark{display:inline-flex;align-items:center;justify-content:center;width:66px;height:66px;flex:0 0 66px;border:1px solid var(--border);border-radius:20px;background:var(--paper)}
+.guide-mark .brand-icon{width:1em;height:1em;display:block;font-size:36px}
 .guide-overline{font-size:12px;opacity:.64;margin:0 0 3px}
 .guide-title{margin:0;font-size:23px;line-height:1.25;letter-spacing:-.035em;font-weight:700}
 .guide-description{font-size:14px;line-height:1.7;color:var(--ink);opacity:.76;margin:0;word-break:keep-all}
