@@ -12,7 +12,8 @@
   ],
   "secrets": {
     "required": [
-      "NEIS_API_KEY"
+      "NEIS_API_KEY",
+      "UNIVERSITY_INFO_API_KEY"
     ]
   }
 }
