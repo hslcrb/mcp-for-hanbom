@@ -28,6 +28,18 @@ test("reusable pill component supports an accessible internal link with exact 1e
   '<hanbom-pill selected><button class="pill-button" type="button" data-category="notice" aria-controls="notices" aria-pressed="true">공지사항</button></hanbom-pill>');
 });
 
+test("both AI logos are visibly larger in the main pill and setup guide",()=>{
+ const markup=PillButton({href:"/mcp-setup",label:"MCP 설정하기",icons:["chatgpt","claude"]});
+ assert.equal((markup.match(/width="24" height="24"/g)||[]).length,2);
+ assert.match(SITE_STYLES,/\.setup-launch\{--setup-brand-icon-size:1\.6em\}/);
+ assert.match(SITE_STYLES,/\.setup-launch \.pill-icon\{width:var\(--setup-brand-icon-size\);height:var\(--setup-brand-icon-size\)/);
+ assert.match(SITE_STYLES,/\.setup-launch \.pill-link\{gap:12px\}/);
+ const guide=renderMcpSetupPage();
+ assert.equal((guide.match(/width="36" height="36"/g)||[]).length,2);
+ assert.match(SETUP_STYLES,/\.guide-mark\{[^}]*width:66px;height:66px/);
+ assert.match(SETUP_STYLES,/\.guide-mark \.brand-icon\{width:1em;height:1em;display:block;font-size:36px\}/);
+});
+
 test("two service-owned SVG assets precisely match the original imported sources",()=>{
  for(const logo of ["chatgpt","claude"]){
   const content=readFileSync(new URL("../assets/logos/"+logo+".svg",import.meta.url),"utf8");
