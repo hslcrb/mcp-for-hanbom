@@ -131,3 +131,13 @@
 - 두 아이콘과 레이블 사이 간격은 12px. 원본 SVG 형상·색·경로는 변경하지 않고 다크모드 ChatGPT 반전도 유지.
 - **MCP 안내 카드**의 두 로고는 기존 **28px → 36px**, 아이콘 주변 둥근 프레임은 **54px → 66px**로 확대.
 - `test/mcp-setup.test.mjs`에서 두 로고가 동일하게 확대됐는지 검증. 실제 Cloudflare 배포/브라우저 실측 결과는 아래에 추록.
+
+### v2.2.1 로고 확대 배포·실측 기록
+
+- GitHub `main` 코드·문서 반영 커밋: `39777ca40f589b1646f683cb319176ec6ed51dff`.
+- Cloudflare Workers Builds `03df0e8c-465b-485c-a926-894d736ee3d9`: **success**, 테스트 **74/74 통과**, 새 Worker `c5979e8b-ca33-4e99-a9d7-c3e5db0bf497` 프로덕션 100% 적용.
+- Cloudflare Browser Rendering으로 실제 `https://data.hanbom.rhee.life/`을 360px 폭에서 렌더링하고 아이콘 크기를 확인. ChatGPT와 Claude 각각 **24×24px**, 두 이미지 모두 로드 완료.
+- 기본 글씨는 **15px**, 이미지 사이 `gap=12px`, 링크 `href=/mcp-setup`, 문서 너비 360px로 수평 넘침 없음.
+- 다크모드 배경 `rgb(19,22,27)`과 ChatGPT 심볼 `filter:invert(1)`도 그대로 정상.
+- 안내 페이지 카드 로고는 코드·자동 테스트에서 모두 **36×36px**, 프레임 **66×66px**인 것을 확인. 추가 브라우저 렌더링은 Cloudflare HTTP 429 rate limit에 걸려 해당 화면의 실측 픽셀은 확인하지 못함.
+- 원본 SVG 데이터·MCP 기능 및 RSS 수집·등록 경로와 다크모드/모바일 레이아웃은 변경하지 않음.
