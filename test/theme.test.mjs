@@ -136,7 +136,7 @@ test("worker page bootstraps theme before CSS without changing RSS pills or API"
  assert.ok(html.indexOf('localStorage.getItem("hanbom-color-theme-v1")')<html.indexOf("<style>"));
  assert.match(html,/class="theme-options" role="group"/);
  assert.match(html,/window\.matchMedia\("\(prefers-color-scheme: dark\)"\)/);
- assert.equal((html.match(/<hanbom-pill/g)||[]).length,130);
+ assert.equal((html.match(/<hanbom-pill/g)||[]).length,131);
  assert.equal((html.match(/data-category="/g)||[]).length,129);
  assert.equal((html.match(/data-theme-choice="/g)||[]).length,3);
  assert.match(html,/<h1>한봄고 홈페이지 공지사항 MCP<\/h1>/);
