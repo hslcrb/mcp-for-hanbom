@@ -1,0 +1,19 @@
+HANBOM DATA
+Copyright 2026 Rheehose
+
+The HANBOM DATA software is licensed under Apache License 2.0 (see LICENSE).
+
+Third-party notices:
+- School RSS entries belong to their respective publishers and are not
+  automatically licensed under the HANBOM DATA source-code license.
+- NEIS school records are provided through the official Ministry of Education
+  open data service.
+- University education conditions originate with the Korean Council for
+  University Education (한국대학교육협의회), data.go.kr dataset 15158679.
+- ChatGPT and Claude SVG logos and names belong to their respective
+  trademark holders; the project does not imply endorsement, and Apache 2.0
+  does not convey trademark permissions.
+- The Juache font is served by an independent CDN under its own font terms.
+
+API credentials, account captures and unpublished records are excluded
+from this repository and all public releases.
