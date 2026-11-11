@@ -37,8 +37,8 @@ test("public REST and MCP tool registry remain intact",async()=>{
   assert.equal(rpc.status,200);
   const names=(await rpc.json()).result.tools.map(x=>x.name);
   assert.deepEqual(names.slice(0,19),["get_school_notices","search_school_notices","get_school_feed_status","get_family_letters","search_family_letters","get_school_news","search_school_news","get_student_works_awards","search_student_works_awards","get_education_office_letters","search_education_office_letters","get_school_opportunities","search_school_opportunities","get_health_notices","search_health_notices","get_student_rules","search_student_rules","get_all_school_posts","search_all_school_posts"]);
-  assert.equal(names.length,74);
-  assert.equal(new Set(names).size,74);
+  assert.equal(names.length,78);
+  assert.equal(new Set(names).size,78);
 });
 
 test("Juache heading loads CDN font while preserving the white list and CSP", async()=>{
