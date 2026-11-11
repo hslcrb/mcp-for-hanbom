@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import worker from "../worker.mjs";
-import {NEIS_SCHOOL,NEIS_TOOLS,NEIS_API_PATHS,NEIS_DEPARTMENTS} from "../neis.mjs";
+import {NEIS_SCHOOL,NEIS_TOOLS,NEIS_API_PATHS,NEIS_DEPARTMENTS,schoolConfig} from "../neis.mjs";
 
 const base="https://data.hanbom.rhee.life";
 const fakeCredential="a".repeat(32); // Synthetic fixture: never an issued API key.
@@ -220,4 +220,12 @@ test("upstream TypeError never leaks the NEIS key through public error bodies",a
   assert.equal(response.data.error,"NEIS_FETCH_TYPE_ERROR");
   assert.equal(JSON.stringify(response.data).includes(fakeCredential),false);
  }finally{globalThis.fetch=previous;}
+});
+
+
+test("runtime school code bindings preserve official NEIS identifiers",()=>{
+ const cfg=schoolConfig({NEIS_EDUCATION_OFFICE_CODE:"J10",NEIS_SCHOOL_CODE:"7531327",NEIS_UNIFIED_SCHOOL_CODE:"J107531327"});
+ assert.deepEqual([cfg.educationOffice,cfg.schoolCode,cfg.unifiedSchoolCode],["J10","7531327","J107531327"]);
+ const bad=schoolConfig({NEIS_EDUCATION_OFFICE_CODE:"bad",NEIS_SCHOOL_CODE:"not-a-code",NEIS_UNIFIED_SCHOOL_CODE:"wrong"});
+ assert.deepEqual([bad.educationOffice,bad.schoolCode,bad.unifiedSchoolCode],["J10","7531327","J107531327"]);
 });
