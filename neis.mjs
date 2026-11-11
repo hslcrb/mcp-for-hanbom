@@ -241,7 +241,9 @@ async function fetchDataset(kind,args,env,ctx){
  if(typeof env?.NEIS_API_KEY!=="string"||env.NEIS_API_KEY.length<24)
   throw new NeisError("NEIS_KEY_NOT_CONFIGURED",503);
  const endpoint=NEIS_ENDPOINTS[kind],params=paramsFor(kind,args);
- const cache=globalThis.caches?.default,key=new Request(publicCacheKey(kind,params));
+ // Calendar responses can differ by grade even with the same upstream query.
+ const cacheScope=kind==="calendar"&&args.grade?{...params,LOCAL_GRADE:args.grade}:params;
+ const cache=globalThis.caches?.default,key=new Request(publicCacheKey(kind,cacheScope));
  if(cache)try{
   const hit=await cache.match(key);
   if(hit){const d=await hit.json();return{...d,cached:true};}

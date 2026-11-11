@@ -8,7 +8,6 @@ import {NEIS_DEPARTMENTS,NEIS_SCHOOL} from "../neis.mjs";
 
 export function renderNeisPage(){
  const back=PillButton({href:"/",label:"홈으로"});
- const setup=PillButton({href:"/mcp-setup",label:"MCP 설정하기"});
  const departments=NEIS_DEPARTMENTS.map(name=>'<option value="'+name+'">'+name+'</option>').join("");
  return `<!doctype html>
 <html lang="ko">

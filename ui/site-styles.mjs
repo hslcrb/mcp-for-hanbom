@@ -35,7 +35,7 @@ nav.filters.subfilters button{font-size:14px;padding:9px 15px}
 nav.filters button[aria-pressed="true"],hanbom-pill[selected] button{color:var(--active-ink);background:var(--active-bg);border-color:var(--active-bg)}
 nav.filters button:hover{filter:none;box-shadow:none;transform:none;transition:none}
 nav.filters button:focus-visible{outline:2px solid var(--focus-color);outline-offset:3px}
-.setup-launch{display:flex;justify-content:center;align-items:center;max-width:100%;margin:-36px auto 42px}
+.setup-launch{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;max-width:100%;margin:-36px auto 42px}
 .pill-link{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--border);border-radius:999px;background:var(--pill-surface);color:var(--ink);font:500 15px/1.25 "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;padding:11px 20px;min-height:43px;max-width:100%;overflow-wrap:anywhere;white-space:normal;text-decoration:none;transition:none}
 .pill-link:visited,.pill-link:hover,.pill-link:active{color:var(--ink);text-decoration:none;filter:none;box-shadow:none;transform:none;transition:none}
 .pill-link:focus-visible{outline:2px solid var(--focus-color);outline-offset:3px}
