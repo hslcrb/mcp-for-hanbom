@@ -1,3 +1,8 @@
 # Local development only — never commit your actual .dev.vars
 NEIS_API_KEY=replace-with-your-own-neis-development-key
 UNIVERSITY_INFO_API_KEY=replace-with-your-own-data-go-kr-development-key
+
+# Public school identifiers (not API credentials)
+NEIS_EDUCATION_OFFICE_CODE=J10
+NEIS_SCHOOL_CODE=7531327
+NEIS_UNIFIED_SCHOOL_CODE=J107531327
