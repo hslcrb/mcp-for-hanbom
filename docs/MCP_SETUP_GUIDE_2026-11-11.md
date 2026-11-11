@@ -83,3 +83,44 @@
 - 신규 `test/mcp-setup.test.mjs`: 등록 pill SSR/링크 유효성, 로고 SVG 원본 일치, 1em 크기, 안내·복사 버튼, 두 SVG MIME/HEAD 처리, API 회귀.
 - 기존 `test/pills.test.mjs`, `test/theme.test.mjs`의 메인 페이지 pill 호스트 개수만 129 → 130으로 변경.
 - 전체 Node 테스트 및 Cloudflare 배포, 320/360/1440px 라이브 브라우저 검증 결과는 배포 후 기록한다.
+
+---
+
+## 프로덕션 배포 및 실제 브라우저 검증 — 2026-11-11
+
+### GitHub·Cloudflare
+
+- 최초 기능·설명서 구현 커밋: `fdaf69304ae8be30a39c7c62f993994465726cd9` (`main`).
+- Cloudflare Workers Builds 빌드 ID: `1c0e136d-8fe6-4565-80b5-5c99cbbe0455`.
+- **테스트 73/73 통과, 실패 0, 빌드와 자동 배포 모두 success**.
+- Worker 프로덕션 버전 `185cb0f9-1142-4709-b6b4-c36df76f7138`, 트래픽 100% 확인.
+- GitHub Actions 사용하지 않고 기존 `main` → Cloudflare Workers Builds 파이프라인만 이용함.
+
+### 메인 페이지에서 확인한 신규 pill
+
+- 운영 주소: https://data.hanbom.rhee.life/.
+- `href=/mcp-setup`, 레이블 `MCP 설정하기`, 부모 `<hanbom-pill>` 컴포넌트 정상.
+- 원본 ChatGPT SVG, Claude SVG가 각각 같은 출처 `/assets/logos/chatgpt.svg`, `/assets/logos/claude.svg`로 성공적으로 로드됨.
+- 360px 모바일에서 CSS 폰트 `15px`, **두 아이콘 계산 너비 각각 `15px`** → 요청한 글자 크기와 같음.
+- RSS 메뉴의 기존 pill 129개와 실제 RSS 원문 링크 528개 로딩을 확인. 신규 안내 링크는 RSS 필터 이벤트와 분리됨.
+- 320px 모바일: 문서 너비 320px, 제목 하단 y=155, 설정 pill 상단 y=164, 하단 y=207, 메뉴 시작 y=249로 **겹침 없음**.
+- 다크모드에서 페이지 배경 `rgb(19,22,27)` 및 검정 ChatGPT SVG `filter:invert(1)` 적용 확인. 이 경우도 아이콘 15px, 두 이미지 정상 로드.
+
+### 안내 페이지 모바일/데스크톱
+
+- 운영 주소: https://data.hanbom.rhee.life/mcp-setup.
+- 320px 모바일: 문서 전체 너비 320px, 안내 카드 2개가 **1열 292px 너비**로 정렬되며 수평 넘침 없음.
+- ChatGPT/Claude 카드 이미지 둘 다 로드됨, 계산 크기 각각 28×28px(각 카드 제목 주변의 가독성을 위한 `1em` 크기).
+- `/assets/logos/chatgpt.svg`와 `/assets/logos/claude.svg` 직접 GET 요청 각각 HTTP **200**, MIME `image/svg+xml; charset=utf-8`, 본문은 원본 SVG 형식.
+- 안내 페이지는 다크모드 버튼 클릭 시 `rgb(19,22,27)` 배경과 `rgb(32,38,47)` 카드 배경으로 변함.
+- 상단 홈으로 링크와 테마 선택 버튼은 320px에서도 겹치지 않음(홈 버튼 오른쪽 x=76, 테마 왼쪽 x=157).
+- 1440px 데스크톱: 각 안내 카드 폭 **541px**, 두 카드가 Grid 2열로 나란히 배치됨. 수평 오버플로 없음.
+- ChatGPT와 Claude 각각 5단계 절차, 공식 안내 링크 노출 확인.
+- 실제 DOM에서 **서버 URL 복사 버튼 클릭** 후 `복사했어요. 해당 서비스의 설정 화면에 붙여넣으세요.` 상태 메시지를 확인.
+
+### 등록 절차·의존 관계
+
+- ChatGPT 절차는 OpenAI 공식 [맞춤형 MCP 서버 연결 안내](https://help.openai.com/ko-kr/articles/12584461-connecting-custom-mcp-servers-in-chatgpt)를 참고.
+- Claude 절차는 Anthropic 공식 [원격 MCP 사용자 정의 커넥터 안내](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)를 참고.
+- 두 외부 서비스에 **실제 계정 연결 자체를 실행하지는 않았음**. 이 페이지는 설정법과 복사를 제공하며, 연결은 각 이용자가 별도로 승인해야 한다.
+- 기존 등록 주소·인증 값(`https://data.hanbom.rhee.life/mcp`, `None`) 유지. 기존 82개 RSS·68개 MCP 도구 그대로.
