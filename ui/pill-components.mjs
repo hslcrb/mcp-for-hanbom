@@ -18,7 +18,19 @@ const safeId = value => {
  * Single reusable pill: native button semantics, controlled pressed state.
  * @param {{id:string,label:string,selected?:boolean}} props
  */
-export function PillButton({id,label,selected=false}) {
+export function PillButton({id,label,selected=false,href=null,icons=[]}) {
+  if(href!==null){
+    // Links deliberately share the same pill component as filter buttons,
+    // but use native anchor semantics rather than pretending to filter RSS.
+    if(typeof href!=="string"||!/^\/[a-z0-9/_-]*$/.test(href)||href.startsWith("//"))throw Error("INVALID_PILL_HREF");
+    const visual=icons.map(icon=>{
+      if(icon!=="chatgpt"&&icon!=="claude")throw Error("INVALID_PILL_ICON");
+      return '<img class="pill-icon pill-icon-'+icon+'" src="/assets/logos/'+icon+
+       '.svg" width="16" height="16" alt="" aria-hidden="true">';
+    }).join("");
+    return '<hanbom-pill><a class="pill-button pill-link" href="'+escapeHtml(href)+'">'+
+      visual+'<span class="pill-link-label">'+escapeHtml(label)+'</span></a></hanbom-pill>';
+  }
   const key = safeId(id);
   const pressed = !!selected;
   return '<hanbom-pill'+(pressed?' selected':'')+'>'+
