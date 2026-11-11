@@ -1,11 +1,13 @@
 
 import {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS} from "./catalog.mjs";
-import {PillNavigation} from "./ui/pill-components.mjs";
+import {PillNavigation,PillButton} from "./ui/pill-components.mjs";
+import {renderMcpSetupPage} from "./ui/mcp-setup-page.mjs";
+import {LOGO_ASSETS} from "./ui/logo-assets.mjs";
 import {SITE_STYLES} from "./ui/site-styles.mjs";
 import {SITE_CLIENT} from "./ui/site-client.mjs";
 import {ThemeSwitch} from "./ui/theme-components.mjs";
 import {THEME_BOOT,THEME_CLIENT} from "./ui/theme-client.mjs";
-export const VERSION="2.1.0";
+export const VERSION="2.2.0";
 export {BOARD_CATALOG,MENU_CATALOG,LEGACY_IDS};
 export const FEEDS=Object.freeze(Object.fromEntries(BOARD_CATALOG.map(b=>[b.id,{
  url:b.url,source:"한봄고등학교 "+b.parent+" · "+b.label,label:b.label,
@@ -201,6 +203,7 @@ async function mcp(request,ctx){
 }
 
 const pillNavigation=PillNavigation({menus:MENU_CATALOG,boards:BOARD_CATALOG});
+const mcpSetupLauncher=PillButton({href:"/mcp-setup",label:"MCP 설정하기",icons:["chatgpt","claude"]});
 const themeSwitch=ThemeSwitch();
 const clientScript=SITE_CLIENT
  .replace("__GROUPS__",JSON.stringify(Object.fromEntries(MENU_CATALOG.map(menu=>[menu.id,menu.ids]))))
@@ -223,6 +226,7 @@ ${SITE_STYLES}
  <main aria-label="한봄고등학교 공개 RSS 82개 게시판">
   <h1>한봄고 홈페이지 공지사항 MCP</h1>
   ${themeSwitch}
+  <div class="setup-launch">${mcpSetupLauncher}</div>
   ${pillNavigation}
   <ol id="notices" aria-live="polite" aria-busy="true"></ol>
  </main>
@@ -239,6 +243,23 @@ export default{async fetch(request,env,ctx){
  const url=new URL(request.url),path=url.pathname;
  if(request.method==="OPTIONS"&&(path==="/mcp"||path.startsWith("/api/")))return new Response(null,{status:204,headers:HEADERS});
  if(path==="/mcp")return mcp(request,ctx);
+ if(path==="/mcp-setup"||path==="/mcp-setup/"){
+  if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
+  return new Response(request.method==="HEAD"?null:renderMcpSetupPage(),{headers:{
+   "content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff",
+   "content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+  }});
+ }
+ if(path.startsWith("/assets/logos/")){
+  const name=path.slice("/assets/logos/".length);
+  if(!Object.hasOwn(LOGO_ASSETS,name))return json({error:"Not found"},404);
+  if(!["GET","HEAD"].includes(request.method))return json({error:"Method not allowed"},405);
+  return new Response(request.method==="HEAD"?null:LOGO_ASSETS[name],{headers:{
+   "content-type":"image/svg+xml; charset=utf-8","cache-control":"public, max-age=604800",
+   "x-content-type-options":"nosniff"
+  }});
+ }
+
  if(path==="/api/meta"||path==="/api/catalog"){
   if(request.method!=="GET")return json({error:"Method not allowed"},405);
   return json({name:"HANBOM DATA",version:VERSION,source_count:BOARD_CATALOG.length,menu_count:MENU_CATALOG.length,
@@ -278,5 +299,5 @@ export default{async fetch(request,env,ctx){
  // Cloudflare Access intentionally paused; archived Zero Trust applications remain available for restoration.
  // if(!request.headers.get("cf-access-jwt-assertion"))return json({error:"Dashboard requires Cloudflare Access"},401);
  return new Response(request.method==="HEAD"?null:page,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store",
-  "x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});
+  "x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; font-src https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"}});
 }};
