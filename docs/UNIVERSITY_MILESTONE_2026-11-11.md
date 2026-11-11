@@ -96,9 +96,48 @@ Workers Builds.
 
 ## 4. Verification
 
-Static source inspection is complete. Final automated-build status,
-real upstream queries, and observed API errors or limitations will be
-added only after live deployment and verification.
+### Confirmed production deployment (2026-11-11)
+
+- University integration, OSS organization and v3.0.0 code commit:
+  `5e4af59a18d73646593ae1080c30e7c0ca440083`.
+- Cloudflare Workers Builds `0e5382b5-c647-4dbe-84e1-5389659a6523`:
+  **success**, **98/98 tests passed**, failed 0, deployed to
+  `data.hanbom.rhee.life` at 100% traffic.
+- Final MCP registration documentation commit:
+  `1a48f30d03b42564b4a7f3d0ac567735ae7dd792`.
+  Cloudflare build `56a34c9a-90e7-4846-9be1-5a4693c0c746` also
+  **success**, **98/98 tests passed**, 100% production traffic.
+- Live Cloudflare Worker Secrets list confirms both
+  `NEIS_API_KEY` and `UNIVERSITY_INFO_API_KEY` bindings exist.
+  Neither secret value is included in this report.
+- Live `GET /api/university/meta` returned:
+  `key_configured=true`, `metrics.length=6`,
+  `operations.length=12`, issued `2026-11-11`,
+  valid through `2028-11-11`.
+- Live `POST /mcp` verified **78 unique read-only tools**, including
+  all four new university education tools and the existing RSS/NEIS tools.
+- Live `/universities` test at 360px rendered six metric choices,
+  both comparison/regional tabs, and a functioning form without
+  horizontal scroll. Dark mode changed body color to
+  `rgb(19, 22, 27)`, and the query panel to `rgb(32, 38, 47)`.
+- Actual upstream regional test
+  `/api/university/query?scope=regional&metric=library&schoolDivisionCode=1&page=1&size=10`
+  returned HTTP success and `count=0`, `total=0`; MCP gave
+  the same `count=0`. **The sample code `1` was not independently
+  verified against an official `schlDivCd` mapping**.
+  Therefore no substantive university statistic for that input was
+  validated. Successful mocked tests of all 12 operations do not
+  imply that all 12 returned populated real-world datasets.
+- The provider's development quota remains subject to its own daily
+  limits; the 7,200-second Cloudflare edge cache is not a globally
+  enforced request quota.
+
+### Milestone conclusion
+
+The requested implementation, deployment and public-source
+project organization are complete. **Initial major feature build-up
+is paused after v3.0.0**; maintenance and issue fixes remain welcome,
+with new feature proposals requiring explicit prioritization.
 
 ## 5. Feature build-up closure
 
